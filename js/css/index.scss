@@ -1,8 +1,14 @@
-.situ-quiz {
+.mdbook-quiz {
   border: 2px solid #ccc;
   border-radius: 4px;
   padding: 1em;
   margin-top: 2.5em;
+  position: relative;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+  }
 
   h3 {
     margin: 0 0 1em;
@@ -10,6 +16,11 @@
 
   h4 {
     margin: 0 0 0.5em;
+  }
+  
+  button {
+    font-size: 1.1em;
+    cursor: pointer;    
   }
 
   .prompt {
@@ -61,5 +72,21 @@
         font-size: 0.8em;
       }
     }
+  }
+}
+
+.consent-form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  background: white;
+  z-index: 1000;
+
+  .container {
+    width: 800px;
+    margin: 0 auto;
   }
 }
