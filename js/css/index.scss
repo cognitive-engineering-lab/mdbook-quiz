@@ -1,0 +1,65 @@
+.situ-quiz {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 1em;
+  margin-top: 2.5em;
+
+  h3 {
+    margin: 0 0 1em;
+  }
+
+  h4 {
+    margin: 0 0 0.5em;
+  }
+
+  .prompt {
+    background: #f8f8f8;
+    padding: 0.5em 1em;
+    margin-bottom: 2em;
+  }
+
+  .response {
+    margin-bottom: 1em;
+
+    .response-block {
+      margin-bottom: 0.5em;
+    }
+  }
+
+  .option {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.25em;
+    margin: 0 0.25em;
+  }
+
+  .option-separator {
+    margin: 0 0.5em;
+  }  
+
+  textarea, input[type=text] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  textarea {
+    min-height: 5em;    
+  }
+
+  // Add automatic line-numbers to code snippets
+  pre {
+    counter-reset: line;
+
+    code {
+      counter-increment: line;      
+
+      &:before {
+        content: counter(line);
+        user-select: none;
+        padding-right: 1.5em;
+        color: #aaa;
+        font-size: 0.8em;
+      }
+    }
+  }
+}
