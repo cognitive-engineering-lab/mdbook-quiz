@@ -7,7 +7,7 @@ use mdbook::{
 };
 use semver::{Version, VersionReq};
 
-use self::processor::SituProcessor;
+use self::processor::QuizProcessor;
 
 mod processor;
 
@@ -27,7 +27,7 @@ fn main() {
   let args = Args::parse();
 
   // Users will want to construct their own preprocessor here
-  let preprocessor = SituProcessor::new();
+  let preprocessor = QuizProcessor::new();
 
   if let Some(Command::Supports { renderer }) = args.command {
     handle_supports(&preprocessor, &renderer);

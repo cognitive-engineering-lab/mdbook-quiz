@@ -6,6 +6,7 @@ specifiers:
   '@types/lodash': ^4.14.182
   '@types/react': ^18.0.9
   '@types/react-dom': ^18.0.5
+  '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.26.0
   '@typescript-eslint/parser': ^5.26.0
   axios: ^0.27.2
@@ -22,6 +23,7 @@ specifiers:
   react: ^18.1.0
   react-dom: ^18.1.0
   typescript: 4.6.4
+  uuid: ^8.3.2
 
 dependencies:
   axios: 0.27.2
@@ -30,6 +32,7 @@ dependencies:
   mobx-react: 7.5.0_zjzbed4ey2pl6an3m4umzh4gbq
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
+  uuid: 8.3.2
 
 devDependencies:
   '@nota-lang/esbuild-utils': 0.3.7_esbuild@0.14.43
@@ -37,6 +40,7 @@ devDependencies:
   '@types/lodash': 4.14.182
   '@types/react': 18.0.12
   '@types/react-dom': 18.0.5
+  '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.27.1_bnfefdnvqpcyokeggdz5sotnli
   '@typescript-eslint/parser': 5.27.1_pm7osnb22e4oktq33hptgspr5i
   esbuild: 0.14.43
@@ -465,6 +469,10 @@ packages:
 
   /@types/scheduler/0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
+    dev: true
+
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
 
   /@types/yauzl/2.10.0:
@@ -2703,6 +2711,11 @@ packages:
   /util-deprecate/1.0.2:
     resolution: {integrity: sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8=}
     dev: true
+
+  /uuid/8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+    dev: false
 
   /v8-compile-cache/2.3.0:
     resolution: {integrity: sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==}

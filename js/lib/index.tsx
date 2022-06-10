@@ -3,9 +3,10 @@ import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import React, { useRef } from "react";
 import * as ReactDOM from "react-dom/client";
+import axios from "axios";
+import * as uuid from "uuid";
 
 import "../css/index.scss";
-import "./consent.tsx";
 
 export interface ShortAnswer {
   type: "ShortAnswer";
@@ -218,67 +219,104 @@ let QuestionView: React.FC<{
   );
 };
 
-let QuizView: React.FC<{ quiz: Quiz }> = observer(({ quiz }) => {
-  let state = useLocalObservable<{
-    started: boolean;
-    index: number;
-    answers: any[];
-  }>(() => ({
-    started: false,
-    index: 0,
-    answers: [],
-  }));
+export interface QuizLog {
+  user?: string;
+  name: string;
+  timestamp: number;
+  answers: any[];
+}
 
-  let n = quiz.questions.length;
-  return (
-    <div className="mdbook-quiz">
-      <header>
-        <h3>Quiz</h3>
-        <div className="counter">
-          {state.started ? (
-            state.index < n ? (
+export interface QuizViewProps {
+  name: string;
+  quiz: Quiz;
+  user?: string;
+  logEndpoint?: string;
+}
+
+let QuizView: React.FC<QuizViewProps> = observer(
+  ({ quiz, user, name, logEndpoint }) => {
+    let state = useLocalObservable<{
+      started: boolean;
+      index: number;
+      answers: any[];
+    }>(() => ({
+      started: false,
+      index: 0,
+      answers: [],
+    }));
+
+    let n = quiz.questions.length;
+    return (
+      <div className="mdbook-quiz">
+        <header>
+          <h3>Quiz</h3>
+          <div className="counter">
+            {state.started ? (
+              state.index < n ? (
+                <>
+                  Question {state.index + 1} / {n}
+                </>
+              ) : null
+            ) : (
               <>
-                Question {state.index + 1} / {n}
+                {n} question{n > 1 ? "s" : null}
               </>
-            ) : null
-          ) : (
-            <>
-              {n} question{n > 1 ? "s" : null}
-            </>
-          )}
-        </div>
-      </header>
-      <section>
-        {state.started ? (
-          state.index == n ? (
-            <>You have completed the quiz!</>
-          ) : (
-            <QuestionView
-              question={quiz.questions[state.index]}
-              onSubmit={action((answer) => {
-                state.answers.push(_.cloneDeep(answer));
-                state.index += 1;
-              })}
-            />
-          )
-        ) : (
-          <button
-            className="start"
-            onClick={action(() => {
-              state.started = true;
-            })}
-          >
-            Start
-          </button>
-        )}
-      </section>
-    </div>
-  );
-});
+            )}
+          </div>
+        </header>
+        <section>
+          {state.started ? (
+            state.index == n ? (
+              <>You have completed the quiz!</>
+            ) : (
+              <QuestionView
+                question={quiz.questions[state.index]}
+                onSubmit={action((answer) => {
+                  state.answers.push(_.cloneDeep(answer));
+                  state.index += 1;
 
-document.querySelectorAll(".situ-quiz-placeholder").forEach((el) => {
+                  if (logEndpoint) {
+                    let timestamp = new Date().getTime();
+                    let log: QuizLog = {
+                      user,
+                      name,
+                      timestamp,
+                      answers: state.answers,
+                    };
+                    axios.post(logEndpoint, log);
+                  }
+                })}
+              />
+            )
+          ) : (
+            <button
+              className="start"
+              onClick={action(() => {
+                state.started = true;
+              })}
+            >
+              Start
+            </button>
+          )}
+        </section>
+      </div>
+    );
+  }
+);
+
+const USER_KEY = "__mdbook_quiz_user";
+if (localStorage.getItem(USER_KEY) === null) {
+  localStorage.setItem(USER_KEY, uuid.v4());
+}
+const userId = localStorage.getItem(USER_KEY)!;
+
+document.querySelectorAll(".quiz-placeholder").forEach((el) => {
   let divEl = el as HTMLDivElement;
-  let quiz: Quiz = JSON.parse(divEl.dataset.quiz!);
+  let name = divEl.dataset.quizName!;
+  let quiz: Quiz = JSON.parse(divEl.dataset.quizQuestions!);
   let root = ReactDOM.createRoot(el);
-  root.render(<QuizView quiz={quiz} />);
+  let logEndpoint = divEl.dataset.quizLogEndpoint;
+  root.render(
+    <QuizView name={name} quiz={quiz} user={userId} logEndpoint={logEndpoint} />
+  );
 });

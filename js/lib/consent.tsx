@@ -1,7 +1,9 @@
 import React, { useRef } from "react";
 import * as ReactDOM from "react-dom/client";
 
-const CONSENT_KEY = "__wcrichto-consent";
+import "../css/consent.scss";
+
+const CONSENT_KEY = "__wcrichto_consent";
 
 let ConsentForm = () => {
   let ref = useRef<HTMLDivElement>(null);
