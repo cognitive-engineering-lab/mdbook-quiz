@@ -5,6 +5,6 @@ let build = cli();
 build({
   format: "iife",
   bundle: true,
-  entryPoints: ['lib/index.tsx', 'lib/consent.tsx'],
+  entryPoints: ['lib/mdbook-quiz.tsx', 'lib/consent.tsx'],
   plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
 });
