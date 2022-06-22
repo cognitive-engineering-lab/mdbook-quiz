@@ -1,34 +1,36 @@
 import React from "react";
-import { QuestionViewBase } from "./base";
+import { QuestionViews, Question } from "./base";
 import MarkdownView from "react-showdown";
 
-export interface ShortAnswerQuestion {
-  type: "ShortAnswer";
+export interface ShortAnswerPrompt {
   prompt: string;
 }
 
 export interface ShortAnswerAnswer {
-  response: string;
+  answer: string;
 }
 
-export class ShortAnswerView extends QuestionViewBase<
-  ShortAnswerQuestion,
+export type ShortAnswer = Question<
+  "ShortAnswer",
+  ShortAnswerPrompt,
   ShortAnswerAnswer
-> {
-  getAnswerFromDOM(container: HTMLDivElement) {
-    let input = container.querySelector("input")! as HTMLInputElement;
-    return { response: input.value };
-  }
+>;
 
-  className() {
-    return "short-answer";
-  }
+export let ShortAnswerView: QuestionViews<
+  ShortAnswerPrompt,
+  ShortAnswerAnswer
+> = {
+  PromptView: ({ prompt }: { prompt: ShortAnswerPrompt }) => (
+    <MarkdownView markdown={prompt.prompt} />
+  ),
 
-  renderPrompt() {
-    return <MarkdownView markdown={this.props.question.prompt} />;
-  }
+  ResponseView: () => <input name="response" type="text" />,
 
-  renderResponse() {
-    return <input type="text" />;
-  }
-}
+  getAnswerFromDOM(data: FormData) {
+    return { answer: data.get("response")!.toString() };
+  },
+
+  AnswerView: ({ answer }: { answer: ShortAnswerAnswer }) => (
+    <MarkdownView markdown={answer.answer} />
+  ),
+};

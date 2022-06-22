@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import * as ReactDOM from "react-dom/client";
 import axios from "axios";
 import * as uuid from "uuid";
-import { Question, QuestionView } from "./questions/mod";
+import { AnswerView, Question, QuestionView } from "./questions/mod";
 import classNames from "classnames";
 
 import "../css/index.scss";
@@ -82,7 +82,13 @@ let QuizView: React.FC<QuizViewProps> = observer(
       <section>
         {state.started ? (
           state.index == n ? (
-            <>You have completed the quiz!</>
+            quiz.questions.map((question, i) => (
+              <AnswerView
+                key={i}
+                question={question}
+                userAnswer={state.answers[i]}
+              />
+            ))
           ) : (
             <QuestionView
               question={quiz.questions[state.index]}

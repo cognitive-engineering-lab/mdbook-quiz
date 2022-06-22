@@ -33,7 +33,7 @@
     bottom: -2rem;
     right: 0;
     height: 0;
-    width: 50%;      
+    width: 50%;
     font-size: 0.8em;
     text-align: right;
 
@@ -110,6 +110,35 @@
         padding-right: 1.5em;
         color: #aaa;
         font-size: 0.8em;
+      }
+    }
+  }
+
+  .answer {
+    .answer-row {
+      display: flex;
+      gap: 1rem;
+
+      > div {
+        flex-grow: 1;
+
+        &.correct strong {
+          color: green;
+
+          &:before {
+            margin-right: 0.5em;
+            content: "✓";
+          }
+        }
+
+        &.incorrect strong {
+          color: red;
+
+          &:before {
+            margin-right: 0.5em;
+            content: "✗";
+          }
+        }
       }
     }
   }
