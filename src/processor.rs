@@ -19,6 +19,7 @@ fn to_cowstr(s: impl Into<String>) -> CowStr<'static> {
 
 pub struct QuizConfig {
   log_endpoint: Option<String>,
+  fullscreen: Option<bool>,
 }
 
 impl QuizProcessor {
@@ -70,6 +71,9 @@ impl QuizProcessor {
               if let Some(log_endpoint) = &config.log_endpoint {
                 add_data("quiz-log-endpoint", log_endpoint);
               }
+              if let Some(fullscreen) = &config.fullscreen {
+                add_data("quiz-fullscreen", "");
+              }
               html.push_str("></div>");
 
               Event::Html(to_cowstr(html))
@@ -103,6 +107,9 @@ impl Preprocessor for QuizProcessor {
       log_endpoint: config_toml
         .get("log-endpoint")
         .map(|value| value.as_str().unwrap().to_owned()),
+      fullscreen: config_toml
+        .get("fullscreen")
+        .map(|value| value.as_bool().unwrap()),
     };
 
     book.for_each_mut(|item| {

@@ -1,9 +1,48 @@
+.mdbook-quiz-wrapper {
+  &.expanded {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: white;
+    width: 97vw;
+    height: 100vh;
+    z-index: 1000;
+    padding: 0 10rem;
+    box-sizing: border-box;
+  }
+}
+
 .mdbook-quiz {
   border: 2px solid #ccc;
   border-radius: 4px;
   padding: 1em;
   margin-top: 2.5em;
   position: relative;
+
+  .exit {
+    position: absolute;
+    right: -4rem;
+    top: 0;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 1rem;
+  }
+
+  .exit-explanation {
+    position: absolute;
+    bottom: -2rem;
+    right: 0;
+    height: 0;
+    width: 50%;      
+    font-size: 0.8em;
+    text-align: right;
+
+    .trigger {
+      font-style: italic;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+  }
 
   header {
     display: flex;
@@ -17,10 +56,10 @@
   h4 {
     margin: 0 0 0.5em;
   }
-  
+
   button {
     font-size: 1.1em;
-    cursor: pointer;    
+    cursor: pointer;
   }
 
   .prompt {
@@ -46,15 +85,16 @@
 
   .option-separator {
     margin: 0 0.5em;
-  }  
+  }
 
-  textarea, input[type=text] {
+  textarea,
+  input[type="text"] {
     width: 100%;
     box-sizing: border-box;
   }
 
   textarea {
-    min-height: 5em;    
+    min-height: 5em;
   }
 
   // Add automatic line-numbers to code snippets
@@ -62,7 +102,7 @@
     counter-reset: line;
 
     code {
-      counter-increment: line;      
+      counter-increment: line;
 
       &:before {
         content: counter(line);
