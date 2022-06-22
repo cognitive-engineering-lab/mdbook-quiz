@@ -83,14 +83,18 @@ let QuizView: React.FC<QuizViewProps> = observer(
         {state.started ? (
           state.index == n ? (
             quiz.questions.map((question, i) => (
-              <AnswerView
-                key={i}
-                question={question}
-                userAnswer={state.answers[i]}
-              />
+              <div className="answer-wrapper" key={i}>
+                <h4>Question {i + 1}</h4>
+                <AnswerView
+                  key={i}
+                  question={question}
+                  userAnswer={state.answers[i]}
+                />
+              </div>
             ))
           ) : (
             <QuestionView
+              key={state.index}
               question={quiz.questions[state.index]}
               onSubmit={onSubmit}
             />
@@ -139,6 +143,12 @@ let QuizView: React.FC<QuizViewProps> = observer(
         </div>
       );
     };
+
+    if (showFullscreen) {
+      document.body.style.overflowY = "hidden";
+    } else {
+      document.body.style.overflowY = "auto";
+    }
 
     return (
       <div className={wrapperClass}>

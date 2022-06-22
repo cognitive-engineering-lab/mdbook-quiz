@@ -4,11 +4,18 @@
     top: 0;
     left: 0;
     background: white;
-    width: 97vw;
+    width: 100vw;
     height: 100vh;
     z-index: 1000;
     padding: 0 10rem;
     box-sizing: border-box;
+    overflow-y: auto;
+
+    .mdbook-quiz {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
   }
 }
 
@@ -114,6 +121,14 @@
     }
   }
 
+  .answer-wrapper {
+    &:not(:last-child) {
+      margin-bottom: 4rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #ccc;
+    }
+  }
+
   .answer {
     .answer-row {
       display: flex;
@@ -121,8 +136,10 @@
 
       > div {
         flex-grow: 1;
+        border: 1px solid #ccc;
+        padding: 1rem;
 
-        &.correct strong {
+        &.correct .answer-header {
           color: green;
 
           &:before {
@@ -131,7 +148,7 @@
           }
         }
 
-        &.incorrect strong {
+        &.incorrect .answer-header {
           color: red;
 
           &:before {

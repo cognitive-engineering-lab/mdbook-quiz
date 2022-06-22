@@ -345,6 +345,7 @@ dependencies = [
  "anyhow",
  "clap",
  "html-escape",
+ "lazy_static",
  "mdbook",
  "pulldown-cmark",
  "pulldown-cmark-to-cmark",

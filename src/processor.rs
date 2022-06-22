@@ -12,19 +12,56 @@ use regex::Regex;
 
 pub struct QuizProcessor;
 
-fn to_cowstr(s: impl Into<String>) -> CowStr<'static> {
-  let s: String = s.into();
-  CowStr::Boxed(s.into_boxed_str())
-}
-
 pub struct QuizConfig {
   log_endpoint: Option<String>,
   fullscreen: Option<bool>,
 }
 
+lazy_static::lazy_static! {
+  static ref QUIZ_REGEX: Regex = Regex::new(r"^\{\{#quiz ([^}]+)\}\}$").unwrap();
+}
+
 impl QuizProcessor {
   pub fn new() -> Self {
     QuizProcessor
+  }
+
+  fn process_quiz(
+    &self,
+    config: &QuizConfig,
+    chapter_dir: &Path,
+    quiz_path: &str,
+  ) -> Result<String> {
+    let quiz_path_rel = Path::new(quiz_path);
+    let quiz_path_abs = chapter_dir.join(quiz_path_rel);
+
+    let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
+
+    let content_toml = std::fs::read_to_string(quiz_path_abs)?;
+    let content = content_toml.parse::<toml::Value>()?;
+    let content_json = serde_json::to_string(&content)?;
+
+    let mut html = String::from("<div class=\"quiz-placeholder\"");
+
+    let mut add_data = |k: &str, v: &str| {
+      html.push_str(&format!(
+        " data-{}=\"{}\" ",
+        k,
+        html_escape::encode_double_quoted_attribute(v)
+      ));
+    };
+    add_data("quiz-name", &quiz_name);
+    add_data("quiz-questions", &content_json);
+    if let Some(log_endpoint) = &config.log_endpoint {
+      add_data("quiz-log-endpoint", log_endpoint);
+    }
+    if config.fullscreen.is_some() {
+      add_data("quiz-fullscreen", "");
+    }
+
+    html.push_str("></div>");
+
+    Ok(html)
   }
 
   fn process_chapter(
@@ -42,41 +79,15 @@ impl QuizProcessor {
     let chapter_dir = chapter_path.parent().unwrap();
 
     let mut new_events = Vec::new();
-    let re = Regex::new(r"^\{\{#quiz ([^}]+)\}\}$")?;
     for event in events {
       let new_event = match &event {
         Event::Text(text) => {
           let text = text.as_ref();
-          match re.captures(text) {
+          match QUIZ_REGEX.captures(text) {
             Some(captures) => {
-              let quiz_path_rel = Path::new(captures.get(1).unwrap().as_str());
-              let quiz_path_abs = chapter_dir.join(quiz_path_rel);
-
-              let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
-
-              let content_toml = std::fs::read_to_string(quiz_path_abs)?;
-              let content = content_toml.parse::<toml::Value>()?;
-              let content_json = serde_json::to_string(&content)?;
-
-              let mut html = String::from("<div class=\"quiz-placeholder\"");
-              let mut add_data = |k: &str, v: &str| {
-                html.push_str(&format!(
-                  " data-{}=\"{}\" ",
-                  k,
-                  html_escape::encode_double_quoted_attribute(v)
-                ));
-              };
-              add_data("quiz-name", &quiz_name);
-              add_data("quiz-questions", &content_json);
-              if let Some(log_endpoint) = &config.log_endpoint {
-                add_data("quiz-log-endpoint", log_endpoint);
-              }
-              if let Some(fullscreen) = &config.fullscreen {
-                add_data("quiz-fullscreen", "");
-              }
-              html.push_str("></div>");
-
-              Event::Html(to_cowstr(html))
+              let quiz_path = captures.get(1).unwrap().as_str();
+              let html = self.process_quiz(config, chapter_dir, quiz_path)?;
+              Event::Html(CowStr::Boxed(html.into_boxed_str()))
             }
             None => event,
           }
@@ -87,9 +98,7 @@ impl QuizProcessor {
     }
 
     let mut new_content = String::new();
-
     cmark(new_events.into_iter(), &mut new_content)?;
-
     chapter.content = new_content;
 
     Ok(())

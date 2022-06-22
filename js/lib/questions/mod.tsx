@@ -41,7 +41,7 @@ export let QuestionView: React.FC<{
 
   let questionClass = questionNameToCssClass(question.type);
 
-  let onClick = () => {
+  let submit = () => {
     let form = ref.current!;
     let data = new FormData(form);
     let answer = questionViews.getAnswerFromDOM(data, form);
@@ -56,9 +56,9 @@ export let QuestionView: React.FC<{
       </div>
       <form className="response" ref={ref}>
         <h4>Response</h4>
-        <questionViews.ResponseView />
+        <questionViews.ResponseView submit={submit} />
       </form>
-      <button onClick={onClick}>Submit</button>
+      <button onClick={submit}>Submit</button>
     </div>
   );
 };
@@ -76,17 +76,16 @@ export let AnswerView: React.FC<{
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
-        <h4>Prompt</h4>
         <questionViews.PromptView prompt={question.prompt} />
       </div>
       <div className="answer-row">
         <div className={isCorrect ? "correct" : "incorrect"}>
-          <strong>You answered:</strong>
+          <div className="answer-header">You answered:</div>
           <questionViews.AnswerView answer={userAnswer} />
         </div>
         {!isCorrect ? (
           <div className="correct">
-            <strong>The correct answer is:</strong>
+            <div className="answer-header">The correct answer is:</div>
             <questionViews.AnswerView answer={question.answer} />
           </div>
         ) : null}

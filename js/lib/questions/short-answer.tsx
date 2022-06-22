@@ -24,13 +24,23 @@ export let ShortAnswerView: QuestionViews<
     <MarkdownView markdown={prompt.prompt} />
   ),
 
-  ResponseView: () => <input name="response" type="text" />,
+  ResponseView: ({ submit }: { submit: () => void }) => (
+    <input
+      name="response"
+      type="text"
+      onKeyDown={(e) => {
+        if (e.key == "Enter") {
+          submit();
+        }
+      }}
+    />
+  ),
 
   getAnswerFromDOM(data: FormData) {
     return { answer: data.get("response")!.toString() };
   },
 
   AnswerView: ({ answer }: { answer: ShortAnswerAnswer }) => (
-    <MarkdownView markdown={answer.answer} />
+    <pre>{answer.answer}</pre>
   ),
 };

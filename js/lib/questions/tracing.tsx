@@ -85,7 +85,27 @@ export let TracingView: QuestionViews<TracingPrompt, TracingAnswer> = {
     );
   },
 
-  AnswerView: ({ answer: _answer }: { answer: any }) => {
-    return <>TODO</>;
+  AnswerView: ({ answer }: { answer: TracingAnswer }) => {
+    return (
+      <div>
+        <p>
+          This program{" "}
+          <strong>{answer.doesCompile ? "does" : "does not"}</strong> compile.
+        </p>
+        <div>
+          {answer.doesCompile ? (
+            <>
+              <p>The output of this program will be:</p>
+              <pre>{answer.stdout}</pre>
+            </>
+          ) : (
+            <>
+              <p>The error occurs on the line number:</p>
+              <pre>{answer.lineNumber}</pre>
+            </>
+          )}
+        </div>
+      </div>
+    );
   },
 };
