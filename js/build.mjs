@@ -27,6 +27,8 @@ class MarkdownFormatter {
 let QUESTION_TYPES = ["ShortAnswer", "Tracing"];
 
 async function generateSchemas() {
+  await fs.mkdir("dist", { recursive: true });
+
   let config = {
     tsconfig: "tsconfig.json",
   };
