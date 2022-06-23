@@ -15,7 +15,7 @@ let methodMapping = {
 
 export let getQuestionMethods = (
   type: Question["type"]
-): QuestionMethods<any, any, any> => methodMapping[type];
+): QuestionMethods<any, any> => methodMapping[type];
 
 let questionNameToCssClass = (name: string) => {
   let output = [];

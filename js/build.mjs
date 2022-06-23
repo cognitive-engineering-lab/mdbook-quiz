@@ -1,10 +1,8 @@
 import { cli, copyPlugin } from "@nota-lang/esbuild-utils";
-import { promisify } from "util";
 import { sassPlugin } from "esbuild-sass-plugin";
 import * as tsSchema from "ts-json-schema-generator";
 import { SchemaGenerator } from "ts-json-schema-generator";
 import fs from "fs/promises";
-import { Markdown } from "react-showdown";
 import path from "path";
 
 // Ensures that "format": "markdown" is added to Markdown types
