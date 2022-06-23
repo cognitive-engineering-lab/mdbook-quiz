@@ -1,9 +1,9 @@
 import React from "react";
-import { QuestionViews, Question } from "./base";
+import { QuestionMethods, Question, Markdown } from "./base";
 import MarkdownView from "react-showdown";
 
 export interface ShortAnswerPrompt {
-  prompt: string;
+  prompt: Markdown;
 }
 
 export interface ShortAnswerAnswer {
@@ -16,7 +16,7 @@ export type ShortAnswer = Question<
   ShortAnswerAnswer
 >;
 
-export let ShortAnswerView: QuestionViews<
+export let ShortAnswerMethods: QuestionMethods<
   ShortAnswerPrompt,
   ShortAnswerAnswer
 > = {

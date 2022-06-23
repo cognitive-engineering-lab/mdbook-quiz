@@ -25,9 +25,7 @@ enum Command {
 
 fn main() {
   let args = Args::parse();
-
-  // Users will want to construct their own preprocessor here
-  let preprocessor = QuizProcessor::new();
+  let preprocessor = QuizProcessor;
 
   if let Some(Command::Supports { renderer }) = args.command {
     handle_supports(&preprocessor, &renderer);

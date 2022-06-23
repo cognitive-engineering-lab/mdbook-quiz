@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { QuestionViews, Question } from "./base";
+import { QuestionMethods, Question } from "./base";
 import { Snippet } from "../snippet";
 
 export interface TracingPrompt {
@@ -14,7 +14,7 @@ export interface TracingAnswer {
 
 export type Tracing = Question<"Tracing", TracingPrompt, TracingAnswer>;
 
-export let TracingView: QuestionViews<TracingPrompt, TracingAnswer> = {
+export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   getAnswerFromDOM(data: FormData) {
     let doesCompile = data.get("doesCompile")! === "true";
     if (doesCompile) {

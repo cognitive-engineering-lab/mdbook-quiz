@@ -1,17 +1,21 @@
 import React, { useRef } from "react";
-import { ShortAnswer, ShortAnswerView } from "./short-answer";
-import { Tracing, TracingView } from "./tracing";
-import { QuestionViews } from "./base";
+import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
+import { Tracing, TracingMethods } from "./tracing";
+import { QuestionMethods } from "./base";
 import classNames from "classnames";
 import MarkdownView from "react-showdown";
 import _ from "lodash";
 
 export type Question = ShortAnswer | Tracing;
 
-let viewMapping = {
-  ShortAnswer: ShortAnswerView,
-  Tracing: TracingView,
+let methodMapping = {
+  ShortAnswer: ShortAnswerMethods,
+  Tracing: TracingMethods,
 };
+
+export let getQuestionMethods = (
+  type: Question["type"]
+): QuestionMethods<any, any, any> => methodMapping[type];
 
 let questionNameToCssClass = (name: string) => {
   let output = [];
@@ -30,8 +34,8 @@ export let QuestionView: React.FC<{
   onSubmit: (answer: any) => void;
 }> = ({ question, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
-  let questionViews: QuestionViews<any, any> = viewMapping[question.type];
-  if (!questionViews) {
+  let methods = getQuestionMethods(question.type);
+  if (!methods) {
     return (
       <div>
         QUIZ FORMAT ERROR: unknown question type <code>{question.type}</code>
@@ -44,7 +48,7 @@ export let QuestionView: React.FC<{
   let submit = () => {
     let form = ref.current!;
     let data = new FormData(form);
-    let answer = questionViews.getAnswerFromDOM(data, form);
+    let answer = methods.getAnswerFromDOM(data, form);
     onSubmit(answer);
   };
 
@@ -52,11 +56,11 @@ export let QuestionView: React.FC<{
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
         <h4>Prompt</h4>
-        <questionViews.PromptView prompt={question.prompt} />
+        <methods.PromptView prompt={question.prompt} />
       </div>
       <form className="response" ref={ref}>
         <h4>Response</h4>
-        <questionViews.ResponseView submit={submit} />
+        <methods.ResponseView submit={submit} />
       </form>
       <button onClick={submit}>Submit</button>
     </div>
@@ -67,26 +71,26 @@ export let AnswerView: React.FC<{
   question: Question;
   userAnswer: Question["answer"];
 }> = ({ question, userAnswer }) => {
-  let questionViews: QuestionViews<any, any> = viewMapping[question.type]!;
+  let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
-  let comparator = questionViews.compareAnswers || _.isEqual;
+  let comparator = methods.compareAnswers || _.isEqual;
   let isCorrect = comparator(question.answer, userAnswer);
 
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
-        <questionViews.PromptView prompt={question.prompt} />
+        <methods.PromptView prompt={question.prompt} />
       </div>
       <div className="answer-row">
         <div className={isCorrect ? "correct" : "incorrect"}>
           <div className="answer-header">You answered:</div>
-          <questionViews.AnswerView answer={userAnswer} />
+          <methods.AnswerView answer={userAnswer} />
         </div>
         {!isCorrect ? (
           <div className="correct">
             <div className="answer-header">The correct answer is:</div>
-            <questionViews.AnswerView answer={question.answer} />
+            <methods.AnswerView answer={question.answer} />
           </div>
         ) : null}
       </div>
