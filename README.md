@@ -40,18 +40,10 @@ And now, a _quiz_:
 {{#quiz ../quizzes/rust-variables.toml}}
 ```
 
-Add the `mdbook-quiz/js/dist` JS package to your mdBook repository. For example, like this:
-
-```bash
-ln -s path/to/mdbook-quiz/js/dist mdbook-quiz
-```
-
-Configure your `book.toml` to activate `mdbook-quiz`. You will need to set `js-dir` to wherever you put the `mdbook-quiz` directory.
-
+Configure your `book.toml` to activate `mdbook-quiz`.
 ```toml
 # book.toml
 [preprocessor.quiz]
-js-dir = "mdbook-quiz"
 ```
 
 Then `mdbook build` should correctly embed the quiz.

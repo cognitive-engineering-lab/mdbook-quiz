@@ -1,7 +1,10 @@
 [package]
 name = "mdbook-quiz"
+authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
+include = ["/src", "/js/dist/"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

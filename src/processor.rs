@@ -177,12 +177,12 @@ impl Preprocessor for QuizProcessor {
     let config_toml = ctx.config.get_preprocessor(self.name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
     let config = QuizConfig {
-      js_dir: config_toml
-        .get("js-dir")
-        .expect("Must specify a js-dir pointing to the mdbook-quiz JS package")
-        .as_str()
-        .unwrap()
-        .into(),
+      js_dir: match config_toml.get("js-dir") {
+        Some(dir) => dir.as_str().unwrap().into(),
+        None => PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+          .join("js")
+          .join("dist"),
+      },
       log_endpoint: config_toml
         .get("log-endpoint")
         .map(|value| value.as_str().unwrap().to_owned()),
