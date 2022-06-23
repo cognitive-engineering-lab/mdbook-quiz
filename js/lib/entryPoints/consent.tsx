@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import * as ReactDOM from "react-dom/client";
 
-import "../css/consent.scss";
+import "../../css/consent.scss";
 
 const CONSENT_KEY = "__wcrichto_consent";
 

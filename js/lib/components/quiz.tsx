@@ -2,13 +2,9 @@ import _ from "lodash";
 import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import React, { useState } from "react";
-import * as ReactDOM from "react-dom/client";
 import axios from "axios";
-import * as uuid from "uuid";
-import { AnswerView, Question, QuestionView } from "./questions/mod";
+import { AnswerView, Question, QuestionView } from "../questions/mod";
 import classNames from "classnames";
-
-import "../css/index.scss";
 
 export interface Quiz {
   questions: Question[];
@@ -29,7 +25,7 @@ export interface QuizViewProps {
   fullscreen?: boolean;
 }
 
-let QuizView: React.FC<QuizViewProps> = observer(
+export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, user, name, logEndpoint, fullscreen }) => {
     let state = useLocalObservable<{
       started: boolean;
@@ -82,16 +78,19 @@ let QuizView: React.FC<QuizViewProps> = observer(
       <section>
         {state.started ? (
           state.index == n ? (
-            quiz.questions.map((question, i) => (
-              <div className="answer-wrapper" key={i}>
-                <h4>Question {i + 1}</h4>
-                <AnswerView
-                  key={i}
-                  question={question}
-                  userAnswer={state.answers[i]}
-                />
-              </div>
-            ))
+            <>
+              <h3>Answer Review</h3>
+              {quiz.questions.map((question, i) => (
+                <div className="answer-wrapper" key={i}>
+                  <h4>Question {i + 1}</h4>
+                  <AnswerView
+                    key={i}
+                    question={question}
+                    userAnswer={state.answers[i]}
+                  />
+                </div>
+              ))}
+            </>
           ) : (
             <QuestionView
               key={state.index}
@@ -166,27 +165,3 @@ let QuizView: React.FC<QuizViewProps> = observer(
     );
   }
 );
-
-const USER_KEY = "__mdbook_quiz_user";
-if (localStorage.getItem(USER_KEY) === null) {
-  localStorage.setItem(USER_KEY, uuid.v4());
-}
-const userId = localStorage.getItem(USER_KEY)!;
-
-document.querySelectorAll(".quiz-placeholder").forEach((el) => {
-  let divEl = el as HTMLDivElement;
-  let name = divEl.dataset.quizName!;
-  let quiz: Quiz = JSON.parse(divEl.dataset.quizQuestions!);
-  let root = ReactDOM.createRoot(el);
-  let logEndpoint = divEl.dataset.quizLogEndpoint;
-  let fullscreen = divEl.dataset.quizFullscreen !== undefined;
-  root.render(
-    <QuizView
-      name={name}
-      quiz={quiz}
-      user={userId}
-      logEndpoint={logEndpoint}
-      fullscreen={fullscreen}
-    />
-  );
-});

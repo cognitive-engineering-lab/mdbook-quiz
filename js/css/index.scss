@@ -94,6 +94,16 @@
     margin: 0 0.5em;
   }
 
+  form {
+    $error-color: #e16969;
+    input.error, textarea.error {
+      outline-color: $error-color;
+    }
+    :not(input, textarea).error {
+      border: 1px solid $error-color;
+    }
+  }
+
   textarea,
   input[type="text"] {
     width: 100%;

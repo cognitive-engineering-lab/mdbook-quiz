@@ -1,10 +1,11 @@
 import React, { useRef } from "react";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
-import { QuestionMethods } from "./base";
+import { QuestionMethods } from "./types";
 import classNames from "classnames";
 import MarkdownView from "react-showdown";
 import _ from "lodash";
+import { RegisterOptions, useForm } from "react-hook-form";
 
 export type Question = ShortAnswer | Tracing;
 
@@ -43,14 +44,23 @@ export let QuestionView: React.FC<{
     );
   }
 
+  let formValidators = useForm();
+  let required = (name: string, options?: RegisterOptions) => {
+    let attrs = formValidators.register(name, { ...options, required: true });
+    let className = classNames({
+      error: formValidators.formState.errors[name],
+    });
+    return { ...attrs, className };
+  };
+
   let questionClass = questionNameToCssClass(question.type);
 
-  let submit = () => {
-    let form = ref.current!;
-    let data = new FormData(form);
-    let answer = methods.getAnswerFromDOM(data, form);
+  let submit = formValidators.handleSubmit((data) => {
+    let answer = methods.getAnswerFromDOM
+      ? methods.getAnswerFromDOM(data, ref.current!)
+      : data;
     onSubmit(answer);
-  };
+  });
 
   return (
     <div className={classNames("question", questionClass)}>
@@ -58,11 +68,14 @@ export let QuestionView: React.FC<{
         <h4>Prompt</h4>
         <methods.PromptView prompt={question.prompt} />
       </div>
-      <form className="response" ref={ref}>
+      <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
-        <methods.ResponseView submit={submit} />
+        <methods.ResponseView
+          submit={submit}
+          formValidators={{ ...formValidators, required }}
+        />
+        <input type="submit" />
       </form>
-      <button onClick={submit}>Submit</button>
     </div>
   );
 };

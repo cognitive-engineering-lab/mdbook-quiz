@@ -1,0 +1,9 @@
+// Extra tsconfig in tests is needed for this issue:
+// https://stackoverflow.com/questions/60943069/vscode-ts-language-features-unavailable-when-tests-are-not-included-in-the-ts/61153019#61153019
+{
+  "extends": "../tsconfig.json",
+  "include": ["./**/*"],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

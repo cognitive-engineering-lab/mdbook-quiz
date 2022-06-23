@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { QuestionMethods, Question } from "./base";
-import { Snippet } from "../snippet";
+import { QuestionMethods, QuestionFields } from "./types";
+import { Snippet } from "../components/snippet";
+import classNames from "classnames";
 
 export interface TracingPrompt {
   program: string;
@@ -12,21 +13,10 @@ export interface TracingAnswer {
   lineNumber?: number;
 }
 
-export type Tracing = Question<"Tracing", TracingPrompt, TracingAnswer>;
+export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
 
 export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
-  getAnswerFromDOM(data: FormData) {
-    let doesCompile = data.get("doesCompile")! === "true";
-    if (doesCompile) {
-      let stdout = data.get("stdout")!.toString();
-      return { doesCompile, stdout };
-    } else {
-      let lineNumber = parseInt(data.get("lineNumber")!.toString());
-      return { doesCompile, lineNumber };
-    }
-  },
-
-  PromptView: ({ prompt }: { prompt: TracingPrompt }) => (
+  PromptView: ({ prompt }) => (
     <>
       <p>
         Determine whether the program will pass the compiler. If it passes, say
@@ -37,7 +27,12 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     </>
   ),
 
-  ResponseView: () => {
+  ResponseView: ({
+    formValidators: {
+      required,
+      formState: { errors },
+    },
+  }) => {
     let [doesCompile, setDoesCompile] = useState<boolean | undefined>(
       undefined
     );
@@ -45,10 +40,10 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
       <>
         <div className="response-block">
           This program:{" "}
-          <span className="option">
+          <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
-              name="doesCompile"
+              {...required("doesCompile")}
               id="doesCompile1"
               value="true"
               onClick={() => setDoesCompile(true)}
@@ -56,10 +51,10 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <label htmlFor="doesCompile1">does compile</label>
           </span>
           <span className="option-separator">OR</span>
-          <span className="option">
+          <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
-              name="doesCompile"
+              {...required("doesCompile")}
               id="doesCompile2"
               value="false"
               onClick={() => setDoesCompile(false)}
@@ -72,12 +67,12 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
           doesCompile ? (
             <div>
               <p>The output of this program will be:</p>
-              <textarea name="stdout"></textarea>
+              <textarea {...required("stdout")}></textarea>
             </div>
           ) : (
             <div>
               <p>The error occurs on the line number:</p>
-              <input name="lineNumber" type="number" min="1" />
+              <input {...required("lineNumber")} type="number" min="1" />
             </div>
           )
         ) : null}
@@ -85,7 +80,18 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     );
   },
 
-  AnswerView: ({ answer }: { answer: TracingAnswer }) => {
+  getAnswerFromDOM(data) {
+    let doesCompile = data.doesCompile === "true";
+    if (doesCompile) {
+      let stdout = data.stdout;
+      return { doesCompile, stdout };
+    } else {
+      let lineNumber = parseInt(data.lineNumber);
+      return { doesCompile, lineNumber };
+    }
+  },
+
+  AnswerView: ({ answer }) => {
     return (
       <div>
         <p>

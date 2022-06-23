@@ -1,5 +1,5 @@
 import React from "react";
-import { QuestionMethods, Question, Markdown } from "./base";
+import { QuestionMethods, QuestionFields, Markdown } from "./types";
 import MarkdownView from "react-showdown";
 
 export interface ShortAnswerPrompt {
@@ -10,7 +10,7 @@ export interface ShortAnswerAnswer {
   answer: string;
 }
 
-export type ShortAnswer = Question<
+export type ShortAnswer = QuestionFields<
   "ShortAnswer",
   ShortAnswerPrompt,
   ShortAnswerAnswer
@@ -20,27 +20,20 @@ export let ShortAnswerMethods: QuestionMethods<
   ShortAnswerPrompt,
   ShortAnswerAnswer
 > = {
-  PromptView: ({ prompt }: { prompt: ShortAnswerPrompt }) => (
-    <MarkdownView markdown={prompt.prompt} />
+  PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
+
+  ResponseView: ({ submit, formValidators: { required } }) => (
+    <>
+      <input
+        {...required("answer")}
+        type="text"
+        placeholder="Write your short answer here..."
+        onKeyDown={(e) => {
+          if (e.key == "Enter") submit();
+        }}
+      />
+    </>
   ),
 
-  ResponseView: ({ submit }: { submit: () => void }) => (
-    <input
-      name="response"
-      type="text"
-      onKeyDown={(e) => {
-        if (e.key == "Enter") {
-          submit();
-        }
-      }}
-    />
-  ),
-
-  getAnswerFromDOM(data: FormData) {
-    return { answer: data.get("response")!.toString() };
-  },
-
-  AnswerView: ({ answer }: { answer: ShortAnswerAnswer }) => (
-    <pre>{answer.answer}</pre>
-  ),
+  AnswerView: ({ answer }) => <pre>{answer.answer}</pre>,
 };

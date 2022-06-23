@@ -48,6 +48,8 @@ Configure your `book.toml` to activate `mdbook-quiz`.
 
 Then `mdbook build` should correctly embed the quiz.
 
+> Note: due to limitations of mdBook (see mdBook#1087), the `mdbook-quiz` preprocessor will copy files into your book's source directory under a subdirectory named `mdbook-quiz`. I recommend adding this directory to your `.gitignore`.
+
 ## Quiz schema
 
 A quiz is a list of questions, and each question must be a pre-defined question type. See `mdbook/js/lib/questions` for the set of questions. Feel free to add your own!

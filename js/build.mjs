@@ -4,6 +4,7 @@ import * as tsSchema from "ts-json-schema-generator";
 import { SchemaGenerator } from "ts-json-schema-generator";
 import fs from "fs/promises";
 import path from "path";
+import { QUESTION_TYPES } from "./lib/question-types.mjs";
 
 // Ensures that "format": "markdown" is added to Markdown types
 class MarkdownFormatter {
@@ -22,9 +23,6 @@ class MarkdownFormatter {
     return [];
   }
 }
-
-// TODO: can we keep this in sync with `methodMapping`?
-let QUESTION_TYPES = ["ShortAnswer", "Tracing"];
 
 async function generateSchemas() {
   await fs.mkdir("dist", { recursive: true });
@@ -53,15 +51,14 @@ async function main() {
   let p1 = build({
     format: "iife",
     bundle: true,
-    entryPoints: ["lib/mdbook-quiz.tsx", "lib/consent.tsx"],
+    entryPoints: ["lib/entryPoints/embed.tsx", "lib/entryPoints/consent.tsx"],
     plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
   });
 
   let p2 = build({
     format: "cjs",
     platform: "node",
-    entryPoints: ["lib/validator.ts"],
-    define: { QUESTION_TYPES: JSON.stringify(QUESTION_TYPES) },
+    entryPoints: ["lib/entryPoints/validator.ts"],
   });
 
   let p3 = generateSchemas();

@@ -46,14 +46,13 @@ impl<'a> QuizProcessorRef<'a> {
       .join("mdbook-quiz");
     fs::create_dir_all(&target_dir)?;
 
-    let mut files = vec!["mdbook-quiz.js", "mdbook-quiz.css"];
+    let mut files = vec!["embed.js", "embed.css"];
     if let Some(true) = self.config.consent {
       files.extend(["consent.js", "consent.css"]);
     }
 
     for file in &files {
       let src = self.config.js_dir.join(file);
-      eprintln!("{src:?} -> {:?}", target_dir.join(file));
       fs::copy(src, target_dir.join(file))?;
     }
 
