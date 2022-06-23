@@ -13,5 +13,7 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
+      # Build script in previous action should build js,
+      # so we don't need to run pnpm build here.
       - run: pnpm test && pnpm lint
         working-directory: js

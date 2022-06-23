@@ -4,7 +4,6 @@ import * as tsSchema from "ts-json-schema-generator";
 import { SchemaGenerator } from "ts-json-schema-generator";
 import fs from "fs/promises";
 import path from "path";
-import { QUESTION_TYPES } from "./lib/question-types.mjs";
 
 // Ensures that "format": "markdown" is added to Markdown types
 class MarkdownFormatter {
@@ -36,14 +35,9 @@ async function generateSchemas() {
   let program = tsSchema.createProgram(config);
   let parser = tsSchema.createParser(program, config);
   let generator = new SchemaGenerator(program, parser, formatter);
-
-  let ps = QUESTION_TYPES.map(async (questionType) => {
-    let schema = generator.createSchema(questionType);
-    let outPath = path.join("dist", `${questionType}.schema.json`);
-    await fs.writeFile(outPath, JSON.stringify(schema));
-  });
-
-  await Promise.all(ps);
+  let schema = generator.createSchema("Quiz");
+  let outPath = path.join("dist", "Quiz.schema.json");
+  await fs.writeFile(outPath, JSON.stringify(schema));
 }
 
 async function main() {
