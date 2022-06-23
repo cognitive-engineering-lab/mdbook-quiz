@@ -9,11 +9,7 @@ jobs:
         with:
           toolchain: stable
       - uses: Swatinem/rust-cache@v1
+      - run: npm install -g pnpm
       - uses: actions-rs/cargo@v1
         with:
           command: clippy
-      - run: |
-          cd js
-          npm install -g pnpm
-          pnpm install
-          pnpm build

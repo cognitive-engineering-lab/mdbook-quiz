@@ -21,7 +21,5 @@ fn main() {
     if !status.success() {
       panic!("Failed to build JS");
     }
-
-    return;
   }
 }
