@@ -8,6 +8,7 @@ $mobile-cutoff: 800px;
 
 $light-border-color: var(--theme-popup-border);
 $heavy-border-color: var(--searchresults-border-color);
+$error-color: #e16969;
 
 .mdbook-quiz-wrapper {
   &.expanded {
@@ -133,7 +134,6 @@ $heavy-border-color: var(--searchresults-border-color);
   }
 
   form {
-    $error-color: #e16969;
     input.error,
     textarea.error {
       outline-color: $error-color;
@@ -147,6 +147,12 @@ $heavy-border-color: var(--searchresults-border-color);
   input[type="text"] {
     width: 100%;
     box-sizing: border-box;
+  }
+
+  select,
+  textarea,
+  input[type="text"] {
+    padding: 3px 6px;
   }
 
   textarea {
@@ -193,6 +199,21 @@ $heavy-border-color: var(--searchresults-border-color);
     }
   }
 
+  .multiple-choice {
+    .md-flex {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="radio"] {
+      margin: 0;
+
+      &.error {
+        outline: 1px solid $error-color;
+      }
+    }
+  }
+
   .answer {
     .answer-header {
       margin-bottom: 1em;
@@ -201,33 +222,37 @@ $heavy-border-color: var(--searchresults-border-color);
     .answer-row {
       display: flex;
       gap: 1rem;
-      flex-wrap: wrap;
+      
+      @include mobile {
+        flex-wrap: wrap;
+      }
 
       > div {
         border: 2px solid $light-border-color;
         padding: 1rem;
         flex-grow: 1;
+        width: 50%;
 
         @include mobile {
           width: 100%;
         }
 
-        &.correct .answer-header {
-          color: green;
-
-          &:before {
-            margin-right: 0.5em;
-            content: "✓";
-          }
+        .answer-header {
+          font-weight: bold;
         }
 
-        &.incorrect .answer-header {
-          color: red;
+        .correct:before {
+          color: green;
+          margin-right: 0.5rem;
+          content: "✓";
+          font-size: 1.5rem;
+        }
 
-          &:before {
-            margin-right: 0.5em;
-            content: "✗";
-          }
+        .incorrect:before {
+          color: red;
+          margin-right: 0.5rem;
+          content: "✗";
+          font-size: 1.5rem;
         }
       }
     }

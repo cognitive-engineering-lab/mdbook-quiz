@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { QuestionMethods, QuestionFields } from "./types";
 import { Snippet } from "../components/snippet";
 import classNames from "classnames";
+import _ from "lodash";
 
 export interface TracingPrompt {
   program: string;
@@ -28,6 +29,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   ),
 
   ResponseView: ({
+    prompt,
     formValidators: {
       required,
       formState: { errors },
@@ -35,6 +37,9 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   }) => {
     let [doesCompile, setDoesCompile] = useState<boolean | undefined>(
       undefined
+    );
+    let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(
+      (i) => i + 1
     );
     return (
       <>
@@ -44,22 +49,22 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <input
               type="radio"
               {...required("doesCompile")}
-              id="doesCompile1"
+              id="doesCompileTrue"
               value="true"
               onClick={() => setDoesCompile(true)}
             />{" "}
-            <label htmlFor="doesCompile1">does compile</label>
+            <label htmlFor="doesCompileTrue">DOES compile</label>
           </span>
           <span className="option-separator">OR</span>
           <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
               {...required("doesCompile")}
-              id="doesCompile2"
+              id="doesCompileFalse"
               value="false"
               onClick={() => setDoesCompile(false)}
             />{" "}
-            <label htmlFor="doesCompile2">does not compile</label>
+            <label htmlFor="doesCompileFalse">does NOT compile</label>
           </span>
         </div>
 
@@ -76,12 +81,16 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <div>
               <p>
                 The error occurs on the line number:{" "}
-                <input
-                  {...required("lineNumber")}
-                  placeholder="Write the line number here..."
-                  type="number"
-                  min="1"
-                />
+                <select {...required("lineNumber")}>
+                  <option value="" disabled selected>
+                    Select...
+                  </option>
+                  {lineNumbers.map((n, i) => (
+                    <option key={i} value={n}>
+                      Line {n}
+                    </option>
+                  ))}
+                </select>
               </p>
             </div>
           )
@@ -101,28 +110,28 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     }
   },
 
-  AnswerView: ({ answer }) => {
+  AnswerView: ({ answer, baseline }) => {
+    let correctnessClass = (key: keyof TracingAnswer) =>
+      answer[key] == baseline[key] ? "correct" : "incorrect";
     return (
       <div>
-        <p>
+        <p className={correctnessClass("doesCompile")}>
           This program{" "}
           <strong>{answer.doesCompile ? "does" : "does not"}</strong> compile.
         </p>
-        <div>
-          {answer.doesCompile ? (
-            <>
-              <p>The output of this program will be:</p>
-              <pre>{answer.stdout}</pre>
-            </>
-          ) : (
-            <>
-              <p>
-                The error occurs on the line number:{" "}
-                <code>{answer.lineNumber}</code>
-              </p>
-            </>
-          )}
-        </div>
+        {answer.doesCompile ? (
+          <>
+            <p className={correctnessClass("stdout")}>
+              The output of this program will be:
+            </p>
+            <pre>{answer.stdout}</pre>
+          </>
+        ) : (
+          <p className={correctnessClass("lineNumber")}>
+            The error occurs on the line number:{" "}
+            <code>{answer.lineNumber}</code>
+          </p>
+        )}
       </div>
     );
   },

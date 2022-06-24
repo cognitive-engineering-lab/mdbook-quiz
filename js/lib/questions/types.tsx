@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import {
   RegisterOptions,
@@ -18,6 +19,7 @@ export interface QuestionMethods<Prompt, Answer> {
   PromptView: React.FC<{ prompt: Prompt }>;
 
   ResponseView: React.FC<{
+    prompt: Prompt;
     submit: () => void;
     formValidators: UseFormReturn & {
       required: (
@@ -32,7 +34,9 @@ export interface QuestionMethods<Prompt, Answer> {
     container: HTMLFormElement
   ): Answer;
 
-  AnswerView: React.FC<{ answer: Answer }>;
+  AnswerView: React.FC<{ answer: Answer; baseline: Answer; prompt: Prompt }>;
 
   compareAnswers?(providedAnswer: Answer, userAnswer: Answer): boolean;
 }
+
+export let defaultComparator = _.isEqual;

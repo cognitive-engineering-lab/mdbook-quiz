@@ -7,14 +7,14 @@ import { render, waitFor, screen } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-import { Tracing } from "../lib/questions/tracing";
+import { MultipleChoice } from "../lib/questions/multiple-choice";
 import { QuestionView } from "../lib/questions/mod";
 
-describe("Tracing", () => {
-  let question: Tracing = {
-    type: "Tracing",
-    prompt: { program: "fn main(){}" },
-    answer: { doesCompile: true, stdout: "Yes" },
+describe("ShortAnswer", () => {
+  let question: MultipleChoice = {
+    type: "MultipleChoice",
+    prompt: { prompt: "Hello world", choices: ["A", "B", "C"] },
+    answer: { answer: 1 },
   };
 
   let submitted: any | null = null;
@@ -29,36 +29,22 @@ describe("Tracing", () => {
         }}
       />
     );
-    await waitFor(() => screen.getByText("Question 1"));
+    await waitFor(() => screen.getByText("Hello world"));
   });
 
   it("initially renders", () => {});
 
-  let getCheckbox = () =>
-    screen.getByRole("radio", {
-      name: "DOES compile",
-    });
-
   it("validates input", async () => {
     let submit = screen.getByRole("button");
-    await user.click(submit);
-    expect(submitted).toBe(null);
-
-    let checkbox = getCheckbox();
-    await user.click(checkbox);
     await user.click(submit);
     expect(submitted).toBe(null);
   });
 
   it("accepts valid input", async () => {
     let submit = screen.getByRole("button");
-    let checkbox = getCheckbox();
-    await user.click(checkbox);
-
-    let input = screen.getByRole("textbox");
-    await user.type(input, "foobar");
+    let input = screen.getByRole("radio", { name: "B" });
+    await user.click(input);
     await user.click(submit);
-
-    expect(submitted).toStrictEqual({ doesCompile: true, stdout: "foobar" });
+    expect(submitted).toStrictEqual({ answer: 1 });
   });
 });

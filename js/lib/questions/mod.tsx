@@ -1,17 +1,19 @@
 import React, { useRef } from "react";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
-import { QuestionMethods } from "./types";
+import { defaultComparator, QuestionMethods } from "./types";
 import classNames from "classnames";
 import MarkdownView from "react-showdown";
 import _ from "lodash";
 import { RegisterOptions, useForm } from "react-hook-form";
+import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 
-export type Question = ShortAnswer | Tracing;
+export type Question = ShortAnswer | Tracing | MultipleChoice;
 
 let methodMapping = {
   ShortAnswer: ShortAnswerMethods,
   Tracing: TracingMethods,
+  MultipleChoice: MultipleChoiceMethods,
 };
 
 export let getQuestionMethods = (
@@ -72,6 +74,7 @@ export let QuestionView: React.FC<{
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
         <methods.ResponseView
+          prompt={question.prompt}
           submit={submit}
           formValidators={{ ...formValidators, required }}
         />
@@ -89,7 +92,7 @@ export let AnswerView: React.FC<{
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
-  let comparator = methods.compareAnswers || _.isEqual;
+  let comparator = methods.compareAnswers || defaultComparator;
   let isCorrect = comparator(question.answer, userAnswer);
 
   return (
@@ -99,24 +102,32 @@ export let AnswerView: React.FC<{
         <methods.PromptView prompt={question.prompt} />
       </div>
       <div className="answer-row">
-        <div className={isCorrect ? "correct" : "incorrect"}>
+        <div>
           <div className="answer-header">You answered:</div>
           <div>
-            <methods.AnswerView answer={userAnswer} />
+            <methods.AnswerView
+              answer={userAnswer}
+              baseline={question.answer}
+              prompt={question.prompt}
+            />
           </div>
         </div>
         {!isCorrect ? (
-          <div className="correct">
+          <div>
             <div className="answer-header">The correct answer is:</div>
             <div>
-              <methods.AnswerView answer={question.answer} />
+              <methods.AnswerView
+                answer={question.answer}
+                baseline={question.answer}
+                prompt={question.prompt}
+              />
             </div>
           </div>
         ) : null}
       </div>
       {!isCorrect && question.context ? (
         <div className="context">
-          <MarkdownView markdown={question.context} />
+          <MarkdownView markdown={`**Context**: ` + question.context} />
         </div>
       ) : null}
     </div>

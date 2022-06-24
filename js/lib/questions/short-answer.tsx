@@ -35,5 +35,11 @@ export let ShortAnswerMethods: QuestionMethods<
     </>
   ),
 
-  AnswerView: ({ answer }) => <pre>{answer.answer}</pre>,
+  AnswerView: ({ answer, baseline }) => (
+    <code
+      className={answer.answer == baseline.answer ? "correct" : "incorrect"}
+    >
+      {answer.answer}
+    </code>
+  ),
 };

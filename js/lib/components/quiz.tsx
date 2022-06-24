@@ -1,10 +1,16 @@
 import _ from "lodash";
 import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { AnswerView, Question, QuestionView } from "../questions/mod";
+import {
+  AnswerView,
+  getQuestionMethods,
+  Question,
+  QuestionView,
+} from "../questions/mod";
 import classNames from "classnames";
+import { defaultComparator } from "../questions/types";
 
 export interface Quiz {
   questions: Question[];
@@ -39,6 +45,24 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
     let n = quiz.questions.length;
     let ended = state.index == n;
+    let showFullscreen = fullscreen && state.started && !ended;
+
+    // Don't allow any keyboard inputs to reach external listeners
+    // while the quiz is active (e.g. to avoid using the search box).
+    useEffect(() => {
+      if (showFullscreen) {
+        let captureKeyboard = (e: KeyboardEvent) => {
+          e.stopPropagation();
+        };
+
+        // the "true" ensures this event listener will run before the
+        // default ones provided by mdBook
+        document.addEventListener("keydown", captureKeyboard, true);
+
+        return () =>
+          document.removeEventListener("keydown", captureKeyboard, true);
+      }
+    }, [showFullscreen]);
 
     let header = (
       <header>
@@ -65,12 +89,15 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
       if (logEndpoint) {
         let timestamp = new Date().getTime();
-        let log: QuizLog = {
-          user,
-          name,
-          timestamp,
-          answers: state.answers,
-        };
+        let answers = state.answers.map((answer, i) => {
+          // Save whether the answer was correct into the log
+          let question = quiz.questions[i];
+          let methods = getQuestionMethods(question.type);
+          let comparator = methods.compareAnswers || defaultComparator;
+          let correct = comparator(answer, question.answer);
+          return { ...answer, correct };
+        });
+        let log: QuizLog = { user, name, timestamp, answers };
         axios.post(logEndpoint, log);
       }
     });
@@ -113,7 +140,6 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       </section>
     );
 
-    let showFullscreen = fullscreen && state.started && !ended;
     let wrapperClass = classNames("mdbook-quiz-wrapper", {
       expanded: showFullscreen,
     });

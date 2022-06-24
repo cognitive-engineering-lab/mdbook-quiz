@@ -26,7 +26,9 @@ export class Validator {
   validate(input: string): string | undefined {
     let quiz = toml.parse(input);
     if (!this.validator(quiz)) {
-      return betterAjvErrors(this.schema, quiz, this.validator.errors!);
+      return betterAjvErrors(this.schema, quiz, this.validator.errors!, {
+        indent: 2,
+      });
     }
   }
 }
