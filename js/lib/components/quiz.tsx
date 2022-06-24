@@ -38,13 +38,14 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     }));
 
     let n = quiz.questions.length;
+    let ended = state.index == n;
 
     let header = (
       <header>
         <h3>Quiz</h3>
         <div className="counter">
           {state.started ? (
-            state.index < n ? (
+            !ended ? (
               <>
                 Question {state.index + 1} / {n}
               </>
@@ -77,7 +78,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let body = (
       <section>
         {state.started ? (
-          state.index == n ? (
+          ended ? (
             <>
               <h3>Answer Review</h3>
               {quiz.questions.map((question, i) => (
@@ -112,7 +113,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       </section>
     );
 
-    let showFullscreen = fullscreen && state.started;
+    let showFullscreen = fullscreen && state.started && !ended;
     let wrapperClass = classNames("mdbook-quiz-wrapper", {
       expanded: showFullscreen,
     });
