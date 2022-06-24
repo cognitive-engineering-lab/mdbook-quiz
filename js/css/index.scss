@@ -230,7 +230,6 @@ $error-color: #e16969;
       > div {
         border: 2px solid $light-border-color;
         padding: 1rem;
-        flex-grow: 1;
         width: 50%;
 
         @include mobile {

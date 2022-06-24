@@ -5,7 +5,7 @@ use std::{
   process::{Command, Stdio},
 };
 
-use anyhow::{bail, Result};
+use anyhow::{bail, Context, Result};
 use mdbook::{
   book::{Book, Chapter},
   preprocess::{Preprocessor, PreprocessorContext},
@@ -96,7 +96,8 @@ impl<'a> QuizProcessorRef<'a> {
 
     let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
 
-    let content_toml = std::fs::read_to_string(quiz_path_abs)?;
+    let content_toml = std::fs::read_to_string(&quiz_path_abs)
+      .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
 
     if let Some(true) = self.config.validate {
       self.validate_quiz(quiz_path_rel, &content_toml)?;
