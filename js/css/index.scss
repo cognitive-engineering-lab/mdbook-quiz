@@ -198,14 +198,12 @@ $mobile-cutoff: 800px;
     .answer-row {
       display: flex;
       gap: 1rem;
-
-      @include mobile {
-        flex-wrap: wrap;
-      }
+      flex-wrap: wrap;
 
       > div {
         border: 1px solid #ccc;
         padding: 1rem;
+        flex-grow: 1;
 
         @include mobile {
           width: 100%;
