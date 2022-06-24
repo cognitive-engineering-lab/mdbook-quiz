@@ -23,6 +23,7 @@ describe("ShortAnswer", () => {
     render(
       <QuestionView
         question={question}
+        index={1}
         onSubmit={(answer) => {
           submitted = answer;
         }}

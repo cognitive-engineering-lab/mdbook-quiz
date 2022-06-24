@@ -8,7 +8,7 @@
   "scripts": {
     "build": "node build.mjs",
     "lint": "eslint --ext js,ts,tsx lib",
-    "fmt": "prettier -w \"lib/**/*.{ts,tsx}\"",
+    "fmt": "prettier -w \"{lib,tests}/**/*.{ts,tsx}\"",
     "test": "jest"
   },
   "devDependencies": {

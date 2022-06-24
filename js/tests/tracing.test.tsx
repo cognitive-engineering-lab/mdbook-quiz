@@ -23,12 +23,13 @@ describe("Tracing", () => {
     render(
       <QuestionView
         question={question}
+        index={1}
         onSubmit={(answer) => {
           submitted = answer;
         }}
       />
     );
-    await waitFor(() => screen.getByText("Prompt"));
+    await waitFor(() => screen.getByText("Question 1"));
   });
 
   it("initially renders", () => {});

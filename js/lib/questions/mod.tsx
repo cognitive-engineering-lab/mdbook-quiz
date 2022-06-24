@@ -32,8 +32,9 @@ let questionNameToCssClass = (name: string) => {
 
 export let QuestionView: React.FC<{
   question: Question;
+  index: number;
   onSubmit: (answer: any) => void;
-}> = ({ question, onSubmit }) => {
+}> = ({ question, index, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
@@ -65,7 +66,7 @@ export let QuestionView: React.FC<{
   return (
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
-        <h4>Prompt</h4>
+        <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
@@ -82,8 +83,9 @@ export let QuestionView: React.FC<{
 
 export let AnswerView: React.FC<{
   question: Question;
+  index: number;
   userAnswer: Question["answer"];
-}> = ({ question, userAnswer }) => {
+}> = ({ question, index, userAnswer }) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
@@ -93,17 +95,22 @@ export let AnswerView: React.FC<{
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
+        <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
       </div>
       <div className="answer-row">
         <div className={isCorrect ? "correct" : "incorrect"}>
           <div className="answer-header">You answered:</div>
-          <methods.AnswerView answer={userAnswer} />
+          <div>
+            <methods.AnswerView answer={userAnswer} />
+          </div>
         </div>
         {!isCorrect ? (
           <div className="correct">
             <div className="answer-header">The correct answer is:</div>
-            <methods.AnswerView answer={question.answer} />
+            <div>
+              <methods.AnswerView answer={question.answer} />
+            </div>
           </div>
         ) : null}
       </div>

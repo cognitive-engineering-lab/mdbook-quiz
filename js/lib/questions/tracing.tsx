@@ -67,12 +67,22 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
           doesCompile ? (
             <div>
               <p>The output of this program will be:</p>
-              <textarea {...required("stdout")}></textarea>
+              <textarea
+                {...required("stdout")}
+                placeholder="Write the program's stdout here..."
+              ></textarea>
             </div>
           ) : (
             <div>
-              <p>The error occurs on the line number:</p>
-              <input {...required("lineNumber")} type="number" min="1" />
+              <p>
+                The error occurs on the line number:{" "}
+                <input
+                  {...required("lineNumber")}
+                  placeholder="Write the line number here..."
+                  type="number"
+                  min="1"
+                />
+              </p>
             </div>
           )
         ) : null}
@@ -106,8 +116,10 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             </>
           ) : (
             <>
-              <p>The error occurs on the line number:</p>
-              <pre>{answer.lineNumber}</pre>
+              <p>
+                The error occurs on the line number:{" "}
+                <code>{answer.lineNumber}</code>
+              </p>
             </>
           )}
         </div>

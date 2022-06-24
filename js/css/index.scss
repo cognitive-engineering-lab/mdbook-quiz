@@ -1,3 +1,11 @@
+$mobile-cutoff: 800px;
+
+@mixin mobile {
+  @media (max-width: ($mobile-cutoff - 1)) {
+    @content;
+  }
+}
+
 .mdbook-quiz-wrapper {
   &.expanded {
     position: fixed;
@@ -10,6 +18,10 @@
     padding: 0 10rem;
     box-sizing: border-box;
     overflow-y: auto;
+
+    @include mobile {
+      padding: 0 1rem;
+    }
 
     .mdbook-quiz {
       max-width: 800px;
@@ -26,6 +38,10 @@
   margin-top: 2.5em;
   position: relative;
 
+  @include mobile {
+    padding: 0.5em;
+  }
+
   .exit {
     position: absolute;
     right: -4rem;
@@ -33,6 +49,11 @@
     font-weight: bold;
     cursor: pointer;
     padding: 1rem;
+
+    @include mobile {
+      right: 0;
+      top: -45px;
+    }
   }
 
   .exit-explanation {
@@ -43,6 +64,10 @@
     width: 50%;
     font-size: 0.8em;
     text-align: right;
+
+    @include mobile {
+      width: 100%;
+    }
 
     .trigger {
       font-style: italic;
@@ -69,17 +94,27 @@
     cursor: pointer;
   }
 
+  .prompt,
+  .response {
+    padding: 1em;
+
+    @include mobile {
+      padding: 0.5em;
+    }
+  }
+
   .prompt {
     background: #f8f8f8;
-    padding: 0.5em 1em;
-    margin-bottom: 2em;
+    margin-bottom: 1em;
   }
 
   .response {
-    margin-bottom: 1em;
-
     .response-block {
       margin-bottom: 0.5em;
+
+      @include mobile {
+        line-height: 2em;
+      }
     }
   }
 
@@ -96,7 +131,8 @@
 
   form {
     $error-color: #e16969;
-    input.error, textarea.error {
+    input.error,
+    textarea.error {
       outline-color: $error-color;
     }
     :not(input, textarea).error {
@@ -131,23 +167,49 @@
     }
   }
 
+  p,
+  pre {
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  input[type="submit"] {
+    margin-top: 1em;
+  }
+
   .answer-wrapper {
     &:not(:last-child) {
       margin-bottom: 4rem;
-      padding-bottom: 1rem;
+      padding-bottom: 2rem;
       border-bottom: 2px solid #ccc;
     }
   }
 
   .answer {
+    .answer-header {
+      margin-bottom: 1em;
+    }
+
     .answer-row {
       display: flex;
       gap: 1rem;
 
+      @include mobile {
+        flex-wrap: wrap;
+      }
+
       > div {
-        flex-grow: 1;
         border: 1px solid #ccc;
         padding: 1rem;
+
+        @include mobile {
+          width: 100%;
+        }
 
         &.correct .answer-header {
           color: green;
@@ -167,6 +229,10 @@
           }
         }
       }
+    }
+
+    .context {
+      margin-top: 1em;
     }
   }
 }

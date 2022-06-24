@@ -29,7 +29,7 @@ describe("Quiz", () => {
 
   it("starts after click", async () => {
     await user.click(screen.getByRole("button"));
-    await waitFor(() => screen.getByText("Prompt"));
+    await waitFor(() => screen.getByText("Question 1"));
   });
 
   it("shows you answers after completion", async () => {
