@@ -11,7 +11,7 @@ use mdbook::{
   preprocess::{Preprocessor, PreprocessorContext},
   BookItem,
 };
-use pulldown_cmark::{CowStr, Event, Parser};
+use pulldown_cmark::{CowStr, Event};
 use pulldown_cmark_to_cmark::cmark;
 use regex::Regex;
 
@@ -129,7 +129,7 @@ impl<'a> QuizProcessorRef<'a> {
   }
 
   fn process_chapter(&self, chapter: &mut Chapter) -> Result<()> {
-    let events = Parser::new(&chapter.content);
+    let events = mdbook::utils::new_cmark_parser(&chapter.content, true);
 
     let chapter_path = self
       .ctx
