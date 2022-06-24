@@ -6,18 +6,21 @@ $mobile-cutoff: 800px;
   }
 }
 
+$light-border-color: var(--theme-popup-border);
+$heavy-border-color: var(--searchresults-border-color);
+
 .mdbook-quiz-wrapper {
   &.expanded {
     position: fixed;
     top: 0;
     left: 0;
-    background: white;
     width: 100vw;
     height: 100vh;
     z-index: 1000;
     padding: 0 10rem;
     box-sizing: border-box;
     overflow-y: auto;
+    background: var(--bg);
 
     @include mobile {
       padding: 0 1rem;
@@ -32,7 +35,7 @@ $mobile-cutoff: 800px;
 }
 
 .mdbook-quiz {
-  border: 2px solid #ccc;
+  border: 2px solid $heavy-border-color;
   border-radius: 4px;
   padding: 1em;
   margin-top: 2.5em;
@@ -104,7 +107,7 @@ $mobile-cutoff: 800px;
   }
 
   .prompt {
-    background: #f8f8f8;
+    background: var(--quote-bg);
     margin-bottom: 1em;
   }
 
@@ -119,7 +122,7 @@ $mobile-cutoff: 800px;
   }
 
   .option {
-    border: 1px solid #ddd;
+    border: 2px solid $light-border-color;
     border-radius: 4px;
     padding: 0.25em;
     margin: 0 0.25em;
@@ -161,7 +164,7 @@ $mobile-cutoff: 800px;
         content: counter(line);
         user-select: none;
         padding-right: 1.5em;
-        color: #aaa;
+        color: $heavy-border-color;
         font-size: 0.8em;
       }
     }
@@ -201,7 +204,7 @@ $mobile-cutoff: 800px;
       flex-wrap: wrap;
 
       > div {
-        border: 1px solid #ccc;
+        border: 2px solid $light-border-color;
         padding: 1rem;
         flex-grow: 1;
 
