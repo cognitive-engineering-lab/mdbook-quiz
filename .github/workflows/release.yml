@@ -21,6 +21,7 @@ jobs:
       - run: pnpm test && pnpm lint
         working-directory: js
       - uses: actions-rs/cargo@v1
-        with:
+        with:          
+          command: publish
           # --allow-dirty needed for js/dist files
-          command: publish --allow-dirty --token ${{ secrets.CARGO_TOKEN }} 
+          args: --allow-dirty --token ${{ secrets.CARGO_TOKEN }} 
