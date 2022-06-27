@@ -16,11 +16,23 @@ use pulldown_cmark_to_cmark::cmark;
 use regex::Regex;
 
 pub struct QuizConfig {
-  js_dir: PathBuf,
-  log_endpoint: Option<String>,
-  fullscreen: Option<bool>,
-  consent: Option<bool>,
+  /// If true, then mdbook-quiz will validate your quiz TOML files using
+  /// the validator.js script installed with mdbook-quiz. You must have NodeJS
+  /// installed on your machine and PATH for this to work.
   validate: Option<bool>,
+
+  /// If true, then a quiz will take up the web page's full screen during use.
+  fullscreen: Option<bool>,
+
+  /// Path to the directory containing the mdbook-quiz Javascript files.
+  /// Defaults to the directory installed with the mdbook-quiz source.
+  js_dir: PathBuf,
+
+  /// URL where quiz results are anonymously logged.
+  log_endpoint: Option<String>,
+
+  /// DO NOT USE
+  consent: Option<bool>,
 }
 
 pub struct QuizProcessor;
