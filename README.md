@@ -8,7 +8,21 @@ This repository provides an [mdBook](https://github.com/rust-lang/mdBook) [prepr
 
 ![Screen Shot 2022-06-27 at 11 46 52 AM](https://user-images.githubusercontent.com/663326/176013623-249b0d71-ad59-4926-8067-4a8e767a4ab8.png)
 
+Table of contents:
+ * [Installation](#installation)
+   + [From crates.io](#from-cratesio)
+   + [From source](#from-source)
+ * [Usage](#usage)
+ * [Quiz schema](#quiz-schema)
+   + [Short answer](#short-answer)
+   + [Multiple choice](#multiple-choice)
+   + [Tracing](#tracing)
+ * [Quiz configuration](#quiz-configuration)
+
+
 ## Installation
+
+### From crates.io
 
 ```
 cargo install mdbook-quiz
@@ -210,3 +224,10 @@ export interface TracingAnswer {
 
 export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
 ```
+
+## Quiz configuration
+
+You can configure mdbook-quiz by adding options to the `[preprocessor.quiz]` section of `book.toml`. The options are:
+
+* `validate` (boolean): If true, then mdbook-quiz will validate your quiz TOML files using the validator.js script installed with mdbook-quiz. You must have NodeJS installed on your machine and PATH for this to work.
+* `fullscreen` (boolean): If true, then a quiz will take up the web page's full screen during use.
