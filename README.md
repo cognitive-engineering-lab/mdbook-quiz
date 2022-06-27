@@ -60,4 +60,143 @@ Then `mdbook build` should correctly embed the quiz.
 
 ## Quiz schema
 
-A quiz is a list of questions, and each question must be a pre-defined question type. See `mdbook/js/lib/questions` for the set of questions. Feel free to add your own!
+Each question type is an instantiation of this Typescript interface:
+
+```ts
+export interface QuestionFields<Type extends string, Prompt, Answer> {
+  type: Type;
+  prompt: Prompt;
+  answer: Answer;
+  context?: Markdown;
+}
+```
+
+It has a discriminating string name `type` and then a `prompt` and `answer`, along with additional `context` for explaining the answer.
+
+> Note that the `Markdown` type is just a string, but will be interpreted as Markdown by the quiz renderer.
+
+Currently, mdbook-quiz supports these question types:
+* [Short answer](#short-answer)
+* [Multiple choice](#multiple-choice)
+* [Tracing](#tracing)
+
+<hr />
+
+### Short answer
+
+A question where the answer is a one-line string.
+
+#### Example
+
+```toml
+[[questions]]
+type = "ShortAnswer"
+prompt.prompt = "What is the keyword for declaring a variable in Rust?"
+answer.answer = "let"
+context = "For example, you can write: `let x = 1`"
+```
+
+#### Interface
+
+```ts
+export interface ShortAnswerPrompt {
+  /** The text of the prompt. */
+  prompt: Markdown;
+}
+
+export interface ShortAnswerAnswer {
+  /** The exact string that answers the question. */
+  answer: string;
+}
+
+export type ShortAnswer = QuestionFields<"ShortAnswer", ShortAnswerPrompt, ShortAnswerAnswer>;
+```
+
+<hr />
+
+### Multiple choice
+
+A question with multiple options that the user selects from.
+
+#### Example
+
+```toml
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "What does it mean if a variable `x` is immutable?"
+prompt.choices = [
+  "`x` is stored in the immutable region of memory.",
+  "After being defined, `x` can be changed at most once.",
+  "`x` cannot be changed after being assigned to a value.",
+  "You cannot create a reference to `x`."
+]
+answer.answer = 2
+context = """
+Immutable means "not mutable", or not changeable.
+"""
+```
+
+#### Interface
+
+```ts
+export interface MultipleChoicePrompt {
+  /** The text of the prompt. */
+  prompt: Markdown;
+  
+  /** An array of text explaining each choice. */
+  choices: Markdown[];
+}
+
+export interface MultipleChoiceAnswer {
+  /** The index of the correct answer in the choices array (0-based). */
+  answer: number;
+}
+```
+
+<hr />
+
+### Tracing
+
+A question where the user has to predict how a program will execute (or fail to compile).
+
+#### Example
+
+```toml
+[[questions]]
+type = "Tracing"
+prompt.program = """
+fn main() {
+  let x = 1;
+  println!("{x}");
+  x += 1;
+  println!("{x}");
+}
+"""
+answer.doesCompile = false
+answer.lineNumber = 4
+context = """
+This is a compiler error because line 4 tries to mutate `x` when `x` is not marked as `mut`.
+"""
+```
+
+#### Interface
+
+```ts
+export interface TracingPrompt {
+  /** The contents of the program to trace */
+  program: string;
+}
+
+export interface TracingAnswer {
+  /** True if the program should pass the compiler */
+  doesCompile: boolean;
+
+  /** If doesCompile=true, then the contents of stdout after running the program */
+  stdout?: string;
+
+  /** If doesCompile=false, then the line number of the code causing the error */
+  lineNumber?: number;
+}
+
+export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
+```
