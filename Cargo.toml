@@ -1,10 +1,12 @@
 [package]
 name = "mdbook-quiz"
 authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
+description = "Interactive quizzes for your mdBook"
 license = "MIT"
 version = "0.1.0"
 edition = "2021"
 include = ["/src", "/js/dist/"]
+repository = "https://github.com/willcrichton/mdbook-quiz"
 
 [dependencies]
 serde_json = "1"

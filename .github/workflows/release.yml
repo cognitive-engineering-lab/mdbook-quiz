@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+
+jobs:
+  publish:
+    runs-on: ubuntu-20.04
+    steps: 
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: npm install -g pnpm
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+      - run: pnpm test && pnpm lint
+        working-directory: js
+      - uses: actions-rs/cargo@v1
+        with:
+          # --allow-dirty needed for js/dist files
+          command: publish --allow-dirty --token ${{ secrets.CARGO_TOKEN }} 
