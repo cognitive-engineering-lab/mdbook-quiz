@@ -44,9 +44,6 @@ You need Cargo and pnpm installed. Then run:
 git clone https://github.com/willcrichton/mdbook-quiz
 cd mdbook-quiz
 cargo install --path .
-cd js
-pnpm install
-pnpm build
 ```
 
 ## Usage
