@@ -4,13 +4,19 @@ This repository provides an [mdBook](https://github.com/rust-lang/mdBook) [prepr
 
 ![Screen Shot 2022-06-27 at 11 46 52 AM](https://user-images.githubusercontent.com/663326/176013623-249b0d71-ad59-4926-8067-4a8e767a4ab8.png)
 
-
-
 ## Installation
 
 ```
 cargo install mdbook-quiz
 ```
+
+Note: this tool is under active development. This repository uses semantic versioning, so I recommend pinning to a specific version to avoid breakage, e.g. by running
+
+```
+cargo install mdbook-quiz --version <YOUR_VERSION>
+```
+
+And you can check your version by running `mdbook-quiz -V`.
 
 ### From source
 
