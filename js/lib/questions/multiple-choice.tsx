@@ -5,11 +5,15 @@ import { MarkdownView } from "../components/markdown";
 import { Markdown, QuestionFields, QuestionMethods } from "./types";
 
 export interface MultipleChoicePrompt {
+  /** The text of the prompt. */
   prompt: Markdown;
+  
+  /** An array of text explaining each choice. */
   choices: Markdown[];
 }
 
 export interface MultipleChoiceAnswer {
+  /** The index of the correct answer in the choices array (0-based). */
   answer: number;
 }
 

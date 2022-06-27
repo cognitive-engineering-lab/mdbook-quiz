@@ -4,10 +4,12 @@ import { MarkdownView } from "../components/markdown";
 import { Markdown, QuestionFields, QuestionMethods } from "./types";
 
 export interface ShortAnswerPrompt {
+  /** The text of the prompt. */
   prompt: Markdown;
 }
 
 export interface ShortAnswerAnswer {
+  /** The exact string that answers the question. */
   answer: string;
 }
 
