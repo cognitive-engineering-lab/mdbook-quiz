@@ -7,7 +7,7 @@ import { Markdown, QuestionFields, QuestionMethods } from "./types";
 export interface MultipleChoicePrompt {
   /** The text of the prompt. */
   prompt: Markdown;
-  
+
   /** An array of text explaining each choice. */
   choices: Markdown[];
 }
