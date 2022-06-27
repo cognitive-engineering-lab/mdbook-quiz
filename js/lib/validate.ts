@@ -1,9 +1,9 @@
 import toml from "@iarna/toml";
 import Ajv, { ValidateFunction } from "ajv";
+import betterAjvErrors from "better-ajv-errors";
+import fs from "fs/promises";
 import _ from "lodash";
 import path from "path";
-import fs from "fs/promises";
-import betterAjvErrors from "better-ajv-errors";
 
 export class Validator {
   constructor(readonly schema: any, readonly validator: ValidateFunction) {}

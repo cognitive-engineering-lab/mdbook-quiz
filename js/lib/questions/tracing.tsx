@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { QuestionMethods, QuestionFields } from "./types";
-import { Snippet } from "../components/snippet";
 import classNames from "classnames";
 import _ from "lodash";
+import React, { useState } from "react";
+
+import { Snippet } from "../components/snippet";
+import { QuestionFields, QuestionMethods } from "./types";
 
 export interface TracingPrompt {
   program: string;
@@ -20,9 +21,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   PromptView: ({ prompt }) => (
     <>
       <p>
-        Determine whether the program will pass the compiler. If it passes, say
-        what will happen when it is executed. If it does not pass, say what kind
-        of compiler error you will get.
+        Determine whether the program will pass the compiler. If it passes, say what will happen
+        when it is executed. If it does not pass, say what kind of compiler error you will get.
       </p>
       <Snippet snippet={prompt.program} />
     </>
@@ -35,12 +35,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
       formState: { errors },
     },
   }) => {
-    let [doesCompile, setDoesCompile] = useState<boolean | undefined>(
-      undefined
-    );
-    let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(
-      (i) => i + 1
-    );
+    let [doesCompile, setDoesCompile] = useState<boolean | undefined>(undefined);
+    let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(i => i + 1);
     return (
       <>
         <div className="response-block">
@@ -116,20 +112,16 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     return (
       <div>
         <p className={correctnessClass("doesCompile")}>
-          This program{" "}
-          <strong>{answer.doesCompile ? "does" : "does not"}</strong> compile.
+          This program <strong>{answer.doesCompile ? "does" : "does not"}</strong> compile.
         </p>
         {answer.doesCompile ? (
           <>
-            <p className={correctnessClass("stdout")}>
-              The output of this program will be:
-            </p>
+            <p className={correctnessClass("stdout")}>The output of this program will be:</p>
             <pre>{answer.stdout}</pre>
           </>
         ) : (
           <p className={correctnessClass("lineNumber")}>
-            The error occurs on the line number:{" "}
-            <code>{answer.lineNumber}</code>
+            The error occurs on the line number: <code>{answer.lineNumber}</code>
           </p>
         )}
       </div>

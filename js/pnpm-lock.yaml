@@ -28,6 +28,7 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   eslint-plugin-react: ^7.30.0
   eslint-plugin-react-hooks: ^4.5.0
+  getdocs-ts: ^0.1.2
   highlight.js: 10.1.1
   install: ^0.13.0
   jest: ^28.1.1
@@ -73,6 +74,7 @@ devDependencies:
   eslint-plugin-prettier: 4.0.0_ddjd75dz7x3czaucyvuaamiqdi
   eslint-plugin-react: 7.30.0_eslint@8.17.0
   eslint-plugin-react-hooks: 4.5.0_eslint@8.17.0
+  getdocs-ts: 0.1.2
   highlight.js: 10.1.1
   install: 0.13.0
   jest: 28.1.1_@types+node@18.0.0
@@ -3039,6 +3041,13 @@ packages:
   /get-value/2.0.6:
     resolution: {integrity: sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /getdocs-ts/0.1.2:
+    resolution: {integrity: sha512-UZFOV2TTuMvc/j59qhT824djdXdvRubYA4N1lv6/JfglC7K3m8L2cfl26gHnTr43n3R0gh0Zn7s95WEW2L8r6g==}
+    hasBin: true
+    dependencies:
+      typescript: 4.6.4
     dev: true
 
   /glob-parent/5.1.2:

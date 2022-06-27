@@ -1,15 +1,11 @@
+import axios from "axios";
+import classNames from "classnames";
 import _ from "lodash";
 import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import {
-  AnswerView,
-  getQuestionMethods,
-  Question,
-  QuestionView,
-} from "../questions/mod";
-import classNames from "classnames";
+
+import { AnswerView, Question, QuestionView, getQuestionMethods } from "../questions/mod";
 import { defaultComparator } from "../questions/types";
 
 export interface Quiz {
@@ -59,8 +55,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         // default ones provided by mdBook
         document.addEventListener("keydown", captureKeyboard, true);
 
-        return () =>
-          document.removeEventListener("keydown", captureKeyboard, true);
+        return () => document.removeEventListener("keydown", captureKeyboard, true);
       }
     }, [showFullscreen]);
 
@@ -163,9 +158,8 @@ export let QuizView: React.FC<QuizViewProps> = observer(
             Why is this quiz fullscreen?
           </div>
           <div style={{ display: expanded ? "block" : "none" }}>
-            We want to know how much you are learning that can be recalled
-            without assistance. Please complete the quiz without re-reading the
-            text, e.g. by opening it in another tab.
+            We want to know how much you are learning that can be recalled without assistance.
+            Please complete the quiz without re-reading the text, e.g. by opening it in another tab.
           </div>
         </div>
       );

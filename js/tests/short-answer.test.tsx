@@ -1,14 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-
-import React from "react";
-import { render, waitFor, screen } from "@testing-library/react";
-import user from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+import { render, screen, waitFor } from "@testing-library/react";
+import user from "@testing-library/user-event";
+import React from "react";
 
-import { ShortAnswer } from "../lib/questions/short-answer";
 import { QuestionView } from "../lib/questions/mod";
+import { ShortAnswer } from "../lib/questions/short-answer";
 
 describe("ShortAnswer", () => {
   let question: ShortAnswer = {
@@ -24,7 +23,7 @@ describe("ShortAnswer", () => {
       <QuestionView
         question={question}
         index={1}
-        onSubmit={(answer) => {
+        onSubmit={answer => {
           submitted = answer;
         }}
       />

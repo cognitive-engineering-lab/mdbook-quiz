@@ -39,6 +39,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
+    "getdocs-ts": "^0.1.2",
     "highlight.js": "10.1.1",
     "install": "^0.13.0",
     "jest": "^28.1.1",

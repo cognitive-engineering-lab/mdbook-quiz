@@ -1,7 +1,8 @@
-import React from "react";
-import { QuestionMethods, QuestionFields, Markdown } from "./types";
-import MarkdownView from "react-showdown";
 import classNames from "classnames";
+import React from "react";
+
+import { MarkdownView } from "../components/markdown";
+import { Markdown, QuestionFields, QuestionMethods } from "./types";
 
 export interface MultipleChoicePrompt {
   prompt: Markdown;
@@ -18,10 +19,7 @@ export type MultipleChoice = QuestionFields<
   MultipleChoiceAnswer
 >;
 
-export let MultipleChoiceMethods: QuestionMethods<
-  MultipleChoicePrompt,
-  MultipleChoiceAnswer
-> = {
+export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, MultipleChoiceAnswer> = {
   PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
 
   ResponseView: ({ prompt, formValidators: { required } }) => (
@@ -46,10 +44,7 @@ export let MultipleChoiceMethods: QuestionMethods<
 
   AnswerView: ({ answer, baseline, prompt }) => (
     <div
-      className={classNames(
-        "md-flex",
-        answer.answer == baseline.answer ? "correct" : "incorrect"
-      )}
+      className={classNames("md-flex", answer.answer == baseline.answer ? "correct" : "incorrect")}
     >
       <MarkdownView markdown={prompt.choices[answer.answer]} />
     </div>

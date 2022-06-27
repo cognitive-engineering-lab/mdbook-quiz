@@ -1,14 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-
-import React from "react";
-import { render, waitFor, screen } from "@testing-library/react";
-import user from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+import { render, screen, waitFor } from "@testing-library/react";
+import user from "@testing-library/user-event";
+import React from "react";
 
-import { Tracing } from "../lib/questions/tracing";
 import { QuestionView } from "../lib/questions/mod";
+import { Tracing } from "../lib/questions/tracing";
 
 describe("Tracing", () => {
   let question: Tracing = {
@@ -24,7 +23,7 @@ describe("Tracing", () => {
       <QuestionView
         question={question}
         index={1}
-        onSubmit={(answer) => {
+        onSubmit={answer => {
           submitted = answer;
         }}
       />

@@ -1,12 +1,13 @@
+import classNames from "classnames";
+import _ from "lodash";
 import React, { useRef } from "react";
+import { RegisterOptions, useForm } from "react-hook-form";
+
+import { MarkdownView } from "../components/markdown";
+import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
-import { defaultComparator, QuestionMethods } from "./types";
-import classNames from "classnames";
-import MarkdownView from "react-showdown";
-import _ from "lodash";
-import { RegisterOptions, useForm } from "react-hook-form";
-import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
+import { QuestionMethods, defaultComparator } from "./types";
 
 export type Question = ShortAnswer | Tracing | MultipleChoice;
 
@@ -16,9 +17,8 @@ let methodMapping = {
   MultipleChoice: MultipleChoiceMethods,
 };
 
-export let getQuestionMethods = (
-  type: Question["type"]
-): QuestionMethods<any, any> => methodMapping[type];
+export let getQuestionMethods = (type: Question["type"]): QuestionMethods<any, any> =>
+  methodMapping[type];
 
 let questionNameToCssClass = (name: string) => {
   let output = [];
@@ -58,10 +58,8 @@ export let QuestionView: React.FC<{
 
   let questionClass = questionNameToCssClass(question.type);
 
-  let submit = formValidators.handleSubmit((data) => {
-    let answer = methods.getAnswerFromDOM
-      ? methods.getAnswerFromDOM(data, ref.current!)
-      : data;
+  let submit = formValidators.handleSubmit(data => {
+    let answer = methods.getAnswerFromDOM ? methods.getAnswerFromDOM(data, ref.current!) : data;
     onSubmit(answer);
   });
 

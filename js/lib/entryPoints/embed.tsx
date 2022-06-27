@@ -1,9 +1,9 @@
 import React from "react";
 import * as ReactDOM from "react-dom/client";
 import * as uuid from "uuid";
-import { QuizView, Quiz } from "../components/quiz";
 
 import "../../css/index.scss";
+import { Quiz, QuizView } from "../components/quiz";
 
 const USER_KEY = "__mdbook_quiz_user";
 if (localStorage.getItem(USER_KEY) === null) {
@@ -11,7 +11,7 @@ if (localStorage.getItem(USER_KEY) === null) {
 }
 const userId = localStorage.getItem(USER_KEY)!;
 
-document.querySelectorAll(".quiz-placeholder").forEach((el) => {
+document.querySelectorAll(".quiz-placeholder").forEach(el => {
   let divEl = el as HTMLDivElement;
   let name = divEl.dataset.quizName!;
   let quiz: Quiz = JSON.parse(divEl.dataset.quizQuestions!);

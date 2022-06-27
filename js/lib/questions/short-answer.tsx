@@ -1,6 +1,7 @@
 import React from "react";
-import { QuestionMethods, QuestionFields, Markdown } from "./types";
-import MarkdownView from "react-showdown";
+
+import { MarkdownView } from "../components/markdown";
+import { Markdown, QuestionFields, QuestionMethods } from "./types";
 
 export interface ShortAnswerPrompt {
   prompt: Markdown;
@@ -10,16 +11,9 @@ export interface ShortAnswerAnswer {
   answer: string;
 }
 
-export type ShortAnswer = QuestionFields<
-  "ShortAnswer",
-  ShortAnswerPrompt,
-  ShortAnswerAnswer
->;
+export type ShortAnswer = QuestionFields<"ShortAnswer", ShortAnswerPrompt, ShortAnswerAnswer>;
 
-export let ShortAnswerMethods: QuestionMethods<
-  ShortAnswerPrompt,
-  ShortAnswerAnswer
-> = {
+export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAnswer> = {
   PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
 
   ResponseView: ({ submit, formValidators: { required } }) => (
@@ -28,7 +22,7 @@ export let ShortAnswerMethods: QuestionMethods<
         {...required("answer")}
         type="text"
         placeholder="Write your short answer here..."
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key == "Enter") submit();
         }}
       />
@@ -36,9 +30,7 @@ export let ShortAnswerMethods: QuestionMethods<
   ),
 
   AnswerView: ({ answer, baseline }) => (
-    <code
-      className={answer.answer == baseline.answer ? "correct" : "incorrect"}
-    >
+    <code className={answer.answer == baseline.answer ? "correct" : "incorrect"}>
       {answer.answer}
     </code>
   ),

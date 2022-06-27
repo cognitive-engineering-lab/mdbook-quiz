@@ -5,7 +5,7 @@ let main = () => {
   process.stdin.setEncoding("ascii");
 
   let input = "";
-  process.stdin.on("data", (chunk) => {
+  process.stdin.on("data", chunk => {
     input += chunk;
   });
   process.stdin.on("end", async () => {

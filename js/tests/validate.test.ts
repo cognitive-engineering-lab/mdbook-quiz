@@ -1,6 +1,7 @@
-import { Validator } from "../lib/validate";
 import TOML from "@iarna/toml";
+
 import { Quiz } from "../lib/components/quiz";
+import { Validator } from "../lib/validate";
 
 describe("validateQuiz", () => {
   let validator: Validator;

@@ -1,14 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-
-import React from "react";
-import { render, waitFor, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import http from "http";
-import "@testing-library/jest-dom";
+import React from "react";
 
-import { QuizView, Quiz, QuizLog } from "../lib/components/quiz";
+import { Quiz, QuizLog, QuizView } from "../lib/components/quiz";
 
 let quiz: Quiz = {
   questions: [
@@ -44,12 +43,12 @@ describe("Quiz", () => {
 
 test("Quiz logs to the endpoint", async () => {
   let resolve: (value: any) => void;
-  let completed = new Promise((inner) => {
+  let completed = new Promise(inner => {
     resolve = inner;
   });
   const server = http.createServer((req, res) => {
     let data = "";
-    req.on("data", (chunk) => {
+    req.on("data", chunk => {
       data += chunk;
     });
     req.on("end", () => {

@@ -1,10 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import {
-  RegisterOptions,
-  UseFormRegisterReturn,
-  UseFormReturn,
-} from "react-hook-form";
+import { RegisterOptions, UseFormRegisterReturn, UseFormReturn } from "react-hook-form";
 
 export type Markdown = string;
 
@@ -29,10 +25,7 @@ export interface QuestionMethods<Prompt, Answer> {
     };
   }>;
 
-  getAnswerFromDOM?(
-    data: { [key: string]: any },
-    container: HTMLFormElement
-  ): Answer;
+  getAnswerFromDOM?(data: { [key: string]: any }, container: HTMLFormElement): Answer;
 
   AnswerView: React.FC<{ answer: Answer; baseline: Answer; prompt: Prompt }>;
 
