@@ -17,3 +17,11 @@ jobs:
       # so we don't need to run pnpm build here.
       - run: pnpm test && pnpm lint
         working-directory: js
+      - run: cargo install --path . --debug --locked
+      - run: mdbook build
+        working-directory: example
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./example/book
+            
