@@ -24,6 +24,8 @@ Table of contents:
 
 ## Installation
 
+*These instructions assume you have an mdBook already set up. Unfamiliar with mdBook? Read the [mdBook guide!](https://rust-lang.github.io/mdBook/)*
+
 ### From crates.io
 
 ```
