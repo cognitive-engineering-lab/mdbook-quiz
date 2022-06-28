@@ -27,6 +27,7 @@ Table of contents:
 ### From crates.io
 
 ```
+cargo install mdbook
 cargo install mdbook-quiz
 ```
 
@@ -69,6 +70,15 @@ Then in your Markdown file, add a reference to the quiz file:
 And now, a _quiz_:
 
 {{#quiz ../quizzes/rust-variables.toml}}
+```
+
+If you're making a new mdbook, add a basic `SUMMARY.md` to include your chapter (see [the mdbook guide](https://rust-lang.github.io/mdBook/cli/init.html)).
+
+```markdown
+<!-- src/SUMMARY.md -->
+# Summary
+
+- [Quiz](./your-chapter.md)
 ```
 
 Configure your `book.toml` to activate `mdbook-quiz`.
