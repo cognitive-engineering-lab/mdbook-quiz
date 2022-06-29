@@ -122,6 +122,7 @@ export let AnswerView: React.FC<{
   index: number;
   userAnswer: Question["answer"];
 }> = ({ question, index, userAnswer }) => {
+  let logger = useContext(LoggerContext);
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
@@ -133,6 +134,7 @@ export let AnswerView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
+        {logger ? <BugReporter question={index} /> : null}
       </div>
       <div className="answer-row">
         <div>

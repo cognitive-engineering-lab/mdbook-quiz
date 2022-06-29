@@ -30,9 +30,14 @@ export class Logger {
   ) {}
 
   private log<T extends {}>(log: T, path: string) {
+    let host = window.location.host;
+    if (host == "localhost" && !this.endpoint.includes("localhost")) {
+      return;
+    }
+
     let fullLog = {
       timestamp: new Date().getTime(),
-      host: window.location.host,
+      host,
       quizName: this.quizName,
       user: this.user,
       ...log,
