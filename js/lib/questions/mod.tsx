@@ -1,9 +1,10 @@
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
+import { LoggerContext } from "../logging";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
@@ -32,12 +33,45 @@ let questionNameToCssClass = (name: string) => {
   return output.join("");
 };
 
+let BugReporter = ({ question }: { question: number }) => {
+  let [show, setShow] = useState(false);
+  let logger = useContext(LoggerContext);
+  let onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+    let data = new FormData(event.target as any);
+    let feedback = data.get("feedback")!.toString();
+    logger!.logBug(question, feedback);
+    event.preventDefault();
+    setShow(false);
+  };
+  return (
+    <div className="bug-report">
+      <button title="Report a bug in this question" onClick={() => setShow(!show)}>
+        🐞
+      </button>
+      {show ? (
+        <div className="reporter">
+          <h3>Report a bug</h3>
+          <p>
+            If you found an issue in this question (e.g. a typo or an incorrect answer), please
+            describe the issue and report it:
+          </p>
+          <form onSubmit={onSubmit}>
+            <textarea name="feedback" aria-label="Bug feedback"></textarea>
+            <input type="submit" aria-label="Submit bug feedback" />
+          </form>
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
 export let QuestionView: React.FC<{
   question: Question;
   index: number;
   onSubmit: (answer: any) => void;
 }> = ({ question, index, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
+  let logger = useContext(LoggerContext);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
     return (
@@ -68,6 +102,7 @@ export let QuestionView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
+        {logger ? <BugReporter question={index} /> : null}
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>

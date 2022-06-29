@@ -8,6 +8,7 @@ import React from "react";
 
 import { QuestionView } from "../lib/questions/mod";
 import { MultipleChoice } from "../lib/questions/multiple-choice";
+import { submitButton } from "./utils";
 
 describe("ShortAnswer", () => {
   let question: MultipleChoice = {
@@ -34,16 +35,14 @@ describe("ShortAnswer", () => {
   it("initially renders", () => {});
 
   it("validates input", async () => {
-    let submit = screen.getByRole("button");
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toBe(null);
   });
 
   it("accepts valid input", async () => {
-    let submit = screen.getByRole("button");
     let input = screen.getByRole("radio", { name: "B" });
     await user.click(input);
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toStrictEqual({ answer: 1 });
   });
 });

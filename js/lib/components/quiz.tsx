@@ -1,22 +1,14 @@
-import axios from "axios";
 import classNames from "classnames";
 import _ from "lodash";
 import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import React, { useEffect, useState } from "react";
 
-import { AnswerView, Question, QuestionView, getQuestionMethods } from "../questions/mod";
-import { defaultComparator } from "../questions/types";
+import { Logger, LoggerContext } from "../logging";
+import { AnswerView, Question, QuestionView } from "../questions/mod";
 
 export interface Quiz {
   questions: Question[];
-}
-
-export interface QuizLog {
-  user?: string;
-  name: string;
-  timestamp: number;
-  answers: any[];
 }
 
 export interface QuizViewProps {
@@ -38,6 +30,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       index: 0,
       answers: [],
     }));
+    let [logger] = useState(() => (logEndpoint ? new Logger(logEndpoint, name, quiz, user) : null));
 
     let n = quiz.questions.length;
     let ended = state.index == n;
@@ -81,20 +74,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let onSubmit = action((answer: any) => {
       state.answers.push(_.cloneDeep(answer));
       state.index += 1;
-
-      if (logEndpoint) {
-        let timestamp = new Date().getTime();
-        let answers = state.answers.map((answer, i) => {
-          // Save whether the answer was correct into the log
-          let question = quiz.questions[i];
-          let methods = getQuestionMethods(question.type);
-          let comparator = methods.compareAnswers || defaultComparator;
-          let correct = comparator(answer, question.answer);
-          return { ...answer, correct };
-        });
-        let log: QuizLog = { user, name, timestamp, answers };
-        axios.post(logEndpoint, log);
-      }
+      logger?.logAnswers(state.answers);
     });
 
     let body = (
@@ -172,18 +152,20 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     }
 
     return (
-      <div className={wrapperClass}>
-        <div className="mdbook-quiz">
-          {showFullscreen ? (
-            <>
-              {exitButton}
-              <ExitExplanation />
-            </>
-          ) : null}
-          {header}
-          {body}
+      <LoggerContext.Provider value={logger}>
+        <div className={wrapperClass}>
+          <div className="mdbook-quiz">
+            {showFullscreen ? (
+              <>
+                {exitButton}
+                <ExitExplanation />
+              </>
+            ) : null}
+            {header}
+            {body}
+          </div>
         </div>
-      </div>
+      </LoggerContext.Provider>
     );
   }
 );

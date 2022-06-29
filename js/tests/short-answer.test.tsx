@@ -8,6 +8,7 @@ import React from "react";
 
 import { QuestionView } from "../lib/questions/mod";
 import { ShortAnswer } from "../lib/questions/short-answer";
+import { submitButton } from "./utils";
 
 describe("ShortAnswer", () => {
   let question: ShortAnswer = {
@@ -34,16 +35,14 @@ describe("ShortAnswer", () => {
   it("initially renders", () => {});
 
   it("validates input", async () => {
-    let submit = screen.getByRole("button");
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toBe(null);
   });
 
   it("accepts valid input", async () => {
-    let submit = screen.getByRole("button");
     let input = screen.getByRole("textbox");
     await user.type(input, "foobar");
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toStrictEqual({ answer: "foobar" });
   });
 });

@@ -100,6 +100,7 @@ $error-color: #e16969;
 
   .prompt,
   .response {
+    position: relative;
     padding: 1em;
 
     @include mobile {
@@ -110,6 +111,29 @@ $error-color: #e16969;
   .prompt {
     background: var(--quote-bg);
     margin-bottom: 1em;
+
+    .bug-report {
+      position: absolute;
+      z-index: 1000;
+      max-width: 70%;
+      right: 0.5em;
+      top: 0.5em;
+      text-align: right;
+
+      button {
+        filter: grayscale(100%);
+        border: 0;
+        background: none;
+      }
+
+      .reporter {
+        background: var(--bg);
+        border: 2px solid $light-border-color;  
+        padding: 0.5em;  
+        text-align: left;
+        border-radius: 4px;      
+      }
+    }
   }
 
   .response {

@@ -8,6 +8,7 @@ import React from "react";
 
 import { QuestionView } from "../lib/questions/mod";
 import { Tracing } from "../lib/questions/tracing";
+import { submitButton } from "./utils";
 
 describe("Tracing", () => {
   let question: Tracing = {
@@ -39,24 +40,22 @@ describe("Tracing", () => {
     });
 
   it("validates input", async () => {
-    let submit = screen.getByRole("button");
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toBe(null);
 
     let checkbox = getCheckbox();
     await user.click(checkbox);
-    await user.click(submit);
+    await user.click(submitButton());
     expect(submitted).toBe(null);
   });
 
   it("accepts valid input", async () => {
-    let submit = screen.getByRole("button");
     let checkbox = getCheckbox();
     await user.click(checkbox);
 
     let input = screen.getByRole("textbox");
     await user.type(input, "foobar");
-    await user.click(submit);
+    await user.click(submitButton());
 
     expect(submitted).toStrictEqual({ doesCompile: true, stdout: "foobar" });
   });
