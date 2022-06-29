@@ -43,10 +43,7 @@ describe("Quiz", () => {
   });
 });
 
-const PORT = 8080;
-const ENDPOINT = `http://localhost:${PORT}`;
-
-let withServer = (f: (req: http.IncomingMessage, json: any) => void): Promise<void> => {
+let withServer = (port: number, f: (req: http.IncomingMessage, json: any) => void) => {
   let resolve: (value: any) => void;
   let completed: Promise<void> = new Promise(inner => {
     resolve = inner;
@@ -56,26 +53,32 @@ let withServer = (f: (req: http.IncomingMessage, json: any) => void): Promise<vo
     req.on("data", chunk => {
       data += chunk;
     });
-    req.on("end", async () => {
+    req.on("end", () => {
       let json = JSON.parse(data);
       f(req, json);
 
-      res.writeHead(200);
-      res.end();
-
+      // TODO: this doesn't seem to be actually shutting the server down in time.
       server.close();
 
       resolve(undefined);
     });
+
+    // Fix CORS issues
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Request-Method", "*");
+    res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST");
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.writeHead(200);
+    res.end();
   });
-  server.listen(PORT);
+  server.listen(port);
 
   return completed;
 };
 
 describe("Quiz logger", () => {
   it("logs answers", async () => {
-    let completed = withServer((req, log: AnswersLog) => {
+    let completed = withServer(8080, (req, log: AnswersLog) => {
       expect(req.method).toBe("POST");
       expect(req.url).toBe("/answers");
 
@@ -84,7 +87,7 @@ describe("Quiz logger", () => {
       expect(log.host).toBe("localhost");
     });
 
-    render(<QuizView name="the-quiz" quiz={quiz} logEndpoint={ENDPOINT} />);
+    render(<QuizView name="the-quiz" quiz={quiz} logEndpoint="http://localhost:8080" />);
     await waitFor(() => screen.getByText("Quiz"));
 
     await user.click(startButton());
@@ -96,7 +99,7 @@ describe("Quiz logger", () => {
   });
 
   it("logs bugs", async () => {
-    let completed = withServer((req, log: BugLog) => {
+    let completed = withServer(8081, (req, log: BugLog) => {
       expect(req.method).toBe("POST");
       expect(req.url).toBe("/bug");
 
@@ -105,7 +108,7 @@ describe("Quiz logger", () => {
       expect(log.host).toBe("localhost");
     });
 
-    render(<QuizView name="the-quiz" quiz={quiz} logEndpoint={ENDPOINT} />);
+    render(<QuizView name="the-quiz" quiz={quiz} logEndpoint="http://localhost:8081" />);
     await waitFor(() => screen.getByText("Quiz"));
 
     await user.click(startButton());
