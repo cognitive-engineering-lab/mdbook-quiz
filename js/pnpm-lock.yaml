@@ -28,9 +28,7 @@ specifiers:
   eslint-plugin-prettier: ^4.0.0
   eslint-plugin-react: ^7.30.0
   eslint-plugin-react-hooks: ^4.5.0
-  getdocs-ts: ^0.1.2
   highlight.js: 10.1.1
-  install: ^0.13.0
   jest: ^28.1.1
   jest-environment-jsdom: ^28.1.1
   lodash: ^4.17.21
@@ -74,9 +72,7 @@ devDependencies:
   eslint-plugin-prettier: 4.0.0_ddjd75dz7x3czaucyvuaamiqdi
   eslint-plugin-react: 7.30.0_eslint@8.17.0
   eslint-plugin-react-hooks: 4.5.0_eslint@8.17.0
-  getdocs-ts: 0.1.2
   highlight.js: 10.1.1
-  install: 0.13.0
   jest: 28.1.1_@types+node@18.0.0
   jest-environment-jsdom: 28.1.1
   lodash: 4.17.21
@@ -3043,13 +3039,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /getdocs-ts/0.1.2:
-    resolution: {integrity: sha512-UZFOV2TTuMvc/j59qhT824djdXdvRubYA4N1lv6/JfglC7K3m8L2cfl26gHnTr43n3R0gh0Zn7s95WEW2L8r6g==}
-    hasBin: true
-    dependencies:
-      typescript: 4.6.4
-    dev: true
-
   /glob-parent/5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -3290,11 +3279,6 @@ packages:
 
   /inherits/2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
-    dev: true
-
-  /install/0.13.0:
-    resolution: {integrity: sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==}
-    engines: {node: '>= 0.10'}
     dev: true
 
   /internal-slot/1.0.3:

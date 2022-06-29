@@ -217,17 +217,15 @@ impl Preprocessor for QuizProcessor {
 #[cfg(test)]
 mod test {
   use super::*;
-  use mdbook::{book::load_book, config::BuildConfig, preprocess::CmdPreprocessor};
+  use mdbook::{book::load_book, config::BuildConfig, preprocess::CmdPreprocessor, MDBook};
   use tempfile::tempdir;
 
   #[test]
   fn test_quiz_generator() -> Result<()> {
     let dir = tempdir()?.into_path();
-    assert!(Command::new("mdbook")
-      .args(["init", "--ignore", "none", "--title", "test"])
-      .current_dir(&dir)
-      .status()?
-      .success());
+
+    let builder = MDBook::init(&dir);
+    builder.build()?;
 
     let quiz_path = dir.join("quiz.toml");
     fs::write(
