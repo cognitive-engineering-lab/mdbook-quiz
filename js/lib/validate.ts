@@ -5,6 +5,9 @@ import fs from "fs/promises";
 import _ from "lodash";
 import path from "path";
 
+// TODO: can we validate Tracing tests?
+// how to add a format to ajv
+
 export class Validator {
   constructor(readonly schema: any, readonly validator: ValidateFunction) {}
 
@@ -24,11 +27,15 @@ export class Validator {
   }
 
   validate(input: string): string | undefined {
-    let quiz = toml.parse(input);
-    if (!this.validator(quiz)) {
-      return betterAjvErrors(this.schema, quiz, this.validator.errors!, {
-        indent: 2,
-      });
+    try {
+      let quiz = toml.parse(input);
+      if (!this.validator(quiz)) {
+        return betterAjvErrors(this.schema, quiz, this.validator.errors!, {
+          indent: 2,
+        });
+      }
+    } catch (e: any) {
+      return e.toString();
     }
   }
 }

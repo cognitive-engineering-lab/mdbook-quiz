@@ -22,6 +22,10 @@ pub struct QuizConfig {
   /// If true, then a quiz will take up the web page's full screen during use.
   fullscreen: Option<bool>,
 
+  /// If true, then a user's answers will be cached in localStorage
+  /// and displayed to them upon revisiting a completed quiz.
+  cache_answers: Option<bool>,
+
   /// Path to the directory containing the mdbook-quiz Javascript files.
   /// Defaults to the directory installed with the mdbook-quiz source.
   js_dir: PathBuf,
@@ -133,6 +137,9 @@ impl<'a> QuizProcessorRef<'a> {
     if let Some(true) = self.config.fullscreen {
       add_data("quiz-fullscreen", "");
     }
+    if let Some(true) = self.config.cache_answers {
+      add_data("quiz-cache-answers", "");
+    }
 
     html.push_str("></div>");
 
@@ -191,6 +198,7 @@ impl Preprocessor for QuizProcessor {
       fullscreen: parse_bool("fullscreen"),
       consent: parse_bool("consent"),
       validate: parse_bool("validate"),
+      cache_answers: parse_bool("cache-answers"),
     };
 
     let mut processor = QuizProcessorRef {

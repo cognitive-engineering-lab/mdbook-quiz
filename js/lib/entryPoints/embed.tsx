@@ -18,6 +18,7 @@ document.querySelectorAll(".quiz-placeholder").forEach(el => {
   let root = ReactDOM.createRoot(el);
   let logEndpoint = divEl.dataset.quizLogEndpoint;
   let fullscreen = divEl.dataset.quizFullscreen !== undefined;
+  let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
   root.render(
     <QuizView
       name={name}
@@ -25,6 +26,7 @@ document.querySelectorAll(".quiz-placeholder").forEach(el => {
       user={userId}
       logEndpoint={logEndpoint}
       fullscreen={fullscreen}
+      cacheAnswers={cacheAnswers}
     />
   );
 });

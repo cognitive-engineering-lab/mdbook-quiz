@@ -17,19 +17,29 @@ export interface QuizViewProps {
   user?: string;
   logEndpoint?: string;
   fullscreen?: boolean;
+  cacheAnswers?: boolean;
 }
 
+let quizAnswersStorageKey = (name: string): string => `quizAnswers:${name}`;
+
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({ quiz, user, name, logEndpoint, fullscreen }) => {
+  ({ quiz, user, name, logEndpoint, fullscreen, cacheAnswers }) => {
     let state = useLocalObservable<{
       started: boolean;
       index: number;
       answers: any[];
-    }>(() => ({
-      started: false,
-      index: 0,
-      answers: [],
-    }));
+    }>(() => {
+      let answers = localStorage.getItem(quizAnswersStorageKey(name));
+      if (cacheAnswers && answers !== null) {
+        return {
+          started: true,
+          index: quiz.questions.length,
+          answers: JSON.parse(answers),
+        };
+      } else {
+        return { started: false, index: 0, answers: [] };
+      }
+    });
     let [logger] = useState(() => (logEndpoint ? new Logger(logEndpoint, name, quiz, user) : null));
 
     let n = quiz.questions.length;
@@ -75,6 +85,10 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       state.answers.push(_.cloneDeep(answer));
       state.index += 1;
       logger?.logAnswers(state.answers);
+
+      if (cacheAnswers && state.index == n) {
+        localStorage.setItem(quizAnswersStorageKey(name), JSON.stringify(state.answers));
+      }
     });
 
     let body = (

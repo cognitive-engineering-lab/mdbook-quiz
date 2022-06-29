@@ -43,6 +43,23 @@ describe("Quiz", () => {
   });
 });
 
+describe("Quiz configuration", () => {
+  it("can cache answers", async () => {
+    let { rerender } = render(<QuizView name="the-quiz" quiz={quiz} cacheAnswers={true} />);
+    await waitFor(() => screen.getByText("Quiz"));
+    await user.click(startButton());
+    await waitFor(() => screen.getByText("Question 1"));
+    let input = await waitFor(() => screen.getByRole("textbox"));
+    await user.type(input, "No");
+    await user.click(submitButton());
+    await waitFor(() => screen.getByText("Answer Review"));
+
+    // After rerendering the component, we should still be at the Answer Review
+    rerender(<QuizView name="the-quiz" quiz={quiz} cacheAnswers={true} />);
+    await waitFor(() => screen.getByText("Answer Review"));
+  });
+});
+
 let withServer = (port: number, f: (req: http.IncomingMessage, json: any) => void) => {
   let resolve: (value: any) => void;
   let completed: Promise<void> = new Promise(inner => {

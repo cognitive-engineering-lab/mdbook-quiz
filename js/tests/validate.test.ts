@@ -11,7 +11,7 @@ describe("validateQuiz", () => {
 
   let runInput = (quiz: any) => validator.validate(TOML.stringify(quiz));
 
-  it("accepts a valid quiz", async () => {
+  it("accepts a valid quiz", () => {
     let quiz: Quiz = {
       questions: [
         {
@@ -23,15 +23,15 @@ describe("validateQuiz", () => {
       ],
     };
 
-    expect(await runInput(quiz)).toBe(undefined);
+    expect(runInput(quiz)).toBe(undefined);
   });
 
-  it("rejects a quiz without questions", async () => {
+  it("rejects a quiz without questions", () => {
     let quiz = { foo: "bar" };
-    expect(await runInput(quiz)).not.toBe(undefined);
+    expect(runInput(quiz)).not.toBe(undefined);
   });
 
-  it("rejects a quiz with a bad question", async () => {
+  it("rejects a quiz with a bad question", () => {
     let quiz = {
       questions: [
         {
@@ -40,6 +40,11 @@ describe("validateQuiz", () => {
         },
       ],
     };
-    expect(await runInput(quiz)).not.toBe(undefined);
+    expect(runInput(quiz)).not.toBe(undefined);
+  });
+
+  it("rejects a malformed TOML", async () => {
+    let toml = '[[questions]]\ntype = "bar';
+    expect(validator.validate(toml)).not.toBe(undefined);
   });
 });
