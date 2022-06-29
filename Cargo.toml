@@ -14,13 +14,10 @@ anyhow = {version = "1", features = ["backtrace"]}
 clap = {version = "3", default-features = false, features = ["derive", "std"]}
 mdbook = {version = "0.4", default-features = false}
 semver = "1"
-pulldown-cmark-to-cmark = "10"
-pulldown-cmark = "0.9"
 regex = "1"
 html-escape = "0.2"
 toml = "0.5"
 lazy_static = "1.4"
 
-[patch.crates-io]
-# Needed until pulldown-cmark-to-cmark#20 is resolved
-pulldown-cmark-to-cmark = { git = "https://github.com/willcrichton/pulldown-cmark-to-cmark" }
+[dev-dependencies]
+tempfile = "3"

@@ -11,8 +11,6 @@ use mdbook::{
   preprocess::{Preprocessor, PreprocessorContext},
   BookItem,
 };
-use pulldown_cmark::{CowStr, Event};
-use pulldown_cmark_to_cmark::cmark;
 use regex::Regex;
 
 pub struct QuizConfig {
@@ -44,7 +42,7 @@ struct QuizProcessorRef<'a> {
 }
 
 lazy_static::lazy_static! {
-  static ref QUIZ_REGEX: Regex = Regex::new(r"^\{\{#quiz ([^}]+)\}\}$").unwrap();
+  static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
 }
 
 impl<'a> QuizProcessorRef<'a> {
@@ -142,8 +140,6 @@ impl<'a> QuizProcessorRef<'a> {
   }
 
   fn process_chapter(&self, chapter: &mut Chapter) -> Result<()> {
-    let events = mdbook::utils::new_cmark_parser(&chapter.content, true);
-
     let chapter_path = self
       .ctx
       .root
@@ -151,30 +147,24 @@ impl<'a> QuizProcessorRef<'a> {
       .join(chapter.path.as_ref().unwrap());
     let chapter_dir = chapter_path.parent().unwrap();
 
-    let mut new_events = Vec::new();
-    for event in events {
-      let new_event = match &event {
-        Event::Text(text) => {
-          let text = text.as_ref();
-          match QUIZ_REGEX.captures(text) {
-            Some(captures) => {
-              let quiz_path = captures.get(1).unwrap().as_str();
-              let html = self.process_quiz(chapter_dir, quiz_path)?;
-              Event::Html(CowStr::Boxed(html.into_boxed_str()))
-            }
-            None => event,
-          }
-        }
-        _ => event,
-      };
-      new_events.push(new_event);
+    let content = &chapter.content;
+    let replacements = QUIZ_REGEX
+      .captures_iter(content)
+      .map(|captures| {
+        let range = captures.get(0).unwrap().range();
+        let quiz_path = captures.get(1).unwrap().as_str();
+        let html = self.process_quiz(chapter_dir, quiz_path)?;
+        Ok((range, html))
+      })
+      .collect::<Result<Vec<_>>>()?;
+
+    if !replacements.is_empty() {
+      for (range, html) in replacements.into_iter().rev() {
+        chapter.content.replace_range(range, &html);
+      }
+
+      chapter.content.push_str(&self.epilogue);
     }
-
-    let mut new_content = String::new();
-    cmark(new_events.into_iter(), &mut new_content)?;
-    new_content.push_str(&self.epilogue);
-
-    chapter.content = new_content;
 
     Ok(())
   }
@@ -221,5 +211,74 @@ impl Preprocessor for QuizProcessor {
 
   fn supports_renderer(&self, renderer: &str) -> bool {
     renderer != "not-supported"
+  }
+}
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use mdbook::{book::load_book, config::BuildConfig, preprocess::CmdPreprocessor};
+  use tempfile::tempdir;
+
+  #[test]
+  fn test_quiz_generator() -> Result<()> {
+    let dir = tempdir()?.into_path();
+    assert!(Command::new("mdbook")
+      .args(["init", "--ignore", "none", "--title", "test"])
+      .current_dir(&dir)
+      .status()?
+      .success());
+
+    let quiz_path = dir.join("quiz.toml");
+    fs::write(
+      &quiz_path,
+      r#"
+    [[questions]]
+    type = "ShortAnswer"
+    prompt.prompt = "Hello world"
+    answer.answer = "No"
+    "#,
+    )?;
+
+    let chapter_path = dir.join("src").join("chapter_1.md");
+    fs::write(
+      &chapter_path,
+      r#"
+    *Hello world!* 
+    
+    {{#quiz ../quiz.toml}}
+    "#,
+    )?;
+
+    let book = load_book(dir.join("src"), &BuildConfig::default())?;
+    let json = serde_json::json!(
+      [
+        {
+          "root": dir.display().to_string(),
+          "config": {
+            "preprocessor": {
+              "quiz": {}
+            },
+          },
+          "renderer": "html",
+          "mdbook_version": "0.1.0"
+        },
+        serde_json::to_value(&book)?
+      ]
+    );
+    let json_str = serde_json::to_string(&json)?;
+
+    let preprocessor = QuizProcessor;
+    let (ctx, book) = CmdPreprocessor::parse_input(json_str.as_bytes())?;
+    let mut book = preprocessor.run(&ctx, book)?;
+
+    let contents = match book.sections.remove(0) {
+      BookItem::Chapter(chapter) => chapter.content,
+      _ => unreachable!(),
+    };
+    assert!(!contents.contains("{{#quiz"));
+    assert!(contents.contains("<script"));
+
+    Ok(())
   }
 }
