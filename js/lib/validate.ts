@@ -52,11 +52,12 @@ export class Validator {
   }
 
   async validate(input: string, quizPath: string): Promise<string | undefined> {
-    let quiz = toml.parse(input);
+    let quiz;
     try {
+      quiz = toml.parse(input);
       await this.validator(quiz);
     } catch (err: any) {
-      if (err instanceof Ajv.ValidationError) {
+      if (quiz && err instanceof Ajv.ValidationError) {
         let formattedErrors = betterAjvErrors(
           this.schema,
           quiz,

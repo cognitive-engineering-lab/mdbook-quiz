@@ -1,8 +1,7 @@
 use std::{
   fs,
-  io::Write,
   path::{Path, PathBuf},
-  process::{Command, Stdio},
+  process::Command,
 };
 
 use anyhow::{bail, Context, Result};
@@ -88,7 +87,7 @@ impl<'a> QuizProcessorRef<'a> {
   fn validate_quiz(&self, path: impl AsRef<Path>) -> Result<()> {
     let path = path.as_ref();
     let validator_path = self.config.js_dir.join("validator.js");
-    let mut status = Command::new("node")
+    let status = Command::new("node")
       .arg(validator_path)
       .arg(path)
       .status()?;
