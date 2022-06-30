@@ -1,9 +1,11 @@
 import { cli, copyPlugin } from "@nota-lang/esbuild-utils";
 import { sassPlugin } from "esbuild-sass-plugin";
-import * as tsSchema from "ts-json-schema-generator";
-import { SchemaGenerator } from "ts-json-schema-generator";
 import fs from "fs/promises";
 import path from "path";
+import * as tsSchema from "ts-json-schema-generator";
+import { AliasType } from "ts-json-schema-generator";
+import { DefinitionType } from "ts-json-schema-generator";
+import { SchemaGenerator } from "ts-json-schema-generator";
 
 // Ensures that "format": "markdown" is added to Markdown types
 class MarkdownFormatter {
@@ -11,7 +13,7 @@ class MarkdownFormatter {
     return type.getName() == "Markdown";
   }
 
-  getDefinition(type) {
+  getDefinition(_type) {
     return {
       type: "string",
       format: "markdown",
@@ -23,21 +25,52 @@ class MarkdownFormatter {
   }
 }
 
+class QuestionFormatter {
+  constructor(childTypeFormatter) {
+    this.childTypeFormatter = childTypeFormatter;
+  }
+
+  supportsType(type) {
+    return (
+      type instanceof DefinitionType &&
+      type.type instanceof AliasType &&
+      type.type.type instanceof DefinitionType &&
+      type.type.type.name.startsWith("QuestionFields")
+    );
+  }
+
+  getDefinition(type) {
+    return {
+      $ref: `#/definitions/${type.type.type.name}`,
+      questionType: type.name,
+    };
+  }
+
+  getChildren(type) {
+    return this.childTypeFormatter.getChildren(type.getType());
+  }
+}
+
 async function generateSchemas() {
   await fs.mkdir("dist", { recursive: true });
 
   let config = {
     tsconfig: "tsconfig.json",
   };
-  let formatter = tsSchema.createFormatter(config, (fmt) =>
-    fmt.addTypeFormatter(new MarkdownFormatter())
-  );
+  let formatter = tsSchema.createFormatter(config, (fmt, circularReferenceTypeFormatter) => {
+    fmt.addTypeFormatter(new MarkdownFormatter());
+    fmt.addTypeFormatter(new QuestionFormatter(circularReferenceTypeFormatter));
+  });
   let program = tsSchema.createProgram(config);
   let parser = tsSchema.createParser(program, config);
   let generator = new SchemaGenerator(program, parser, formatter);
   let schema = generator.createSchema("Quiz");
+  Object.keys(schema.definitions).forEach(k => {
+    schema.definitions[k].$async = true;
+  });
+  schema.$async = true;
   let outPath = path.join("dist", "Quiz.schema.json");
-  await fs.writeFile(outPath, JSON.stringify(schema));
+  await fs.writeFile(outPath, JSON.stringify(schema, null, 2));
 }
 
 async function main() {

@@ -85,37 +85,32 @@ impl<'a> QuizProcessorRef<'a> {
     Ok(())
   }
 
-  fn validate_quiz(&self, path: &Path, contents: &str) -> Result<()> {
+  fn validate_quiz(&self, path: impl AsRef<Path>) -> Result<()> {
+    let path = path.as_ref();
     let validator_path = self.config.js_dir.join("validator.js");
-    let mut validator_process = Command::new("node")
+    let mut status = Command::new("node")
       .arg(validator_path)
-      .stdin(Stdio::piped())
-      .spawn()?;
-
-    let mut validator_stdin = validator_process.stdin.take().unwrap();
-    validator_stdin.write_all(contents.as_bytes())?;
-    drop(validator_stdin);
-
-    let status = validator_process.wait()?;
+      .arg(path)
+      .status()?;
     if !status.success() {
       bail!("Validation failed for quiz: {}", path.display());
+    } else {
+      Ok(())
     }
-
-    Ok(())
   }
 
   fn process_quiz(&self, chapter_dir: &Path, quiz_path: &str) -> Result<String> {
     let quiz_path_rel = Path::new(quiz_path);
     let quiz_path_abs = chapter_dir.join(quiz_path_rel);
 
+    if let Some(true) = self.config.validate {
+      self.validate_quiz(&quiz_path_abs)?;
+    }
+
     let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
 
     let content_toml = std::fs::read_to_string(&quiz_path_abs)
       .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
-
-    if let Some(true) = self.config.validate {
-      self.validate_quiz(quiz_path_rel, &content_toml)?;
-    }
 
     let content = content_toml.parse::<toml::Value>()?;
     let content_json = serde_json::to_string(&content)?;

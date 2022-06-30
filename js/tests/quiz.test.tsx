@@ -129,7 +129,6 @@ describe("Quiz logger", () => {
     await waitFor(() => screen.getByText("Quiz"));
 
     await user.click(startButton());
-    let input = await waitFor(() => screen.getByRole("textbox"));
     await user.click(bugButton());
 
     let feedback = screen.getByRole("textbox", { name: "Bug feedback" });

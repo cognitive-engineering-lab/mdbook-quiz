@@ -30,6 +30,8 @@ export interface QuestionMethods<Prompt, Answer> {
   AnswerView: React.FC<{ answer: Answer; baseline: Answer; prompt: Prompt }>;
 
   compareAnswers?(providedAnswer: Answer, userAnswer: Answer): boolean;
+
+  validate?(prompt: Prompt, answer: Answer): boolean;
 }
 
 export let defaultComparator = _.isEqual;

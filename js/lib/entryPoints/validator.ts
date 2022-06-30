@@ -1,21 +1,16 @@
+import fs from "fs/promises";
+
 import { Validator } from "../validate";
 
-let main = () => {
-  process.stdin.resume();
-  process.stdin.setEncoding("ascii");
-
-  let input = "";
-  process.stdin.on("data", chunk => {
-    input += chunk;
-  });
-  process.stdin.on("end", async () => {
-    let validator = await Validator.load(__dirname);
-    let errors = validator.validate(input);
-    if (errors) {
-      console.error(errors);
-      process.exit(1);
-    }
-  });
+let main = async () => {
+  let quizPath = process.argv[2];
+  let validator = await Validator.load(__dirname);
+  let contents = await fs.readFile(quizPath, "utf-8");
+  let errors = await validator.validate(contents, quizPath);
+  if (errors) {
+    console.error(errors);
+    process.exit(1);
+  }
 };
 
 main();

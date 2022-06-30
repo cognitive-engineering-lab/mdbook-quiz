@@ -33,7 +33,9 @@ export let snippetToHtml = (snippet: string): string => {
   snippet = snippet.trim(); // allow quiz authors to have leading/trailing whitespace
   let highlighted: string = hljs.highlight("rust", snippet).value;
   let lines = splitHljsOutput(highlighted);
-  let wrapped = lines.map(line => `<code class="language-rust">${line}</code>`).join("\n");
+  let wrapped = lines
+    .map(line => `<span class="line-number"></span><code>${line}</code>`)
+    .join("\n");
   return `<pre>${wrapped}</pre>`;
 };
 

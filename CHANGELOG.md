@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Users can report bugs in specific questions.
 - User's answers are saved to localStorage.
+- Tracing questions have their programs validated.
 
 ### Fixed
 - TOML parsing errors in validation are now human-readable.
