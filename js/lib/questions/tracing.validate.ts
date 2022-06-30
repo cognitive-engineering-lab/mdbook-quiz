@@ -25,7 +25,7 @@ let indentString = (s: string, indent: number): string => {
 };
 
 export let validateTracing: Validator<TracingPrompt, TracingAnswer> = async (prompt, answer) => {
-  let dir = await fs.mkdtemp(os.tmpdir());
+  let dir = await fs.mkdtemp(path.join(os.tmpdir(), "mdbook-quiz-"));
   let inner = async () => {
     let inputPath = path.join(dir, "main.rs");
     await fs.writeFile(inputPath, prompt.program);
