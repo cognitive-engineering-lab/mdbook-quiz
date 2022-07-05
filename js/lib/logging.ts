@@ -10,6 +10,7 @@ export interface BaseLog {
   quizName: string;
   host: string;
   timestamp: number;
+  commitHash?: string;
 }
 
 export type AnswersLog = BaseLog & {
@@ -26,6 +27,7 @@ export class Logger {
     private endpoint: string,
     private quizName: string,
     private quiz: Quiz,
+    private commitHash?: string,
     private user?: string
   ) {}
 
@@ -35,14 +37,14 @@ export class Logger {
       return;
     }
 
-    let fullLog = {
+    let baseLog: BaseLog = {
       timestamp: new Date().getTime(),
       host,
       quizName: this.quizName,
       user: this.user,
-      ...log,
+      commitHash: this.commitHash,
     };
-    axios.post(this.endpoint + "/" + path, fullLog);
+    axios.post(this.endpoint + "/" + path, { ...baseLog, ...log });
   }
 
   logAnswers(answers: any[]) {

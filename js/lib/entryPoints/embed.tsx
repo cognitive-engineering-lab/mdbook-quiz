@@ -17,6 +17,7 @@ document.querySelectorAll(".quiz-placeholder").forEach(el => {
   let quiz: Quiz = JSON.parse(divEl.dataset.quizQuestions!);
   let root = ReactDOM.createRoot(el);
   let logEndpoint = divEl.dataset.quizLogEndpoint;
+  let commitHash = divEl.dataset.quizCommitHash;
   let fullscreen = divEl.dataset.quizFullscreen !== undefined;
   let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
   root.render(
@@ -27,6 +28,7 @@ document.querySelectorAll(".quiz-placeholder").forEach(el => {
       logEndpoint={logEndpoint}
       fullscreen={fullscreen}
       cacheAnswers={cacheAnswers}
+      commitHash={commitHash}
     />
   );
 });

@@ -102,9 +102,17 @@ describe("Quiz logger", () => {
       expect(log.quizName).toBe("the-quiz");
       expect(log.answers).toStrictEqual([{ answer: "No", correct: false }]);
       expect(log.host).toBe("localhost");
+      expect(log.commitHash).toBe("foobar");
     });
 
-    render(<QuizView name="the-quiz" quiz={quiz} logEndpoint="http://localhost:8080" />);
+    render(
+      <QuizView
+        name="the-quiz"
+        quiz={quiz}
+        logEndpoint="http://localhost:8080"
+        commitHash="foobar"
+      />
+    );
     await waitFor(() => screen.getByText("Quiz"));
 
     await user.click(startButton());

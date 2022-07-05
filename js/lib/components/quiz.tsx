@@ -18,12 +18,13 @@ export interface QuizViewProps {
   logEndpoint?: string;
   fullscreen?: boolean;
   cacheAnswers?: boolean;
+  commitHash?: string;
 }
 
 let quizAnswersStorageKey = (name: string): string => `quizAnswers:${name}`;
 
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({ quiz, user, name, logEndpoint, fullscreen, cacheAnswers }) => {
+  ({ quiz, user, name, logEndpoint, fullscreen, cacheAnswers, commitHash }) => {
     let state = useLocalObservable<{
       started: boolean;
       index: number;
@@ -40,7 +41,9 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         return { started: false, index: 0, answers: [] };
       }
     });
-    let [logger] = useState(() => (logEndpoint ? new Logger(logEndpoint, name, quiz, user) : null));
+    let [logger] = useState(() =>
+      logEndpoint ? new Logger(logEndpoint, name, quiz, commitHash, user) : null
+    );
 
     let n = quiz.questions.length;
     let ended = state.index == n;

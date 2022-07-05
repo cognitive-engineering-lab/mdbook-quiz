@@ -32,6 +32,9 @@ pub struct QuizConfig {
   /// URL where quiz results are anonymously logged.
   log_endpoint: Option<String>,
 
+  /// Commit hash to include with logs
+  commit_hash: Option<String>,
+
   /// DO NOT USE
   consent: Option<bool>,
 }
@@ -134,6 +137,9 @@ impl<'a> QuizProcessorRef<'a> {
     if let Some(true) = self.config.cache_answers {
       add_data("quiz-cache-answers", "");
     }
+    if let Some(commit_hash) = &self.config.commit_hash {
+      add_data("quiz-commit-hash", commit_hash);
+    }
 
     html.push_str("></div>");
 
@@ -179,16 +185,36 @@ impl Preprocessor for QuizProcessor {
   fn run(&self, ctx: &PreprocessorContext, mut book: Book) -> Result<Book> {
     let config_toml = ctx.config.get_preprocessor(self.name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
+
+    let js_dir = match config_toml.get("js-dir") {
+      Some(dir) => dir.as_str().unwrap().into(),
+      None => PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("js")
+        .join("dist"),
+    };
+
+    let log_endpoint = config_toml
+      .get("log-endpoint")
+      .map(|value| value.as_str().unwrap().to_owned());
+
+    let commit_hash = match config_toml.get("commit-hash") {
+      Some(hash) => Some(hash.as_str().unwrap().into()),
+      None => {
+        let output = Command::new("git").args(["rev-parse", "HEAD"]).output();
+        match output {
+          Ok(output) => Some(String::from_utf8(output.stdout)?),
+          Err(e) => {
+            eprintln!("Could not get commit-hash, git failed with error: {e}");
+            None
+          }
+        }
+      }
+    };
+
     let config = QuizConfig {
-      js_dir: match config_toml.get("js-dir") {
-        Some(dir) => dir.as_str().unwrap().into(),
-        None => PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-          .join("js")
-          .join("dist"),
-      },
-      log_endpoint: config_toml
-        .get("log-endpoint")
-        .map(|value| value.as_str().unwrap().to_owned()),
+      js_dir,
+      log_endpoint,
+      commit_hash,
       fullscreen: parse_bool("fullscreen"),
       consent: parse_bool("consent"),
       validate: parse_bool("validate"),
