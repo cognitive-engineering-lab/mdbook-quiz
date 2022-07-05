@@ -99,12 +99,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
               <h3>Answer Review</h3>
               {quiz.questions.map((question, i) => (
                 <div className="answer-wrapper" key={i}>
-                  <AnswerView
-                    key={i}
-                    index={i + 1}
-                    question={question}
-                    userAnswer={state.answers[i]}
-                  />
+                  <AnswerView index={i + 1} question={question} userAnswer={state.answers[i]} />
                 </div>
               ))}
             </>

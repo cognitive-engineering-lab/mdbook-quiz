@@ -1,5 +1,6 @@
 import cp from "child_process";
 import fs from "fs/promises";
+import _ from "lodash";
 import os from "os";
 import path from "path";
 import util from "util";
@@ -31,7 +32,7 @@ export let validateTracing: Validator<TracingPrompt, TracingAnswer> = async (pro
     await fs.writeFile(inputPath, prompt.program);
 
     try {
-      await exec(`rustc ${inputPath} --error-format=json`, { cwd: dir });
+      await exec(`rustc ${inputPath} -A warnings --error-format=json`, { cwd: dir });
       if (!answer.doesCompile) {
         return "Program should NOT compile, but DOES.";
       }
@@ -54,7 +55,23 @@ ${indentString(answer.stdout!, 2)}
           "Program SHOULD compile, but does NOT. Errors are:",
           ...errors.map(error => indentString(error.message, 2)),
         ].join("\n");
+        return message;
+      }
 
+      let anyErrorHasLine = _.some(errors, error =>
+        _.some(error.spans, span => span.line_start == answer.lineNumber)
+      );
+      if (!anyErrorHasLine) {
+        let message = [
+          `Provided lineNumber is ${answer.lineNumber}, but no error had that line number. Errors are:`,
+          ...errors.map(error =>
+            indentString(
+              error.message +
+                ` [${error.spans.map(span => `${span.line_start}-${span.line_end}`).join(", ")}]`,
+              2
+            )
+          ),
+        ].join("\n");
         return message;
       }
     }
