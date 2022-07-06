@@ -1,31 +1,37 @@
 import React from "react";
 
-let splitHljsOutput = (html: string): string[] => {
+let splitHljsOutput = (html: string): Node[] => {
   let parser = new DOMParser();
   let dom = parser.parseFromString(html, "text/html");
-  let lines: string[][] = [[]];
+  let lines: Node[][] = [[]];
   let curLine = () => lines[lines.length - 1];
   dom.body.childNodes.forEach(child => {
     if (child.nodeType == Node.TEXT_NODE) {
       let content = child.textContent!;
       let childLines = content.split("\n");
       if (childLines.length > 1) {
-        curLine().push(childLines[0]);
+        curLine().push(document.createTextNode(childLines[0]));
 
         childLines.slice(1, -1).forEach(childLine => {
-          lines.push([childLine]);
+          lines.push([document.createTextNode(childLine)]);
         });
 
-        lines.push([childLines[childLines.length - 1]]);
+        lines.push([document.createTextNode(childLines[childLines.length - 1])]);
       } else {
-        curLine().push(content);
+        curLine().push(document.createTextNode(content));
       }
     } else {
-      curLine().push((child as any).outerHTML);
+      curLine().push(child);
     }
   });
 
-  return lines.map(line => line.join(""));
+  return lines.map(line => {
+    let span = document.createElement("span");
+    line.forEach(node => {
+      span.appendChild(node);
+    });
+    return span;
+  });
 };
 
 export let snippetToHtml = (snippet: string): string => {
@@ -34,9 +40,19 @@ export let snippetToHtml = (snippet: string): string => {
   let highlighted: string = hljs.highlight("rust", snippet).value;
   let lines = splitHljsOutput(highlighted);
   let wrapped = lines
-    .map(line => `<span class="line-number"></span><code>${line}</code>`)
-    .join("\n");
-  return `<pre>${wrapped}</pre>`;
+    .map(line => {
+      let codeEl = document.createElement("code");
+      codeEl.appendChild(line);
+      let numEl = document.createElement("span");
+      numEl.className = "line-number";
+      return [numEl, codeEl];
+    })
+    .flat();
+  let pre = document.createElement("pre");
+  wrapped.forEach(node => {
+    pre.appendChild(node);
+  });
+  return pre.outerHTML;
 };
 
 export let Snippet: React.FC<{ snippet: string }> = ({ snippet }) => {
