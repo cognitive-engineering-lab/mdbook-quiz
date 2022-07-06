@@ -10,6 +10,7 @@ export interface BaseLog {
   quizName: string;
   host: string;
   timestamp: number;
+  quizHash: string;
   commitHash?: string;
 }
 
@@ -27,6 +28,7 @@ export class Logger {
     private endpoint: string,
     private quizName: string,
     private quiz: Quiz,
+    private quizHash: string,
     private commitHash?: string,
     private user?: string
   ) {}
@@ -41,6 +43,7 @@ export class Logger {
       timestamp: new Date().getTime(),
       host,
       quizName: this.quizName,
+      quizHash: this.quizHash,
       user: this.user,
       commitHash: this.commitHash,
     };

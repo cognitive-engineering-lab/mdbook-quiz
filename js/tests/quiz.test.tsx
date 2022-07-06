@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import http from "http";
+import hash from "object-hash";
 import React from "react";
 
 import { Quiz, QuizView } from "../lib/components/quiz";
@@ -45,7 +46,7 @@ describe("Quiz", () => {
 
 describe("Quiz configuration", () => {
   it("can cache answers", async () => {
-    let { rerender } = render(<QuizView name="the-quiz" quiz={quiz} cacheAnswers={true} />);
+    let { rerender } = render(<QuizView key={0} name="the-quiz" quiz={quiz} cacheAnswers={true} />);
     await waitFor(() => screen.getByText("Quiz"));
     await user.click(startButton());
     await waitFor(() => screen.getByText("Question 1"));
@@ -55,8 +56,13 @@ describe("Quiz configuration", () => {
     await waitFor(() => screen.getByText("Answer Review"));
 
     // After rerendering the component, we should still be at the Answer Review
-    rerender(<QuizView name="the-quiz" quiz={quiz} cacheAnswers={true} />);
+    rerender(<QuizView key={1} name="the-quiz" quiz={quiz} cacheAnswers={true} />);
     await waitFor(() => screen.getByText("Answer Review"));
+
+    // But if the quiz changes, then the answers should be invalidated
+    let newQuiz = { questions: [...quiz.questions, ...quiz.questions] };
+    rerender(<QuizView key={2} name="the-quiz" quiz={newQuiz} cacheAnswers={true} />);
+    await waitFor(() => startButton());
   });
 });
 
@@ -103,6 +109,7 @@ describe("Quiz logger", () => {
       expect(log.answers).toStrictEqual([{ answer: "No", correct: false }]);
       expect(log.host).toBe("localhost");
       expect(log.commitHash).toBe("foobar");
+      expect(log.quizHash).toBe(hash.MD5(quiz));
     });
 
     render(

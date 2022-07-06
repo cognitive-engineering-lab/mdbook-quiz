@@ -2,6 +2,7 @@ import classNames from "classnames";
 import _ from "lodash";
 import { action } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
+import hash from "object-hash";
 import React, { useEffect, useState } from "react";
 
 import { Logger, LoggerContext } from "../logging";
@@ -21,28 +22,57 @@ export interface QuizViewProps {
   commitHash?: string;
 }
 
-let quizAnswersStorageKey = (name: string): string => `quizAnswers:${name}`;
+interface StoredAnswers {
+  answers: any[];
+  quizHash: string;
+}
+class AnswerStorage {
+  constructor(readonly quizName: string, readonly quizHash: string) {}
+
+  storageKey = () => `quizAnswers:${this.quizName}`;
+
+  save(answers: any[]) {
+    let storedAnswers: StoredAnswers = {
+      answers,
+      quizHash: this.quizHash,
+    };
+    localStorage.setItem(this.storageKey(), JSON.stringify(storedAnswers));
+  }
+
+  load(): any[] | undefined {
+    let storedAnswersJson = localStorage.getItem(this.storageKey());
+    if (storedAnswersJson) {
+      let storedAnswers: StoredAnswers = JSON.parse(storedAnswersJson);
+      if (storedAnswers.quizHash == this.quizHash) {
+        return storedAnswers.answers;
+      }
+    }
+  }
+}
 
 export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, user, name, logEndpoint, fullscreen, cacheAnswers, commitHash }) => {
+    let [quizHash] = useState(() => hash.MD5(quiz));
+    let answerStorage = new AnswerStorage(name, quizHash);
     let state = useLocalObservable<{
       started: boolean;
       index: number;
       answers: any[];
     }>(() => {
-      let answers = localStorage.getItem(quizAnswersStorageKey(name));
-      if (cacheAnswers && answers !== null) {
+      let answers = answerStorage.load();
+      if (cacheAnswers && answers !== undefined) {
         return {
           started: true,
           index: quiz.questions.length,
-          answers: JSON.parse(answers),
+          answers,
         };
       } else {
         return { started: false, index: 0, answers: [] };
       }
     });
+
     let [logger] = useState(() =>
-      logEndpoint ? new Logger(logEndpoint, name, quiz, commitHash, user) : null
+      logEndpoint ? new Logger(logEndpoint, name, quiz, quizHash, commitHash, user) : null
     );
 
     let n = quiz.questions.length;
@@ -90,7 +120,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       logger?.logAnswers(state.answers);
 
       if (cacheAnswers && state.index == n) {
-        localStorage.setItem(quizAnswersStorageKey(name), JSON.stringify(state.answers));
+        answerStorage.save(state.answers);
       }
     });
 

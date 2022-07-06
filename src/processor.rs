@@ -1,5 +1,5 @@
 use std::{
-  fs,
+  env, fs,
   path::{Path, PathBuf},
   process::Command,
 };
@@ -37,6 +37,8 @@ pub struct QuizConfig {
 
   /// DO NOT USE
   consent: Option<bool>,
+
+  dev_mode: bool,
 }
 
 pub struct QuizProcessor;
@@ -63,12 +65,15 @@ impl<'a> QuizProcessorRef<'a> {
     fs::create_dir_all(&target_dir)?;
 
     let mut files = vec!["embed.js", "embed.css"];
+    if self.config.dev_mode {
+      files.extend(["embed.js.map", "embed.css.map"]);
+    }
     if let Some(true) = self.config.consent {
       files.extend(["consent.js", "consent.css"]);
     }
 
     for file in &files {
-      let src = self.config.js_dir.join(file);
+      let src = self.config.js_dir.join(file).canonicalize()?;
       fs::copy(src, target_dir.join(file))?;
     }
 
@@ -219,6 +224,7 @@ impl Preprocessor for QuizProcessor {
       consent: parse_bool("consent"),
       validate: parse_bool("validate"),
       cache_answers: parse_bool("cache-answers"),
+      dev_mode: env::var("QUIZ_DEV_MODE").is_ok(),
     };
 
     let mut processor = QuizProcessorRef {
