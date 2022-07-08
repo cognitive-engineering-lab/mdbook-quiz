@@ -10,7 +10,15 @@ let highlightExtension: ShowdownExtension = {
     let document = parser.parseFromString(text, "text/html");
     let snippets = document.querySelectorAll("pre > code");
     snippets.forEach(node => {
-      let html = snippetToHtml(node.textContent!);
+      let language = undefined;
+      node.classList.forEach(cls => {
+        let prefix = "language-";
+        if (cls.startsWith(prefix)) {
+          language = cls.slice(prefix.length);
+        }
+      });
+
+      let html = snippetToHtml(node.textContent!, language);
       let snippetDoc = parser.parseFromString(html, "text/html");
       let pre = node.parentNode as HTMLPreElement;
       pre.replaceWith(snippetDoc.body.firstChild!);

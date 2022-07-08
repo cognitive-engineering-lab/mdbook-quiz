@@ -34,10 +34,10 @@ let splitHljsOutput = (html: string): Node[] => {
   });
 };
 
-export let snippetToHtml = (snippet: string): string => {
+export let snippetToHtml = (snippet: string, language?: string): string => {
   let hljs = (window as any).hljs;
   snippet = snippet.trim(); // allow quiz authors to have leading/trailing whitespace
-  let highlighted: string = hljs.highlight("rust", snippet).value;
+  let highlighted: string = hljs.highlight(language || "rust", snippet).value;
   let lines = splitHljsOutput(highlighted);
   let wrapped = lines
     .map(line => {

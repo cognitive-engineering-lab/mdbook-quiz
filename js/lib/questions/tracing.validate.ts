@@ -39,7 +39,7 @@ export let validateTracing: Validator<TracingPrompt, TracingAnswer> = async (pro
 
       let { stdout } = await exec("./main", { cwd: dir });
       stdout = stdout.trim();
-      if (stdout != answer.stdout) {
+      if (!answer.stdout || stdout != answer.stdout!.trim()) {
         let message = `
 Actual stdout is not expected stdout. Actual:
 ${indentString(stdout, 2)}

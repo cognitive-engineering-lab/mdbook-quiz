@@ -231,9 +231,13 @@ $error-color: #e16969;
   }
 
   .multiple-choice {
-    .md-flex {
+    .choice {
       display: flex;
       gap: 10px;
+
+      &:not(:last-child) {
+        margin-bottom: 0.5em;
+      }
     }
 
     input[type="radio"] {

@@ -31,7 +31,7 @@ export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, Multiple
       {prompt.choices.map((choice, i) => {
         let id = `answer${i}`;
         return (
-          <div className="md-flex" key={i}>
+          <div className="choice" key={i}>
             <input type="radio" {...required("answer")} value={i} id={id} />
             <label htmlFor={id}>
               <MarkdownView markdown={choice} />

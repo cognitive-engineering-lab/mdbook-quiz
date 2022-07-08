@@ -21,7 +21,6 @@ let initQuizzes = () => {
     let commitHash = divEl.dataset.quizCommitHash;
     let fullscreen = divEl.dataset.quizFullscreen !== undefined;
     let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
-    console.log(quiz);
     root.render(
       <QuizView
         name={name}
