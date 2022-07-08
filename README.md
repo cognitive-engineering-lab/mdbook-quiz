@@ -1,6 +1,5 @@
 # mdbook-quiz: interactive quizzes for Markdown
 
-
 [![tests](https://github.com/willcrichton/mdbook-quiz/actions/workflows/main.yml/badge.svg)](https://github.com/willcrichton/mdbook-quiz/actions/workflows/main.yml)
 [![crates.io](https://img.shields.io/crates/v/mdbook-quiz.svg)](https://crates.io/crates/mdbook-quiz)
 
@@ -8,7 +7,7 @@ _[live demo](https://willcrichton.net/mdbook-quiz/)_
 
 This repository provides an [mdBook](https://github.com/rust-lang/mdBook) [preprocessor](https://rust-lang.github.io/mdBook/format/configuration/preprocessors.html) that allows you to add interactive quizzes to your Markdown books. A quiz looks like this:
 
-![Screen Shot 2022-06-27 at 11 46 52 AM](https://user-images.githubusercontent.com/663326/176013623-249b0d71-ad59-4926-8067-4a8e767a4ab8.png)
+<img width="521" alt="Screenshot of mdbook-quiz embedded in a web page" src="https://user-images.githubusercontent.com/663326/178065062-73542533-a1d7-479e-975b-cb0bf03658b2.png">
 
 Table of contents:
  * [Installation](#installation)
@@ -32,17 +31,17 @@ Table of contents:
 cargo install mdbook-quiz
 ```
 
-Note: this tool is under active development. This repository uses semantic versioning, so I recommend pinning to a specific version to avoid breakage, e.g. by running
+Note: this tool is under active development. I recommend pinning to a specific version to avoid breakage, e.g. by running
 
 ```
 cargo install mdbook-quiz --version <YOUR_VERSION>
 ```
 
-And you can check your version by running `mdbook-quiz -V`.
+And you can check your version by running `mdbook-quiz -V`. This repository uses semantic versioning for the quiz data format, so your quizzes should not break if you update to a more recent patch.
 
 ### From source
 
-You need Cargo and pnpm installed. Then run:
+You need Cargo and [pnpm](https://pnpm.io/) installed. Then run:
 
 ```
 git clone https://github.com/willcrichton/mdbook-quiz
@@ -84,6 +83,20 @@ Then `mdbook build` should correctly embed the quiz.
 > Note: due to limitations of mdBook (see [mdBook#1087](https://github.com/rust-lang/mdBook/issues/1087)), the `mdbook-quiz` preprocessor will copy files into your book's source directory under a subdirectory named `mdbook-quiz`. I recommend adding this directory to your `.gitignore`.
 
 ## Quiz schema
+
+A quiz is an array of questions.
+
+```ts
+export interface Quiz {
+  questions: Question[];
+}
+```
+
+A question is one of a set of predefined question types.
+
+```
+export type Question = ShortAnswer | Tracing | MultipleChoice;
+```
 
 Each question type is an instantiation of this Typescript interface:
 
@@ -232,3 +245,4 @@ You can configure mdbook-quiz by adding options to the `[preprocessor.quiz]` sec
 
 * `validate` (boolean): If true, then mdbook-quiz will validate your quiz TOML files using the validator.js script installed with mdbook-quiz. You must have NodeJS installed on your machine and PATH for this to work.
 * `fullscreen` (boolean): If true, then a quiz will take up the web page's full screen during use.
+* `cache-answers` (boolean): If true, then the user's answers will be saved in their browser's `localStorage`. Then the quiz will show the user's answers even after they reload the page.
