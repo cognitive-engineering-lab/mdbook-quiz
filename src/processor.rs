@@ -140,7 +140,9 @@ impl<'a> QuizProcessorRef<'a> {
       add_data("quiz-fullscreen", "");
     }
     if let Some(true) = self.config.cache_answers {
-      add_data("quiz-cache-answers", "");
+      if !self.config.dev_mode {
+        add_data("quiz-cache-answers", "");
+      }
     }
     if let Some(commit_hash) = &self.config.commit_hash {
       add_data("quiz-commit-hash", commit_hash);
