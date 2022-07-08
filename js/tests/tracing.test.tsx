@@ -57,6 +57,9 @@ describe("Tracing", () => {
     await user.type(input, "foobar");
     await user.click(submitButton());
 
-    expect(submitted).toStrictEqual({ doesCompile: true, stdout: "foobar" });
+    expect(submitted).toStrictEqual({
+      answer: { doesCompile: true, stdout: "foobar" },
+      correct: false,
+    });
   });
 });

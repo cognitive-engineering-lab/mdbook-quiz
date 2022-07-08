@@ -106,7 +106,7 @@ describe("Quiz logger", () => {
       expect(req.url).toBe("/answers");
 
       expect(log.quizName).toBe("the-quiz");
-      expect(log.answers).toStrictEqual([{ answer: "No", correct: false }]);
+      expect(log.answers).toStrictEqual([{ answer: { answer: "No" }, correct: false }]);
       expect(log.host).toBe("localhost");
       expect(log.commitHash).toBe("foobar");
       expect(log.quizHash).toBe(hash.MD5(quiz));

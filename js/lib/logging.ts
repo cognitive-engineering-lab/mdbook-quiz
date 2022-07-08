@@ -2,8 +2,7 @@ import axios from "axios";
 import React from "react";
 
 import { Quiz } from "./components/quiz";
-import { getQuestionMethods } from "./questions/mod";
-import { defaultComparator } from "./questions/types";
+import { TaggedAnswer } from "./questions/mod";
 
 export interface BaseLog {
   user?: string;
@@ -15,7 +14,7 @@ export interface BaseLog {
 }
 
 export type AnswersLog = BaseLog & {
-  answers: any[];
+  answers: TaggedAnswer[];
 };
 
 export type BugLog = BaseLog & {
@@ -50,15 +49,7 @@ export class Logger {
     axios.post(this.endpoint + "/" + path, { ...baseLog, ...log });
   }
 
-  logAnswers(answers: any[]) {
-    answers = answers.map((answer, i) => {
-      // Save whether the answer was correct into the log
-      let question = this.quiz.questions[i];
-      let methods = getQuestionMethods(question.type);
-      let comparator = methods.compareAnswers || defaultComparator;
-      let correct = comparator(answer, question.answer);
-      return { ...answer, correct };
-    });
+  logAnswers(answers: TaggedAnswer[]) {
     this.log({ answers }, "answers");
   }
 

@@ -6,7 +6,7 @@ import hash from "object-hash";
 import React, { useEffect, useState } from "react";
 
 import { Logger, LoggerContext } from "../logging";
-import { AnswerView, Question, QuestionView } from "../questions/mod";
+import { AnswerView, Question, QuestionView, TaggedAnswer } from "../questions/mod";
 
 export interface Quiz {
   questions: Question[];
@@ -23,28 +23,31 @@ export interface QuizViewProps {
 }
 
 interface StoredAnswers {
-  answers: any[];
+  answers: TaggedAnswer[];
+  confirmedDone: boolean;
   quizHash: string;
 }
+
 class AnswerStorage {
   constructor(readonly quizName: string, readonly quizHash: string) {}
 
-  storageKey = () => `quizAnswers:${this.quizName}`;
+  storageKey = () => `mdbook-quiz:${this.quizName}`;
 
-  save(answers: any[]) {
+  save(answers: TaggedAnswer[], confirmedDone: boolean) {
     let storedAnswers: StoredAnswers = {
       answers,
+      confirmedDone,
       quizHash: this.quizHash,
     };
     localStorage.setItem(this.storageKey(), JSON.stringify(storedAnswers));
   }
 
-  load(): any[] | undefined {
+  load(): StoredAnswers | undefined {
     let storedAnswersJson = localStorage.getItem(this.storageKey());
     if (storedAnswersJson) {
       let storedAnswers: StoredAnswers = JSON.parse(storedAnswersJson);
       if (storedAnswers.quizHash == this.quizHash) {
-        return storedAnswers.answers;
+        return storedAnswers;
       }
     }
   }
@@ -57,17 +60,19 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let state = useLocalObservable<{
       started: boolean;
       index: number;
-      answers: any[];
+      confirmedDone: boolean;
+      answers: TaggedAnswer[];
     }>(() => {
-      let answers = answerStorage.load();
-      if (cacheAnswers && answers !== undefined) {
+      let stored = answerStorage.load();
+      if (cacheAnswers && stored) {
         return {
           started: true,
           index: quiz.questions.length,
-          answers,
+          answers: stored.answers,
+          confirmedDone: stored.confirmedDone,
         };
       } else {
-        return { started: false, index: 0, answers: [] };
+        return { started: false, index: 0, confirmedDone: false, answers: [] };
       }
     });
 
@@ -76,6 +81,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     );
 
     let n = quiz.questions.length;
+    let nCorrect = state.answers.filter(a => a.correct).length;
     let ended = state.index == n;
     let showFullscreen = fullscreen && state.started && !ended;
 
@@ -119,8 +125,14 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       state.index += 1;
       logger?.logAnswers(state.answers);
 
-      if (cacheAnswers && state.index == n) {
-        answerStorage.save(state.answers);
+      if (state.index == n) {
+        if (_.every(state.answers, a => a.correct)) {
+          state.confirmedDone = true;
+        }
+
+        if (cacheAnswers) {
+          answerStorage.save(state.answers, state.confirmedDone);
+        }
       }
     });
 
@@ -130,11 +142,49 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           ended ? (
             <>
               <h3>Answer Review</h3>
-              {quiz.questions.map((question, i) => (
-                <div className="answer-wrapper" key={i}>
-                  <AnswerView index={i + 1} question={question} userAnswer={state.answers[i]} />
-                </div>
-              ))}
+              <p>
+                You answered{" "}
+                <strong>
+                  {nCorrect}/{n}
+                </strong>{" "}
+                questions correctly.
+              </p>
+              {!state.confirmedDone ? (
+                <p style={{ marginBottom: "1em" }}>
+                  You can either{" "}
+                  <button
+                    onClick={action(() => {
+                      state.index = 0;
+                      state.answers = [];
+                    })}
+                  >
+                    retry the quiz
+                  </button>{" "}
+                  or{" "}
+                  <button
+                    onClick={action(() => {
+                      state.confirmedDone = true;
+                    })}
+                  >
+                    see the correct answers
+                  </button>
+                  .
+                </p>
+              ) : null}
+              {quiz.questions.map((question, i) => {
+                let { answer, correct } = state.answers[i];
+                return (
+                  <div className="answer-wrapper" key={i}>
+                    <AnswerView
+                      index={i + 1}
+                      question={question}
+                      userAnswer={answer}
+                      correct={correct}
+                      showCorrect={state.confirmedDone}
+                    />
+                  </div>
+                );
+              })}
             </>
           ) : (
             <QuestionView

@@ -43,6 +43,9 @@ describe("ShortAnswer", () => {
     let input = screen.getByRole("textbox");
     await user.type(input, "foobar");
     await user.click(submitButton());
-    expect(submitted).toStrictEqual({ answer: "foobar" });
+    expect(submitted).toStrictEqual({
+      answer: { answer: "foobar" },
+      correct: false,
+    });
   });
 });

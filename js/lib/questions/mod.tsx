@@ -8,7 +8,7 @@ import { LoggerContext } from "../logging";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
-import { QuestionMethods, defaultComparator } from "./types";
+import { QuestionMethods } from "./types";
 
 export type Question = ShortAnswer | Tracing | MultipleChoice;
 
@@ -65,10 +65,15 @@ let BugReporter = ({ question }: { question: number }) => {
   );
 };
 
+export interface TaggedAnswer {
+  answer: any;
+  correct: boolean;
+}
+
 export let QuestionView: React.FC<{
   question: Question;
   index: number;
-  onSubmit: (answer: any) => void;
+  onSubmit: (answer: TaggedAnswer) => void;
 }> = ({ question, index, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
   let logger = useContext(LoggerContext);
@@ -94,7 +99,9 @@ export let QuestionView: React.FC<{
 
   let submit = formValidators.handleSubmit(data => {
     let answer = methods.getAnswerFromDOM ? methods.getAnswerFromDOM(data, ref.current!) : data;
-    onSubmit(answer);
+    let comparator = methods.compareAnswers || _.isEqual;
+    let correct = comparator(question.answer, answer);
+    onSubmit({ answer, correct });
   });
 
   return (
@@ -121,13 +128,14 @@ export let AnswerView: React.FC<{
   question: Question;
   index: number;
   userAnswer: Question["answer"];
-}> = ({ question, index, userAnswer }) => {
+  correct: boolean;
+  showCorrect: boolean;
+}> = ({ question, index, userAnswer, correct, showCorrect }) => {
   let logger = useContext(LoggerContext);
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
-  let comparator = methods.compareAnswers || defaultComparator;
-  let isCorrect = comparator(question.answer, userAnswer);
+  showCorrect = showCorrect && !correct;
 
   return (
     <div className={classNames("answer", questionClass)}>
@@ -147,7 +155,7 @@ export let AnswerView: React.FC<{
             />
           </div>
         </div>
-        {!isCorrect ? (
+        {showCorrect ? (
           <div>
             <div className="answer-header">The correct answer is:</div>
             <div>
@@ -160,7 +168,7 @@ export let AnswerView: React.FC<{
           </div>
         ) : null}
       </div>
-      {!isCorrect && question.context ? (
+      {showCorrect && question.context ? (
         <div className="context">
           <MarkdownView markdown={`**Context**: ` + question.context} />
         </div>

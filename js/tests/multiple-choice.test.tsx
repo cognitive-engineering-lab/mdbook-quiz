@@ -43,6 +43,9 @@ describe("ShortAnswer", () => {
     let input = screen.getByRole("radio", { name: "B" });
     await user.click(input);
     await user.click(submitButton());
-    expect(submitted).toStrictEqual({ answer: 1 });
+    expect(submitted).toStrictEqual({
+      answer: { answer: 1 },
+      correct: true,
+    });
   });
 });

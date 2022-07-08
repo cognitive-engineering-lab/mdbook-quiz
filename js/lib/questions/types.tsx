@@ -33,5 +33,3 @@ export interface QuestionMethods<Prompt, Answer> {
 
   validate?(prompt: Prompt, answer: Answer): boolean;
 }
-
-export let defaultComparator = _.isEqual;
