@@ -1,3 +1,7 @@
+// TODO: remove this once Rust 1.63 is released
+#![feature(scoped_threads)]
+#![allow(stable_features)]
+
 use std::{io, process};
 
 use clap::{Parser, Subcommand};

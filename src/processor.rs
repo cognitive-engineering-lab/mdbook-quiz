@@ -1,12 +1,15 @@
 use std::{
-  env, fs,
+  env,
+  fmt::Write,
+  fs,
   path::{Path, PathBuf},
   process::Command,
+  thread,
 };
 
 use anyhow::{bail, Context, Result};
 use mdbook::{
-  book::{Book, Chapter},
+  book::Book,
   preprocess::{Preprocessor, PreprocessorContext},
   BookItem,
 };
@@ -43,9 +46,9 @@ pub struct QuizConfig {
 
 pub struct QuizProcessor;
 
-struct QuizProcessorRef<'a> {
-  ctx: &'a PreprocessorContext,
+struct QuizProcessorRef {
   config: QuizConfig,
+  src_dir: PathBuf,
   epilogue: String,
 }
 
@@ -53,15 +56,11 @@ lazy_static::lazy_static! {
   static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
 }
 
-impl<'a> QuizProcessorRef<'a> {
+impl QuizProcessorRef {
   fn copy_js_files(&mut self) -> Result<()> {
     // Rather than copying directly to the build directory, we instead copy to the book source
     // since mdBook will clean the build-dir after preprocessing. See mdBook#1087 for more.
-    let target_dir = self
-      .ctx
-      .root
-      .join(&self.ctx.config.book.src)
-      .join("mdbook-quiz");
+    let target_dir = self.src_dir.join("mdbook-quiz");
     fs::create_dir_all(&target_dir)?;
 
     let mut files = vec!["embed.js", "embed.css"];
@@ -125,27 +124,28 @@ impl<'a> QuizProcessorRef<'a> {
     let mut html = String::from("<div class=\"quiz-placeholder\"");
 
     let mut add_data = |k: &str, v: &str| {
-      html.push_str(&format!(
+      write!(
+        html,
         " data-{}=\"{}\" ",
         k,
         html_escape::encode_double_quoted_attribute(v)
-      ));
+      )
     };
-    add_data("quiz-name", &quiz_name);
-    add_data("quiz-questions", &content_json);
+    add_data("quiz-name", &quiz_name)?;
+    add_data("quiz-questions", &content_json)?;
     if let Some(log_endpoint) = &self.config.log_endpoint {
-      add_data("quiz-log-endpoint", log_endpoint);
+      add_data("quiz-log-endpoint", log_endpoint)?;
     }
     if let Some(true) = self.config.fullscreen {
-      add_data("quiz-fullscreen", "");
+      add_data("quiz-fullscreen", "")?;
     }
     if let Some(true) = self.config.cache_answers {
       if !self.config.dev_mode {
-        add_data("quiz-cache-answers", "");
+        add_data("quiz-cache-answers", "")?;
       }
     }
     if let Some(commit_hash) = &self.config.commit_hash {
-      add_data("quiz-commit-hash", commit_hash);
+      add_data("quiz-commit-hash", commit_hash)?;
     }
 
     html.push_str("></div>");
@@ -153,15 +153,7 @@ impl<'a> QuizProcessorRef<'a> {
     Ok(html)
   }
 
-  fn process_chapter(&self, chapter: &mut Chapter) -> Result<()> {
-    let chapter_path = self
-      .ctx
-      .root
-      .join(&self.ctx.config.book.src)
-      .join(chapter.path.as_ref().unwrap());
-    let chapter_dir = chapter_path.parent().unwrap();
-
-    let content = &chapter.content;
+  fn process_chapter(&self, chapter_dir: &Path, content: &mut String) -> Result<()> {
     let replacements = QUIZ_REGEX
       .captures_iter(content)
       .map(|captures| {
@@ -174,10 +166,10 @@ impl<'a> QuizProcessorRef<'a> {
 
     if !replacements.is_empty() {
       for (range, html) in replacements.into_iter().rev() {
-        chapter.content.replace_range(range, &html);
+        content.replace_range(range, &html);
       }
 
-      chapter.content.push_str(&self.epilogue);
+      content.push_str(&self.epilogue);
     }
 
     Ok(())
@@ -230,16 +222,33 @@ impl Preprocessor for QuizProcessor {
     };
 
     let mut processor = QuizProcessorRef {
-      ctx,
       config,
+      src_dir: ctx.root.join(&ctx.config.book.src),
       epilogue: String::new(),
     };
     processor.copy_js_files()?;
 
-    book.for_each_mut(|item| {
-      if let BookItem::Chapter(chapter) = item {
-        processor.process_chapter(chapter).unwrap();
+    thread::scope(|s| {
+      fn for_each_mut<'scope, 'a: 'scope, 'b: 'scope, 'c: 'scope>(
+        s: &'a thread::Scope<'scope, '_>,
+        processor: &'b QuizProcessorRef,
+        items: impl IntoIterator<Item = &'c mut BookItem>,
+      ) {
+        for item in items {
+          if let BookItem::Chapter(chapter) = item {
+            s.spawn(|| {
+              let chapter_path = processor.src_dir.join(chapter.path.as_ref().unwrap());
+              let chapter_dir = chapter_path.parent().unwrap();
+              processor
+                .process_chapter(chapter_dir, &mut chapter.content)
+                .unwrap();
+            });
+            for_each_mut(s, processor, &mut chapter.sub_items);
+          }
+        }
       }
+
+      for_each_mut(s, &processor, &mut book.sections);
     });
 
     Ok(book)
