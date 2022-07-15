@@ -4,7 +4,6 @@ use std::{
   fs,
   path::{Path, PathBuf},
   process::Command,
-  thread,
 };
 
 use anyhow::{bail, Context, Result};
@@ -228,15 +227,16 @@ impl Preprocessor for QuizProcessor {
     };
     processor.copy_js_files()?;
 
-    thread::scope(|s| {
-      fn for_each_mut<'scope, 'a: 'scope, 'b: 'scope, 'c: 'scope>(
-        s: &'a thread::Scope<'scope, '_>,
-        processor: &'b QuizProcessorRef,
-        items: impl IntoIterator<Item = &'c mut BookItem>,
+    // TODO: use std::thread::Scope once that gets stabilized
+    rayon::scope(|s| {
+      fn for_each_mut<'scope, 'proc: 'scope, 'item: 'scope>(
+        s: &rayon::Scope<'scope>,
+        processor: &'proc QuizProcessorRef,
+        items: impl IntoIterator<Item = &'item mut BookItem>,
       ) {
         for item in items {
           if let BookItem::Chapter(chapter) = item {
-            s.spawn(|| {
+            s.spawn(|_| {
               let chapter_path = processor.src_dir.join(chapter.path.as_ref().unwrap());
               let chapter_dir = chapter_path.parent().unwrap();
               processor

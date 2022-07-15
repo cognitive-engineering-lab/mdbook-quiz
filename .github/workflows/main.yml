@@ -8,7 +8,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: clippy
       - uses: Swatinem/rust-cache@v1
       - name: Install JS dependencies
