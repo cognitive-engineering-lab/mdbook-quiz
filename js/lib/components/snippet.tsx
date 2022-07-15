@@ -39,19 +39,25 @@ export let snippetToHtml = (snippet: string, language?: string): string => {
   snippet = snippet.trim(); // allow quiz authors to have leading/trailing whitespace
   let highlighted: string = hljs.highlight(language || "rust", snippet).value;
   let lines = splitHljsOutput(highlighted);
-  let wrapped = lines
-    .map(line => {
-      let codeEl = document.createElement("code");
-      codeEl.appendChild(line);
-      let numEl = document.createElement("span");
-      numEl.className = "line-number";
-      return [numEl, codeEl];
-    })
-    .flat();
+
   let pre = document.createElement("pre");
-  wrapped.forEach(node => {
-    pre.appendChild(node);
-  });
+  if (lines.length > 1) {
+    let wrapped = lines
+      .map(line => {
+        let codeEl = document.createElement("code");
+        codeEl.appendChild(line);
+        let numEl = document.createElement("span");
+        numEl.className = "line-number";
+        return [numEl, codeEl];
+      })
+      .flat();
+    wrapped.forEach(node => {
+      pre.appendChild(node);
+    });
+  } else if (lines.length == 1) {
+    pre.appendChild(lines[0]);
+  }
+
   return pre.outerHTML;
 };
 

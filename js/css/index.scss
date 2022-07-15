@@ -267,6 +267,7 @@ $error-color: #e16969;
         border: 2px solid $light-border-color;
         padding: 1rem;
         width: 50%;
+        overflow: auto;
 
         @include mobile {
           width: 100%;
@@ -279,14 +280,14 @@ $error-color: #e16969;
         .correct:before {
           color: green;
           margin-right: 0.5rem;
-          content: "✓";
+          content: "✓ Correct";
           font-size: 1.5rem;
         }
 
         .incorrect:before {
           color: red;
           margin-right: 0.5rem;
-          content: "✗";
+          content: "✗ Incorrect";
           font-size: 1.5rem;
         }
       }
