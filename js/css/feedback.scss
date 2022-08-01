@@ -1,0 +1,53 @@
+.pop {
+    background-color: #262625;
+    border-radius: 5px;
+    padding: 10px;
+    color: white;
+    display: inline-block;
+}
+
+.pop-arrow,
+.pop-arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+}
+
+.pop-arrow {
+    visibility: hidden;
+}
+
+.pop-arrow::before {
+    visibility: visible;
+    content: '';
+    transform: rotate(45deg);
+}
+
+.pop[data-popper-placement^='top'] > .pop-arrow {
+    bottom: -4px;
+}
+
+.pop[data-popper-placement^='bottom'] > .pop-arrow {
+    top: -4px;
+}
+
+.pop[data-popper-placement^='left'] > .pop-arrow {
+    right: -4px;
+}
+
+.pop[data-popper-placement^='right'] > .pop-arrow {
+    left: -4px;
+}
+
+.pop-button {
+    -moz-transition: all .1s ease-in;
+    -o-transition: all .1s ease-in;
+    -webkit-transition: all .1s ease-in;
+    transition: all .1s ease-in;
+    padding: 5px 10px;
+}
+
+.pop-button:hover {
+    background-color: #4d4d49;
+}

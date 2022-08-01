@@ -1,8 +1,12 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@fortawesome/fontawesome-svg-core': ^6.1.2
+  '@fortawesome/free-solid-svg-icons': ^6.1.2
+  '@fortawesome/react-fontawesome': ^0.2.0
   '@iarna/toml': ^2.2.5
   '@nota-lang/esbuild-utils': ^0.3.7
+  '@popperjs/core': ^2.11.5
   '@testing-library/dom': ^8.14.0
   '@testing-library/jest-dom': ^5.16.4
   '@testing-library/react': ^13.3.0
@@ -14,6 +18,7 @@ specifiers:
   '@types/object-hash': ^2.2.1
   '@types/react': ^18.0.9
   '@types/react-dom': ^18.0.5
+  '@types/react-modal': ^3.13.1
   '@types/showdown': ^2.0.0
   '@types/uuid': ^8.3.4
   '@typescript-eslint/eslint-plugin': ^5.26.0
@@ -41,14 +46,21 @@ specifiers:
   react: ^18.1.0
   react-dom: ^18.1.0
   react-hook-form: ^7.32.2
+  react-modal: ^3.15.1
+  react-popper: ^2.3.0
   react-showdown: ^2.3.1
   ts-json-schema-generator: ^1.0.0
   typescript: 4.6.4
   uuid: ^8.3.2
+  web-highlighter: ^0.7.4
 
 devDependencies:
+  '@fortawesome/fontawesome-svg-core': 6.1.2
+  '@fortawesome/free-solid-svg-icons': 6.1.2
+  '@fortawesome/react-fontawesome': 0.2.0_nynrfkrwh56h2gmvnqypzpsozi
   '@iarna/toml': 2.2.5
   '@nota-lang/esbuild-utils': 0.3.7_esbuild@0.14.43
+  '@popperjs/core': 2.11.5
   '@testing-library/dom': 8.14.0
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 13.3.0_ef5jwxihqo6n7gxfmzogljlgcm
@@ -60,6 +72,7 @@ devDependencies:
   '@types/object-hash': 2.2.1
   '@types/react': 18.0.12
   '@types/react-dom': 18.0.5
+  '@types/react-modal': 3.13.1
   '@types/showdown': 2.0.0
   '@types/uuid': 8.3.4
   '@typescript-eslint/eslint-plugin': 5.27.1_bnfefdnvqpcyokeggdz5sotnli
@@ -87,10 +100,13 @@ devDependencies:
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
   react-hook-form: 7.32.2_react@18.1.0
+  react-modal: 3.15.1_ef5jwxihqo6n7gxfmzogljlgcm
+  react-popper: 2.3.0_42yiot2n2wjamynwfzzmd7tk3i
   react-showdown: 2.3.1_react@18.1.0
   ts-json-schema-generator: 1.0.0
   typescript: 4.6.4
   uuid: 8.3.2
+  web-highlighter: 0.7.4
 
 packages:
 
@@ -518,6 +534,39 @@ packages:
       - supports-color
     dev: true
 
+  /@fortawesome/fontawesome-common-types/6.1.2:
+    resolution: {integrity: sha512-wBaAPGz1Awxg05e0PBRkDRuTsy4B3dpBm+zreTTyd9TH4uUM27cAL4xWyWR0rLJCrRwzVsQ4hF3FvM6rqydKPA==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dev: true
+
+  /@fortawesome/fontawesome-svg-core/6.1.2:
+    resolution: {integrity: sha512-853G/Htp0BOdXnPoeCPTjFrVwyrJHpe8MhjB/DYE9XjwhnNDfuBCd3aKc2YUYbEfHEcBws4UAA0kA9dymZKGjA==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.1.2
+    dev: true
+
+  /@fortawesome/free-solid-svg-icons/6.1.2:
+    resolution: {integrity: sha512-lTgZz+cMpzjkHmCwOG3E1ilUZrnINYdqMmrkv30EC3XbRsGlbIOL8H9LaNp5SV4g0pNJDfQ4EdTWWaMvdwyLiQ==}
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': 6.1.2
+    dev: true
+
+  /@fortawesome/react-fontawesome/0.2.0_nynrfkrwh56h2gmvnqypzpsozi:
+    resolution: {integrity: sha512-uHg75Rb/XORTtVt7OS9WoK8uM276Ufi7gCzshVWkUJbHhh3svsUUeqXerrM96Wm7fRiDzfKRwSoahhMIkGAYHw==}
+    peerDependencies:
+      '@fortawesome/fontawesome-svg-core': ~1 || ~6
+      react: '>=16.3'
+    dependencies:
+      '@fortawesome/fontawesome-svg-core': 6.1.2
+      prop-types: 15.8.1
+      react: 18.1.0
+    dev: true
+
   /@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==}
     engines: {node: '>=10.10.0'}
@@ -888,6 +937,10 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@popperjs/core/2.11.5:
+    resolution: {integrity: sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==}
+    dev: true
+
   /@sinclair/typebox/0.23.5:
     resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
     dev: true
@@ -1089,6 +1142,12 @@ packages:
 
   /@types/react-dom/18.0.5:
     resolution: {integrity: sha512-OWPWTUrY/NIrjsAPkAk1wW9LZeIjSvkXRhclsFO8CZcZGCOg2G0YZy4ft+rOyYxy8B7ui5iZzi9OkDebZ7/QSA==}
+    dependencies:
+      '@types/react': 18.0.12
+    dev: true
+
+  /@types/react-modal/3.13.1:
+    resolution: {integrity: sha512-iY/gPvTDIy6Z+37l+ibmrY+GTV4KQTHcCyR5FIytm182RQS69G5ps4PH2FxtC7bAQ2QRHXMevsBgck7IQruHNg==}
     dependencies:
       '@types/react': 18.0.12
     dev: true
@@ -2741,6 +2800,10 @@ packages:
       onetime: 5.1.2
       signal-exit: 3.0.7
       strip-final-newline: 2.0.0
+    dev: true
+
+  /exenv/1.2.2:
+    resolution: {integrity: sha512-Z+ktTxTwv9ILfgKCk32OX3n/doe+OcLTRtqK9pcL+JsP3J1/VW8Uvl4ZjLlKqeW4rzK4oesDOGMEMRIZqtP4Iw==}
     dev: true
 
   /exit/0.1.2:
@@ -5023,6 +5086,10 @@ packages:
       scheduler: 0.22.0
     dev: true
 
+  /react-fast-compare/3.2.0:
+    resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
+    dev: true
+
   /react-hook-form/7.32.2_react@18.1.0:
     resolution: {integrity: sha512-F1A6n762xaRhvtQH5SkQQhMr19cCkHZYesTcKJJeNmrphiZp/cYFTIzC05FnQry0SspM54oPJ9tXFXlzya8VNQ==}
     engines: {node: '>=12.22.0'}
@@ -5042,6 +5109,39 @@ packages:
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: true
+
+  /react-lifecycles-compat/3.0.4:
+    resolution: {integrity: sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==}
+    dev: true
+
+  /react-modal/3.15.1_ef5jwxihqo6n7gxfmzogljlgcm:
+    resolution: {integrity: sha512-duB9bxOaYg7Zt6TMFldIFxQRtSP+Dg3F1ZX3FXxSUn+3tZZ/9JCgeAQKDg7rhZSAqopq8TFRw3yIbnx77gyFTw==}
+    engines: {node: '>=8'}
+    peerDependencies:
+      react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
+      react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
+    dependencies:
+      exenv: 1.2.2
+      prop-types: 15.8.1
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-lifecycles-compat: 3.0.4
+      warning: 4.0.3
+    dev: true
+
+  /react-popper/2.3.0_42yiot2n2wjamynwfzzmd7tk3i:
+    resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==}
+    peerDependencies:
+      '@popperjs/core': ^2.0.0
+      react: ^16.8.0 || ^17 || ^18
+      react-dom: ^16.8.0 || ^17 || ^18
+    dependencies:
+      '@popperjs/core': 2.11.5
+      react: 18.1.0
+      react-dom: 18.1.0_react@18.1.0
+      react-fast-compare: 3.2.0
+      warning: 4.0.3
     dev: true
 
   /react-showdown/2.3.1_react@18.1.0:
@@ -5904,6 +6004,16 @@ packages:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
     dependencies:
       makeerror: 1.0.12
+    dev: true
+
+  /warning/4.0.3:
+    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
+    dependencies:
+      loose-envify: 1.4.0
+    dev: true
+
+  /web-highlighter/0.7.4:
+    resolution: {integrity: sha512-07mWw6ib+Abcr/fuKEWYPy1Y0MsCOz6yUUVw9xMpyt5UzyXWtSlcwzy2YqnccCP/LjtM9MZHQSo3dbGJII8h6w==}
     dev: true
 
   /webidl-conversions/3.0.1:

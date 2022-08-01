@@ -62,9 +62,9 @@ impl QuizProcessorRef {
     let target_dir = self.src_dir.join("mdbook-quiz");
     fs::create_dir_all(&target_dir)?;
 
-    let mut files = vec!["embed.js", "embed.css"];
+    let mut files = vec!["embed.js", "embed.css", "feedback.js", "feedback.css"];
     if self.config.dev_mode {
-      files.extend(["embed.js.map", "embed.css.map"]);
+      files.extend(["embed.js.map", "embed.css.map", "feedback.js.map", "feedback.css.map"]);
     }
     if let Some(true) = self.config.consent {
       files.extend(["consent.js", "consent.css"]);
