@@ -1,8 +1,39 @@
+/* Theme */
+.ayu {
+    --popper-bg: var(--quote-bg);
+    --popper-bg-hover: #1D1F21;
+    --popper-color: var(--fg);
+}
+
+.coal {
+    --popper-bg: var(--quote-bg);
+    --popper-bg-hover: #1D1F21;
+    --popper-color: var(--fg);
+}
+
+.light {
+    --popper-bg: #262625;
+    --popper-bg-hover: #aaaaaa;
+    --popper-color: white;
+}
+
+.navy {
+    --popper-bg: var(--quote-bg);
+    --popper-bg-hover: #1D1F21;
+    --popper-color: var(--fg);
+}
+
+.rust {
+    --popper-bg: var(--quote-bg);
+    --popper-bg-hover: #aaaaaa;
+    --popper-color: var(--fg);
+}
+
 .pop {
-    background-color: #262625;
+    background-color: var(--popper-bg);
+    color: var(--popper-color);
     border-radius: 5px;
     padding: 10px;
-    color: white;
     display: inline-block;
 }
 
@@ -49,12 +80,16 @@
 
     // make emojis white
     color: transparent;
-    text-shadow: 0 0 0 white;
+    text-shadow: 0 0 0 var(--popper-color);
 
     // prevent text cursor when hovering over emoji
     cursor: pointer;
 }
 
 .pop-button:hover {
-    background-color: #4d4d49;
+    background-color: var(--popper-bg-hover);
+}
+
+.ReactModal__Overlay {
+    z-index: 101; // must be >= #menu-bar z-index
 }
