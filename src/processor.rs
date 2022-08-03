@@ -40,6 +40,10 @@ pub struct QuizConfig {
   /// DO NOT USE
   consent: Option<bool>,
 
+  /// If true, allow users to give feedback on book content in the form of
+  /// highlights with comments.
+  feedback: Option<bool>,
+
   dev_mode: bool,
 }
 
@@ -62,12 +66,19 @@ impl QuizProcessorRef {
     let target_dir = self.src_dir.join("mdbook-quiz");
     fs::create_dir_all(&target_dir)?;
 
-    let mut files = vec!["embed.js", "embed.css", "feedback.js", "feedback.css"];
+    let mut files = vec!["embed.js", "embed.css"];
     if self.config.dev_mode {
-      files.extend(["embed.js.map", "embed.css.map", "feedback.js.map", "feedback.css.map"]);
+      files.extend(["embed.js.map", "embed.css.map"]);
     }
     if let Some(true) = self.config.consent {
       files.extend(["consent.js", "consent.css"]);
+    }
+    if let Some(true) = self.config.feedback {
+      files.extend(["feedback.js", "feedback.css"]);
+
+      if self.config.dev_mode {
+        files.extend(["feedback.js.map", "feedback.css.map"]);
+      }
     }
 
     for file in &files {
@@ -215,6 +226,7 @@ impl Preprocessor for QuizProcessor {
       commit_hash,
       fullscreen: parse_bool("fullscreen"),
       consent: parse_bool("consent"),
+      feedback: parse_bool("feedback"),
       validate: parse_bool("validate"),
       cache_answers: parse_bool("cache-answers"),
       dev_mode: env::var("QUIZ_DEV_MODE").is_ok(),
