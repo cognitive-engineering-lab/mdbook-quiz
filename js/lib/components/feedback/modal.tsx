@@ -24,9 +24,11 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({ range, highlighter, toggl
   };
 
   const handleSubmit = () => {
-    // add feedback to serialized highlighter data
-    highlighter.hooks.Serialize.RecordInfo.tap(() => feedback);
+    // add feedback to serialized highlighter data (dispose hook after use)
+    let dispose = highlighter.hooks.Serialize.RecordInfo.tap(() => feedback);
     highlighter.fromRange(range);
+    dispose();
+
     toggleModal();
   };
 
