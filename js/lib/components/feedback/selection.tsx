@@ -8,9 +8,6 @@ import SelectionTooltip from "./tooltip";
 
 type SelectionRendererProps = { highlighter: Highlighter; stored?: any[] };
 let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored }) => {
-  // id of feedback highlight currently being hovered over
-  const [hovered, setHovered] = useState<string | null>(null);
-
   // current highlighted range of text
   const [currRange, setCurrRange] = useState<Range | null>(null);
 
@@ -41,10 +38,6 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
 
       localStorage.setItem(HIGHLIGHT_STORAGE_KEY, JSON.stringify(stored_highlights));
     });
-
-    // update state on hover changes
-    highlighter.on(Highlighter.event.HOVER, ({ id }) => setHovered(id));
-    highlighter.on(Highlighter.event.HOVER_OUT, () => setHovered(null));
   }, []);
 
   useEffect(() => {
@@ -61,18 +54,6 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
     setModalOpen(false);
     setCurrRange(null);
   };
-
-  if (hovered) {
-    // If hovering over existing highlight, show feedback in tooltip
-    let el = highlighter.getDoms(hovered);
-    let feedback = highlighter.cache.get(hovered).extra as string;
-
-    const reference: VirtualElement = {
-      getBoundingClientRect: el[0].getBoundingClientRect.bind(el[0]),
-    };
-
-    return <SelectionTooltip reference={reference} text={feedback} />;
-  }
 
   if (currRange) {
     if (modalOpen) {
