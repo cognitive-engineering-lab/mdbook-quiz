@@ -12,10 +12,10 @@ library.add(faQuestion);
 
 type SelectionTooltipProps = {
   reference: VirtualElement;
-  toggleModal?: () => void;
+  openModal?: () => void;
   text?: string;
 };
-const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, toggleModal, text }) => {
+const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, openModal, text }) => {
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
   const { styles, attributes } = usePopper(reference, popperElement, {
@@ -42,7 +42,7 @@ const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, toggleMo
       {text ? (
         <div>{text}</div>
       ) : (
-        <div className="pop-button" onClick={toggleModal} title="Provide feedback on this content">
+        <div className="pop-button" onClick={openModal} title="Provide feedback on this content">
           <FontAwesomeIcon icon="question" />
         </div>
       )}

@@ -20,7 +20,4 @@ let initFeedback = () => {
   root.render(<SelectionRenderer highlighter={highlighter} stored={stored as unknown as any[]} />);
 };
 
-// It's important to wait for DOMContentLoaded because mdbook-quiz depends
-// on globals provided by scripts loaded via mdbook, which may be in the page
-// footer and therefore load after this script
-window.addEventListener("DOMContentLoaded", initFeedback, false);
+initFeedback();

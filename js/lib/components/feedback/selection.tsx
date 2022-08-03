@@ -6,29 +6,27 @@ import { HIGHLIGHT_STORAGE_KEY } from "../../entryPoints/feedback";
 import FeedbackModal from "./modal";
 import SelectionTooltip from "./tooltip";
 
-type SelectionRendererProps = { highlighter: Highlighter; stored: any[] | undefined };
+type SelectionRendererProps = { highlighter: Highlighter; stored?: any[] };
 let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored }) => {
   // id of feedback highlight currently being hovered over
-  const [hovered, setHovered] = useState<false | string>(false);
+  const [hovered, setHovered] = useState<string | null>(null);
 
   // current highlighted range of text
-  const [currRange, setCurrRange] = useState<false | Range>(false);
+  const [currRange, setCurrRange] = useState<Range | null>(null);
 
   // whether feedback modal is open
   const [modalOpen, setModalOpen] = useState(false);
 
   // update selected range when selection changes
+  // wrapped in useCallback to retain a stable reference to the callback
+  // so addEventListener and removeEventListener use the same function
   const handleSelection = useCallback(() => {
     // get current selection (falsy value if no selection)
     let selection = document.getSelection();
     let range =
       selection && !selection.isCollapsed && selection.rangeCount && selection.getRangeAt(0);
 
-    if (range) {
-      setCurrRange(range);
-    } else {
-      setCurrRange(false);
-    }
+    setCurrRange(range || null);
   }, []);
 
   useEffect(() => {
@@ -46,7 +44,7 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
 
     // update state on hover changes
     highlighter.on(Highlighter.event.HOVER, ({ id }) => setHovered(id));
-    highlighter.on(Highlighter.event.HOVER_OUT, () => setHovered(false));
+    highlighter.on(Highlighter.event.HOVER_OUT, () => setHovered(null));
   }, []);
 
   useEffect(() => {
@@ -61,7 +59,7 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
   // Remove modal and tooltip when closing modal
   const handleCloseModal = () => {
     setModalOpen(false);
-    setCurrRange(false);
+    setCurrRange(null);
   };
 
   if (hovered) {
@@ -80,7 +78,7 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
     if (modalOpen) {
       // If tooltip feedback icon pressed, render modal
       return (
-        <FeedbackModal range={currRange} highlighter={highlighter} toggleModal={handleCloseModal} />
+        <FeedbackModal range={currRange} highlighter={highlighter} closeModal={handleCloseModal} />
       );
     } else {
       // If modal not open, show tooltip over selected text
@@ -88,11 +86,11 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
         getBoundingClientRect: currRange.getBoundingClientRect.bind(currRange),
       };
 
-      return <SelectionTooltip reference={reference} toggleModal={() => setModalOpen(true)} />;
+      return <SelectionTooltip reference={reference} openModal={() => setModalOpen(true)} />;
     }
   }
 
-  return <></>;
+  return null;
 };
 
 export default SelectionRenderer;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import Modal from "react-modal";
 import Highlighter from "web-highlighter";
 
@@ -15,31 +15,26 @@ const modalStyles = {
   },
 };
 
-type FeedbackModalProps = { range: Range; highlighter: Highlighter; toggleModal: () => void };
-const FeedbackModal: React.FC<FeedbackModalProps> = ({ range, highlighter, toggleModal }) => {
-  const [feedback, setFeedback] = useState("");
-
-  const handleFeedbackChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    setFeedback(e.currentTarget.value);
-  };
+type FeedbackModalProps = { range: Range; highlighter: Highlighter; closeModal: () => void };
+const FeedbackModal: React.FC<FeedbackModalProps> = ({ range, highlighter, closeModal }) => {
+  const feedback = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = () => {
     // add feedback to serialized highlighter data (dispose hook after use)
-    let dispose = highlighter.hooks.Serialize.RecordInfo.tap(() => feedback);
+    let dispose = highlighter.hooks.Serialize.RecordInfo.tap(() => feedback.current!.value);
     highlighter.fromRange(range);
     dispose();
 
-    toggleModal();
+    closeModal();
   };
 
   return (
-    <Modal style={modalStyles} contentLabel="Feedback Modal" onRequestClose={toggleModal} isOpen>
+    <Modal style={modalStyles} contentLabel="Feedback Modal" onRequestClose={closeModal} isOpen>
       <textarea
+        ref={feedback}
         style={{ minWidth: "250px" }}
         rows={4}
         placeholder="Your feedback..."
-        value={feedback}
-        onChange={handleFeedbackChange}
       ></textarea>
       <br />
       <button onClick={handleSubmit}>Submit</button>
