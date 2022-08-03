@@ -1,24 +1,31 @@
 import { VirtualElement } from "@popperjs/core";
-import React, { MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler, PropsWithChildren, useEffect, useState } from "react";
 import { usePopper } from "react-popper";
 
 import "../../../css/feedback.scss";
 
-type SelectionTooltipProps = {
+type FeedbackTooltipProps = PropsWithChildren<{
   reference: VirtualElement;
-  openModal?: () => void;
-  text?: string;
-};
-const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, openModal, text }) => {
+  onHoverChange?: (isHovered: boolean) => void;
+}>;
+const FeedbackTooltip: React.FC<FeedbackTooltipProps> = ({
+  reference,
+  onHoverChange,
+  children,
+}) => {
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
   const { styles, attributes } = usePopper(reference, popperElement, {
     placement: "top",
-    modifiers: [
-      { name: "offset", options: { offset: [0, 8] } },
-      { name: "arrow", options: { element: arrowElement } },
-    ],
+    modifiers: [{ name: "arrow", options: { element: arrowElement } }],
   });
+
+  useEffect(() => {
+    if (onHoverChange && popperElement) {
+      popperElement.addEventListener("mouseenter", () => onHoverChange(true));
+      popperElement.addEventListener("mouseleave", () => onHoverChange(false));
+    }
+  }, [popperElement]);
 
   const handleTooltipClick: MouseEventHandler<HTMLDivElement> = ev => {
     // prevent loss of selected text when user clicks on tooltip
@@ -33,16 +40,10 @@ const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, openModa
       style={styles.popper}
       {...attributes.popper}
     >
-      {text ? (
-        <div>{text}</div>
-      ) : (
-        <div className="pop-button" onClick={openModal} title="Provide feedback on this content">
-          &#10068;
-        </div>
-      )}
+      {children}
       <div ref={setArrowElement} className="pop-arrow" style={styles.arrow} />
     </div>
   );
 };
 
-export default SelectionTooltip;
+export default FeedbackTooltip;

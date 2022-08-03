@@ -4,7 +4,7 @@ import Highlighter from "web-highlighter";
 
 import { HIGHLIGHT_STORAGE_KEY } from "../../entryPoints/feedback";
 import FeedbackModal from "./modal";
-import SelectionTooltip from "./tooltip";
+import FeedbackTooltip from "./tooltip";
 
 type SelectionRendererProps = { highlighter: Highlighter; stored?: any[] };
 let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored }) => {
@@ -67,7 +67,17 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
         getBoundingClientRect: currRange.getBoundingClientRect.bind(currRange),
       };
 
-      return <SelectionTooltip reference={reference} openModal={() => setModalOpen(true)} />;
+      return (
+        <FeedbackTooltip reference={reference}>
+          <div
+            className="pop-button"
+            onClick={() => setModalOpen(true)}
+            title="Provide feedback on this content"
+          >
+            &#10068;
+          </div>
+        </FeedbackTooltip>
+      );
     }
   }
 

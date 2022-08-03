@@ -32,9 +32,14 @@
 .pop {
     background-color: var(--popper-bg);
     color: var(--popper-color);
-    border-radius: 5px;
     padding: 10px;
     display: inline-block;
+
+    // prevent tooltip dissapearing when cursor moves between
+    // highlight and tooltip
+    border-bottom: 8px solid transparent;
+    border-radius: 5px;
+    background-clip: padding-box;
 }
 
 .pop-arrow,
@@ -88,6 +93,17 @@
 
 .pop-button:hover {
     background-color: var(--popper-bg-hover);
+}
+
+.pop-feedback-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    align-items: center;
+}
+
+.pop-feedback-text {
+    padding-right: 0.5rem;
+    border-right: 1px solid var(--popper-bg-hover);
 }
 
 .ReactModal__Overlay {
