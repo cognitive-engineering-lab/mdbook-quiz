@@ -1,9 +1,6 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@fortawesome/fontawesome-svg-core': ^6.1.2
-  '@fortawesome/free-solid-svg-icons': ^6.1.2
-  '@fortawesome/react-fontawesome': ^0.2.0
   '@iarna/toml': ^2.2.5
   '@nota-lang/esbuild-utils': ^0.3.7
   '@popperjs/core': ^2.11.5
@@ -55,9 +52,6 @@ specifiers:
   web-highlighter: ^0.7.4
 
 devDependencies:
-  '@fortawesome/fontawesome-svg-core': 6.1.2
-  '@fortawesome/free-solid-svg-icons': 6.1.2
-  '@fortawesome/react-fontawesome': 0.2.0_nynrfkrwh56h2gmvnqypzpsozi
   '@iarna/toml': 2.2.5
   '@nota-lang/esbuild-utils': 0.3.7_esbuild@0.14.43
   '@popperjs/core': 2.11.5
@@ -532,39 +526,6 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /@fortawesome/fontawesome-common-types/6.1.2:
-    resolution: {integrity: sha512-wBaAPGz1Awxg05e0PBRkDRuTsy4B3dpBm+zreTTyd9TH4uUM27cAL4xWyWR0rLJCrRwzVsQ4hF3FvM6rqydKPA==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dev: true
-
-  /@fortawesome/fontawesome-svg-core/6.1.2:
-    resolution: {integrity: sha512-853G/Htp0BOdXnPoeCPTjFrVwyrJHpe8MhjB/DYE9XjwhnNDfuBCd3aKc2YUYbEfHEcBws4UAA0kA9dymZKGjA==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.1.2
-    dev: true
-
-  /@fortawesome/free-solid-svg-icons/6.1.2:
-    resolution: {integrity: sha512-lTgZz+cMpzjkHmCwOG3E1ilUZrnINYdqMmrkv30EC3XbRsGlbIOL8H9LaNp5SV4g0pNJDfQ4EdTWWaMvdwyLiQ==}
-    engines: {node: '>=6'}
-    requiresBuild: true
-    dependencies:
-      '@fortawesome/fontawesome-common-types': 6.1.2
-    dev: true
-
-  /@fortawesome/react-fontawesome/0.2.0_nynrfkrwh56h2gmvnqypzpsozi:
-    resolution: {integrity: sha512-uHg75Rb/XORTtVt7OS9WoK8uM276Ufi7gCzshVWkUJbHhh3svsUUeqXerrM96Wm7fRiDzfKRwSoahhMIkGAYHw==}
-    peerDependencies:
-      '@fortawesome/fontawesome-svg-core': ~1 || ~6
-      react: '>=16.3'
-    dependencies:
-      '@fortawesome/fontawesome-svg-core': 6.1.2
-      prop-types: 15.8.1
-      react: 18.1.0
     dev: true
 
   /@humanwhocodes/config-array/0.9.5:

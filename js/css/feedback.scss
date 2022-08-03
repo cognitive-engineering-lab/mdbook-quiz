@@ -45,7 +45,14 @@
     -o-transition: all .1s ease-in;
     -webkit-transition: all .1s ease-in;
     transition: all .1s ease-in;
-    padding: 5px 10px;
+    padding: 5px 8px;
+
+    // make emojis white
+    color: transparent;
+    text-shadow: 0 0 0 white;
+
+    // prevent text cursor when hovering over emoji
+    cursor: pointer;
 }
 
 .pop-button:hover {

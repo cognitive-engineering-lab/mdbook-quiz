@@ -1,14 +1,8 @@
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faQuestion } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { VirtualElement } from "@popperjs/core";
 import React, { MouseEventHandler, useState } from "react";
 import { usePopper } from "react-popper";
 
-import "../../css/feedback.scss";
-
-// load question mark SVG icon
-library.add(faQuestion);
+import "../../../css/feedback.scss";
 
 type SelectionTooltipProps = {
   reference: VirtualElement;
@@ -43,7 +37,7 @@ const SelectionTooltip: React.FC<SelectionTooltipProps> = ({ reference, openModa
         <div>{text}</div>
       ) : (
         <div className="pop-button" onClick={openModal} title="Provide feedback on this content">
-          <FontAwesomeIcon icon="question" />
+          &#10068;
         </div>
       )}
       <div ref={setArrowElement} className="pop-arrow" style={styles.arrow} />
