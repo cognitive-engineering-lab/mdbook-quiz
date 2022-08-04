@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import Highlighter from "web-highlighter";
 import HighlightSource from "web-highlighter/dist/model/source";
 
-import { HIGHLIGHT_STORAGE_KEY } from "../../entryPoints/feedback";
 import FeedbackTooltip from "./tooltip";
+import { HIGHLIGHT_STORAGE_KEY } from "./utils";
 
 type FeedbackRendererProps = { highlighter: Highlighter };
 const FeedbackRenderer: React.FC<FeedbackRendererProps> = ({ highlighter }) => {

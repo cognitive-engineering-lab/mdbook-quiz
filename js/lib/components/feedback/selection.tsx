@@ -2,9 +2,9 @@ import { VirtualElement } from "@popperjs/core";
 import React, { useCallback, useEffect, useState } from "react";
 import Highlighter from "web-highlighter";
 
-import { HIGHLIGHT_STORAGE_KEY } from "../../entryPoints/feedback";
 import FeedbackModal from "./modal";
 import FeedbackTooltip from "./tooltip";
+import { HIGHLIGHT_STORAGE_KEY } from "./utils";
 
 type SelectionRendererProps = { highlighter: Highlighter; stored?: any[] };
 let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored }) => {

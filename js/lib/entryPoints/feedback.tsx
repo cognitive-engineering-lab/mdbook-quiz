@@ -4,8 +4,7 @@ import Highlighter from "web-highlighter";
 
 import FeedbackRenderer from "../components/feedback/renderer";
 import SelectionRenderer from "../components/feedback/selection";
-
-export const HIGHLIGHT_STORAGE_KEY = "mdbook-quiz:highlights";
+import { HIGHLIGHT_STORAGE_KEY } from "../components/feedback/utils";
 
 let initFeedback = () => {
   let highlighter = new Highlighter();
