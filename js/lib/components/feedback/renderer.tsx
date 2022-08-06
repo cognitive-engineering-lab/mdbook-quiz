@@ -18,7 +18,7 @@ const FeedbackRenderer: React.FC<FeedbackRendererProps> = ({ highlighter }) => {
     highlighter.on(Highlighter.event.REMOVE, ({ ids }) => {
       let stored_str = localStorage.getItem(HIGHLIGHT_STORAGE_KEY);
       let stored_highlights = JSON.parse(stored_str || "[]") as HighlightSource[];
-      let filtered_highlights = stored_highlights.filter(hl => !ids.includes(hl.text));
+      let filtered_highlights = stored_highlights.filter(hl => !ids.includes(hl.id));
 
       localStorage.setItem(HIGHLIGHT_STORAGE_KEY, JSON.stringify(filtered_highlights));
     });

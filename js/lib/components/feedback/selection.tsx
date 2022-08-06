@@ -28,7 +28,7 @@ let SelectionRenderer: React.FC<SelectionRendererProps> = ({ highlighter, stored
 
   useEffect(() => {
     // load highlights from local storage
-    stored?.map(s => highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text, s.extra));
+    stored?.map(s => highlighter.fromStore(s.startMeta, s.endMeta, s.text, s.id, s.extra));
 
     // store new highlights in localStorage when created
     highlighter.on(Highlighter.event.CREATE, ({ sources }) => {
