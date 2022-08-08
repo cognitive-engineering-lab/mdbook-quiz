@@ -77,8 +77,7 @@ async function main() {
   let build = cli();
   let p1 = build({
     format: "iife",
-    bundle: true,
-    entryPoints: ["lib/entryPoints/embed.tsx", "lib/entryPoints/consent.tsx"],
+    entryPoints: ["lib/entryPoints/embed.tsx"],
     plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
   });
 

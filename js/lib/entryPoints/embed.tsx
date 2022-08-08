@@ -2,7 +2,7 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 import * as uuid from "uuid";
 
-import "../../css/index.scss";
+import "../../index.scss";
 import { Quiz, QuizView } from "../components/quiz";
 
 let initQuizzes = () => {
