@@ -93,9 +93,14 @@ $error-color: #e16969;
     margin: 0 0 0.5em;
   }
 
-  button {
+  button, input[type=submit] {
     font-size: 1.1em;
     cursor: pointer;
+    background-color: var(--searchbar-bg);
+    color: var(--searchbar-fg);
+    border: 1px solid var(--searchbar-border-color);
+    border-radius: 4px;
+    padding: 3px 5px;
   }
 
   .prompt,
