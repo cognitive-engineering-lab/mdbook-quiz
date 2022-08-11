@@ -37,7 +37,7 @@ let BugReporter = ({ question }: { question: number }) => {
   let onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     let data = new FormData(event.target as any);
     let feedback = data.get("feedback")!.toString();
-    window.telemetry.log({
+    window.telemetry!.log("bug", {
       question,
       feedback,
     });

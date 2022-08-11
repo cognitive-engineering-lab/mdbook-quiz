@@ -28,7 +28,11 @@ interface StoredAnswers {
 }
 
 declare global {
-  var telemetry: any;
+  var telemetry:
+    | {
+        log: (endpoint: string, payload: any) => void;
+      }
+    | undefined;
 }
 
 class AnswerStorage {
@@ -122,7 +126,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let onSubmit = action((answer: any) => {
       state.answers.push(_.cloneDeep(answer));
       state.index += 1;
-      window.telemetry?.log({
+      window.telemetry?.log("answers", {
         quizHash,
         answers: state.answers,
       });
