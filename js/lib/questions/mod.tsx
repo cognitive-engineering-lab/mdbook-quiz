@@ -1,10 +1,9 @@
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
-import { LoggerContext } from "../logging";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
@@ -35,11 +34,13 @@ let questionNameToCssClass = (name: string) => {
 
 let BugReporter = ({ question }: { question: number }) => {
   let [show, setShow] = useState(false);
-  let logger = useContext(LoggerContext);
   let onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     let data = new FormData(event.target as any);
     let feedback = data.get("feedback")!.toString();
-    logger!.logBug(question, feedback);
+    window.telemetry.log({
+      question,
+      feedback,
+    });
     event.preventDefault();
     setShow(false);
   };
@@ -76,7 +77,6 @@ export let QuestionView: React.FC<{
   onSubmit: (answer: TaggedAnswer) => void;
 }> = ({ question, index, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
-  let logger = useContext(LoggerContext);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
     return (
@@ -109,7 +109,7 @@ export let QuestionView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
-        {logger ? <BugReporter question={index} /> : null}
+        {window.telemetry ? <BugReporter question={index} /> : null}
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
@@ -131,7 +131,6 @@ export let AnswerView: React.FC<{
   correct: boolean;
   showCorrect: boolean;
 }> = ({ question, index, userAnswer, correct, showCorrect }) => {
-  let logger = useContext(LoggerContext);
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
@@ -142,7 +141,7 @@ export let AnswerView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
-        {logger ? <BugReporter question={index} /> : null}
+        {window.telemetry ? <BugReporter question={index} /> : null}
       </div>
       <div className="answer-row">
         <div>

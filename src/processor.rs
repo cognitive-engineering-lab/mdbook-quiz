@@ -31,15 +31,6 @@ pub struct QuizConfig {
   /// Defaults to the directory installed with the mdbook-quiz source.
   js_dir: PathBuf,
 
-  /// URL where quiz results are anonymously logged.
-  log_endpoint: Option<String>,
-
-  /// Commit hash to include with logs
-  commit_hash: Option<String>,
-
-  /// DO NOT USE
-  consent: Option<bool>,
-
   dev_mode: bool,
 }
 
@@ -65,9 +56,6 @@ impl QuizProcessorRef {
     let mut files = vec!["embed.js", "embed.css"];
     if self.config.dev_mode {
       files.extend(["embed.js.map", "embed.css.map"]);
-    }
-    if let Some(true) = self.config.consent {
-      files.extend(["consent.js", "consent.css"]);
     }
 
     for file in &files {
@@ -132,9 +120,6 @@ impl QuizProcessorRef {
     };
     add_data("quiz-name", &quiz_name)?;
     add_data("quiz-questions", &content_json)?;
-    if let Some(log_endpoint) = &self.config.log_endpoint {
-      add_data("quiz-log-endpoint", log_endpoint)?;
-    }
     if let Some(true) = self.config.fullscreen {
       add_data("quiz-fullscreen", "")?;
     }
@@ -142,9 +127,6 @@ impl QuizProcessorRef {
       if !self.config.dev_mode {
         add_data("quiz-cache-answers", "")?;
       }
-    }
-    if let Some(commit_hash) = &self.config.commit_hash {
-      add_data("quiz-commit-hash", commit_hash)?;
     }
 
     html.push_str("></div>");
@@ -191,30 +173,9 @@ impl Preprocessor for QuizProcessor {
         .join("dist"),
     };
 
-    let log_endpoint = config_toml
-      .get("log-endpoint")
-      .map(|value| value.as_str().unwrap().to_owned());
-
-    let commit_hash = match config_toml.get("commit-hash") {
-      Some(hash) => Some(hash.as_str().unwrap().into()),
-      None => {
-        let output = Command::new("git").args(["rev-parse", "HEAD"]).output();
-        match output {
-          Ok(output) => Some(String::from_utf8(output.stdout)?),
-          Err(e) => {
-            eprintln!("Could not get commit-hash, git failed with error: {e}");
-            None
-          }
-        }
-      }
-    };
-
     let config = QuizConfig {
       js_dir,
-      log_endpoint,
-      commit_hash,
       fullscreen: parse_bool("fullscreen"),
-      consent: parse_bool("consent"),
       validate: parse_bool("validate"),
       cache_answers: parse_bool("cache-answers"),
       dev_mode: env::var("QUIZ_DEV_MODE").is_ok(),

@@ -5,7 +5,6 @@ import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
 import React, { useEffect, useState } from "react";
 
-import { Logger, LoggerContext } from "../logging";
 import { AnswerView, Question, QuestionView, TaggedAnswer } from "../questions/mod";
 
 export interface Quiz {
@@ -26,6 +25,10 @@ interface StoredAnswers {
   answers: TaggedAnswer[];
   confirmedDone: boolean;
   quizHash: string;
+}
+
+declare global {
+  var telemetry: any;
 }
 
 class AnswerStorage {
@@ -54,7 +57,7 @@ class AnswerStorage {
 }
 
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({ quiz, user, name, logEndpoint, fullscreen, cacheAnswers, commitHash }) => {
+  ({ quiz, name, fullscreen, cacheAnswers }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
     let answerStorage = new AnswerStorage(name, quizHash);
     let state = useLocalObservable<{
@@ -75,10 +78,6 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         return { started: false, index: 0, confirmedDone: false, answers: [] };
       }
     });
-
-    let [logger] = useState(() =>
-      logEndpoint ? new Logger(logEndpoint, name, quiz, quizHash, commitHash, user) : null
-    );
 
     let n = quiz.questions.length;
     let nCorrect = state.answers.filter(a => a.correct).length;
@@ -123,7 +122,10 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let onSubmit = action((answer: any) => {
       state.answers.push(_.cloneDeep(answer));
       state.index += 1;
-      logger?.logAnswers(state.answers);
+      window.telemetry?.log({
+        quizHash,
+        answers: state.answers,
+      });
 
       if (state.index == n) {
         if (_.every(state.answers, a => a.correct)) {
@@ -244,20 +246,18 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     }
 
     return (
-      <LoggerContext.Provider value={logger}>
-        <div className={wrapperClass}>
-          <div className="mdbook-quiz">
-            {showFullscreen ? (
-              <>
-                {exitButton}
-                <ExitExplanation />
-              </>
-            ) : null}
-            {header}
-            {body}
-          </div>
+      <div className={wrapperClass}>
+        <div className="mdbook-quiz">
+          {showFullscreen ? (
+            <>
+              {exitButton}
+              <ExitExplanation />
+            </>
+          ) : null}
+          {header}
+          {body}
         </div>
-      </LoggerContext.Provider>
+      </div>
     );
   }
 );
