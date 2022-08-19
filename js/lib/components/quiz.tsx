@@ -127,6 +127,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       state.answers.push(_.cloneDeep(answer));
       state.index += 1;
       window.telemetry?.log("answers", {
+        quizName: name,
         quizHash,
         answers: state.answers,
       });
@@ -195,6 +196,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           ) : (
             <QuestionView
               key={state.index}
+              quizName={name}
               index={state.index + 1}
               question={quiz.questions[state.index]}
               onSubmit={onSubmit}

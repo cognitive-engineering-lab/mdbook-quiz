@@ -32,12 +32,13 @@ let questionNameToCssClass = (name: string) => {
   return output.join("");
 };
 
-let BugReporter = ({ question }: { question: number }) => {
+let BugReporter = ({ quizName, question }: { quizName: string; question: number }) => {
   let [show, setShow] = useState(false);
   let onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     let data = new FormData(event.target as any);
     let feedback = data.get("feedback")!.toString();
     window.telemetry!.log("bug", {
+      quizName,
       question,
       feedback,
     });
@@ -72,10 +73,11 @@ export interface TaggedAnswer {
 }
 
 export let QuestionView: React.FC<{
+  quizName: string;
   question: Question;
   index: number;
   onSubmit: (answer: TaggedAnswer) => void;
-}> = ({ question, index, onSubmit }) => {
+}> = ({ quizName, question, index, onSubmit }) => {
   let ref = useRef<HTMLFormElement>(null);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
@@ -109,7 +111,7 @@ export let QuestionView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry ? <BugReporter question={index} /> : null}
+        {window.telemetry ? <BugReporter quizName={quizName} question={index} /> : null}
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
