@@ -80,16 +80,14 @@ async function main() {
     entryPoints: ["lib/entryPoints/embed.tsx"],
     plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
   });
-
   let p2 = build({
     format: "cjs",
     platform: "node",
     entryPoints: ["lib/entryPoints/validator.ts"],
   });
+  await Promise.all([p1, p2]);
 
-  let p3 = generateSchemas();
-
-  await Promise.all([p1, p2, p3]);
+  await generateSchemas();
 }
 
 main();

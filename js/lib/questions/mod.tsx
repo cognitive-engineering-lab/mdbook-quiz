@@ -127,12 +127,13 @@ export let QuestionView: React.FC<{
 };
 
 export let AnswerView: React.FC<{
+  quizName: string;
   question: Question;
   index: number;
   userAnswer: Question["answer"];
   correct: boolean;
   showCorrect: boolean;
-}> = ({ question, index, userAnswer, correct, showCorrect }) => {
+}> = ({ quizName, question, index, userAnswer, correct, showCorrect }) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
@@ -143,7 +144,7 @@ export let AnswerView: React.FC<{
       <div className="prompt">
         <h4>Question {index}</h4>
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry ? <BugReporter question={index} /> : null}
+        {window.telemetry ? <BugReporter quizName={quizName} question={index} /> : null}
       </div>
       <div className="answer-row">
         <div>

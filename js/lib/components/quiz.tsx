@@ -184,6 +184,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
                   <div className="answer-wrapper" key={i}>
                     <AnswerView
                       index={i + 1}
+                      quizName={name}
                       question={question}
                       userAnswer={answer}
                       correct={correct}
