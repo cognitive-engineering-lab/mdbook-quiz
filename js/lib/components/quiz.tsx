@@ -25,6 +25,7 @@ interface StoredAnswers {
   answers: TaggedAnswer[];
   confirmedDone: boolean;
   quizHash: string;
+  attempt: number;
 }
 
 declare global {
@@ -40,10 +41,11 @@ class AnswerStorage {
 
   storageKey = () => `mdbook-quiz:${this.quizName}`;
 
-  save(answers: TaggedAnswer[], confirmedDone: boolean) {
+  save(answers: TaggedAnswer[], confirmedDone: boolean, attempt: number) {
     let storedAnswers: StoredAnswers = {
       answers,
       confirmedDone,
+      attempt,
       quizHash: this.quizHash,
     };
     localStorage.setItem(this.storageKey(), JSON.stringify(storedAnswers));
@@ -68,6 +70,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       started: boolean;
       index: number;
       confirmedDone: boolean;
+      attempt: number;
       answers: TaggedAnswer[];
     }>(() => {
       let stored = answerStorage.load();
@@ -77,9 +80,10 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           index: quiz.questions.length,
           answers: stored.answers,
           confirmedDone: stored.confirmedDone,
+          attempt: stored.attempt,
         };
       } else {
-        return { started: false, index: 0, confirmedDone: false, answers: [] };
+        return { started: false, index: 0, attempt: 0, confirmedDone: false, answers: [] };
       }
     });
 
@@ -130,6 +134,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         quizName: name,
         quizHash,
         answers: state.answers,
+        attempt: state.attempt,
       });
 
       if (state.index == n) {
@@ -138,7 +143,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         }
 
         if (cacheAnswers) {
-          answerStorage.save(state.answers, state.confirmedDone);
+          answerStorage.save(state.answers, state.confirmedDone, state.attempt);
         }
       }
     });
@@ -163,6 +168,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
                     onClick={action(() => {
                       state.index = 0;
                       state.answers = [];
+                      state.attempt += 1;
                     })}
                   >
                     retry the quiz
