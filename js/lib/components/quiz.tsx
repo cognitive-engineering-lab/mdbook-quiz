@@ -79,8 +79,9 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           started: true,
           index: quiz.questions.length,
           answers: stored.answers,
-          confirmedDone: stored.confirmedDone,
-          attempt: stored.attempt,
+          // note: need to provide defaults if schema changes
+          confirmedDone: stored.confirmedDone || false,
+          attempt: stored.attempt || 0,
         };
       } else {
         return { started: false, index: 0, attempt: 0, confirmedDone: false, answers: [] };
