@@ -14,11 +14,8 @@ export interface Quiz {
 export interface QuizViewProps {
   name: string;
   quiz: Quiz;
-  user?: string;
-  logEndpoint?: string;
   fullscreen?: boolean;
   cacheAnswers?: boolean;
-  commitHash?: string;
 }
 
 interface StoredAnswers {
