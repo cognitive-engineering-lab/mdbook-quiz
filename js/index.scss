@@ -284,14 +284,14 @@ $error-color: #e16969;
 
         .correct:before {
           color: green;
-          margin-right: 0.5rem;
+          margin-right: 1rem;
           content: "✓ Correct";
           font-size: 1.5rem;
         }
 
         .incorrect:before {
           color: red;
-          margin-right: 0.5rem;
+          margin-right: 1rem;
           content: "✗ Incorrect";
           font-size: 1.5rem;
         }
