@@ -2,6 +2,7 @@ import classNames from "classnames";
 import _ from "lodash";
 import React, { useState } from "react";
 
+import { MarkdownView } from "../components/markdown";
 import { Snippet } from "../components/snippet";
 import { QuestionFields, QuestionMethods } from "./types";
 
@@ -22,6 +23,34 @@ export interface TracingAnswer {
 }
 
 export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
+
+let HELP_TEXT = `Errors may involve multiple line numbers. For example:
+
+\`\`\`
+let mut x = 1;
+let y = &x;
+let z = &mut x;
+*z = *y;
+\`\`\`
+
+Here, lines 2, 3, and 4 all interact to cause a compiler error. 
+To resolve this ambiguity, you should mark the _last_ line which is involved in the error. 
+Here, that would be line 4. (Since without line 4, this program would compile!)
+`;
+// TODO: replace this, the bug reporter, and the "why fullscreen?" text with popperjs
+let LineNumberInfo = () => {
+  let [open, setOpen] = useState(false);
+  return (
+    <div className="info-wrapper">
+      {open ? (
+        <div className="info-popout">
+          <MarkdownView markdown={HELP_TEXT} />
+        </div>
+      ) : null}
+      <div className="info" onClick={() => setOpen(!open)} />
+    </div>
+  );
+};
 
 export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   PromptView: ({ prompt }) => (
@@ -93,6 +122,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
                     </option>
                   ))}
                 </select>
+                &nbsp;&nbsp;
+                <LineNumberInfo />
               </p>
             </div>
           )

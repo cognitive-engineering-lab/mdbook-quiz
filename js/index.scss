@@ -137,6 +137,7 @@ $error-color: #e16969;
         padding: 0.5em;  
         text-align: left;
         border-radius: 4px;      
+        box-shadow: 1px 1px 4px $light-border-color;
       }
     }
   }
@@ -300,6 +301,47 @@ $error-color: #e16969;
 
     .context {
       margin-top: 1em;
+    }
+  }
+
+  .info-wrapper {
+    display: inline-block;
+    position: relative;
+  }
+  .info-popout {
+    position: absolute;
+    background: var(--bg);
+    left: calc(100% + 10px);
+    border: 1px solid $light-border-color;  
+    padding: 0.5em;  
+    text-align: left;
+    border-radius: 4px;  
+    max-width: 400px;
+    width: max-content;
+    box-shadow: 1px 1px 4px $light-border-color;
+  }
+  .info {
+    display: inline-block;
+    color: var(--icons);
+    border: 1px solid var(--icons);
+    border-radius: 50%;
+    vertical-align: middle;
+    font-size: 12px;
+    width: 17px;
+    height: 17px;
+    font-weight: bold;
+    line-height: 1em;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--fg);
+      border-color: var(--fg);
+    }
+
+    &::before {
+      content: "?";
+      vertical-align: middle;
     }
   }
 }
