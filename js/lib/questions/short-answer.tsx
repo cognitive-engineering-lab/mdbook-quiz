@@ -40,6 +40,6 @@ export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAns
   ),
 
   compareAnswers(providedAnswer: ShortAnswerAnswer, userAnswer: ShortAnswerAnswer): boolean {
-    return providedAnswer.answer.toLowerCase() == userAnswer.answer.toLowerCase();
+    return providedAnswer.answer.toLowerCase().trim() == userAnswer.answer.toLowerCase().trim();
   },
 };
