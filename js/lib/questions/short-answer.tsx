@@ -32,8 +32,14 @@ export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAns
   ),
 
   AnswerView: ({ answer, baseline }) => (
-    <code className={answer.answer == baseline.answer ? "correct" : "incorrect"}>
+    <code
+      className={ShortAnswerMethods.compareAnswers!(answer, baseline) ? "correct" : "incorrect"}
+    >
       {answer.answer}
     </code>
   ),
+
+  compareAnswers(providedAnswer: ShortAnswerAnswer, userAnswer: ShortAnswerAnswer): boolean {
+    return providedAnswer.answer.toLowerCase() == userAnswer.answer.toLowerCase();
+  },
 };

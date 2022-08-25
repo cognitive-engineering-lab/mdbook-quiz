@@ -41,11 +41,12 @@ describe("ShortAnswer", () => {
 
   it("accepts valid input", async () => {
     let input = screen.getByRole("textbox");
-    await user.type(input, "foobar");
+    await user.type(input, "yEs");
     await user.click(submitButton());
+    // answers should be case-insensitive
     expect(submitted).toStrictEqual({
-      answer: { answer: "foobar" },
-      correct: false,
+      answer: { answer: "yEs" },
+      correct: true,
     });
   });
 });
