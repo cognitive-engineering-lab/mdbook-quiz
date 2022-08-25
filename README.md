@@ -94,7 +94,7 @@ export interface Quiz {
 
 A question is one of a set of predefined question types.
 
-```
+```ts
 export type Question = ShortAnswer | Tracing | MultipleChoice;
 ```
 
