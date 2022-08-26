@@ -85,7 +85,11 @@ async function main() {
     platform: "node",
     entryPoints: ["lib/entryPoints/validator.ts"],
   });
-  await Promise.all([p1, p2]);
+  let p3 = build({
+    format: "esm",
+    entryPoints: ["lib/export.ts"],
+  });
+  await Promise.all([p1, p2, p3]);
 
   await generateSchemas();
 }
