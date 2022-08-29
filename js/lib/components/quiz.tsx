@@ -85,6 +85,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       }
     });
 
+    let saveToCache = () => {
+      if (cacheAnswers) {
+        answerStorage.save(state.answers, state.confirmedDone, state.attempt);
+      }
+    };
+
     let n = quiz.questions.length;
     let nCorrect = state.answers.filter(a => a.correct).length;
     let ended = state.index == n;
@@ -140,9 +146,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           state.confirmedDone = true;
         }
 
-        if (cacheAnswers) {
-          answerStorage.save(state.answers, state.confirmedDone, state.attempt);
-        }
+        saveToCache();
       }
     });
 
@@ -175,6 +179,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
                   <button
                     onClick={action(() => {
                       state.confirmedDone = true;
+                      saveToCache();
                     })}
                   >
                     see the correct answers
