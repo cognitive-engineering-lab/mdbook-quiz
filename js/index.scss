@@ -153,10 +153,10 @@ $error-color: #e16969;
 
       .reporter {
         background: var(--bg);
-        border: 2px solid $light-border-color;  
-        padding: 0.5em;  
+        border: 2px solid $light-border-color;
+        padding: 0.5em;
         text-align: left;
-        border-radius: 4px;      
+        border-radius: 4px;
         box-shadow: 1px 1px 4px $light-border-color;
       }
     }
@@ -213,7 +213,7 @@ $error-color: #e16969;
   // Add automatic line-numbers to code snippets
   // https://stackoverflow.com/a/64917958
   pre {
-    counter-reset: line;    
+    counter-reset: line;
 
     display: grid;
     grid-template-columns: min-content 1fr;
@@ -232,10 +232,14 @@ $error-color: #e16969;
         font-size: 0.8em;
       }
     }
-    
+
+    code {
+      padding: 0;
+    }
+
     mark {
       background: var(--highlight);
-    }    
+    }
   }
 
   p,
@@ -288,7 +292,7 @@ $error-color: #e16969;
     .answer-row {
       display: flex;
       gap: 1rem;
-      
+
       @include mobile {
         flex-wrap: wrap;
       }
@@ -336,10 +340,10 @@ $error-color: #e16969;
     position: absolute;
     background: var(--bg);
     left: calc(100% + 10px);
-    border: 1px solid $light-border-color;  
-    padding: 0.5em;  
+    border: 1px solid $light-border-color;
+    padding: 0.5em;
     text-align: left;
-    border-radius: 4px;  
+    border-radius: 4px;
     max-width: 400px;
     width: max-content;
     box-shadow: 1px 1px 4px $light-border-color;
@@ -369,5 +373,5 @@ $error-color: #e16969;
     }
   }
 
- 
+
 }
