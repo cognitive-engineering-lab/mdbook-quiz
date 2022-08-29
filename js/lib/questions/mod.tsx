@@ -4,17 +4,19 @@ import React, { useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
+import { BadProgram, BadProgramMethods } from "./bad-program";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
 import { QuestionMethods } from "./types";
 
-export type Question = ShortAnswer | Tracing | MultipleChoice;
+export type Question = ShortAnswer | Tracing | MultipleChoice | BadProgram;
 
 let methodMapping = {
   ShortAnswer: ShortAnswerMethods,
   Tracing: TracingMethods,
   MultipleChoice: MultipleChoiceMethods,
+  BadProgram: BadProgramMethods,
 };
 
 export let getQuestionMethods = (type: Question["type"]): QuestionMethods<any, any> =>
