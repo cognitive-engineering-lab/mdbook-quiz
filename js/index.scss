@@ -10,6 +10,26 @@ $light-border-color: var(--theme-popup-border);
 $heavy-border-color: var(--searchresults-border-color);
 $error-color: #e16969;
 
+.ayu {
+  --highlight: #46480f;
+}
+
+.coal {
+  --highlight: #46480f;
+}
+
+.light {
+  --highlight: #ffffc1;
+}
+
+.navy {
+  --highlight: #46480f;
+}
+
+.rust {
+  --highlight: #fdf2ca;
+}
+
 .mdbook-quiz-wrapper {
   &.expanded {
     position: fixed;
@@ -212,6 +232,10 @@ $error-color: #e16969;
         font-size: 0.8em;
       }
     }
+    
+    mark {
+      background: var(--highlight);
+    }    
   }
 
   p,
@@ -243,7 +267,7 @@ $error-color: #e16969;
       gap: 10px;
 
       &:not(:last-child) {
-        margin-bottom: 0.5em;
+        margin-bottom: 1em;
       }
     }
 
@@ -344,4 +368,6 @@ $error-color: #e16969;
       vertical-align: middle;
     }
   }
+
+ 
 }

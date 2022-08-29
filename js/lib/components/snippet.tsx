@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
-let splitHljsOutput = (html: string): Node[] => {
-  let parser = new DOMParser();
-  let dom = parser.parseFromString(html, "text/html");
+let splitHljsOutput = (root: Node): Node[] => {
   let lines: Node[][] = [[]];
   let curLine = () => lines[lines.length - 1];
-  dom.body.childNodes.forEach(child => {
+  root.childNodes.forEach(child => {
     if (child.nodeType == Node.TEXT_NODE) {
       let content = child.textContent!;
       let childLines = content.split("\n");
@@ -33,14 +31,25 @@ let splitHljsOutput = (html: string): Node[] => {
     return span;
   });
 };
-
-export let snippetToHtml = (snippet: string, language?: string): string => {
+export let snippetToNode = (snippet: string, language?: string): HTMLPreElement => {
   let hljs = (window as any).hljs;
-  snippet = snippet.trim(); // allow quiz authors to have leading/trailing whitespace
-  let highlighted: string = hljs.highlight(language || "rust", snippet).value;
-  let lines = splitHljsOutput(highlighted);
+
+  // allow quiz authors to have leading/trailing whitespace
+  snippet = snippet.trim();
+
+  // use `[]` to delimit <mark> regions
+  snippet = snippet.replace(/`\[/g, "<mark>").replace(/\]`/g, "</mark>");
+
+  let code = document.createElement("code");
+  code.className = "language-rust";
+  code.innerHTML = snippet;
+
+  // goddamn hack for esbuild-jest
+  let f = hljs.highlightBlock;
+  f(code, language);
 
   let pre = document.createElement("pre");
+  let lines = splitHljsOutput(code);
   if (lines.length > 1) {
     let wrapped = lines
       .map(line => {
@@ -58,10 +67,13 @@ export let snippetToHtml = (snippet: string, language?: string): string => {
     pre.appendChild(lines[0]);
   }
 
-  return pre.outerHTML;
+  return pre;
 };
 
 export let Snippet: React.FC<{ snippet: string }> = ({ snippet }) => {
-  let html = snippetToHtml(snippet);
-  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  let ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    ref.current!.appendChild(snippetToNode(snippet));
+  }, []);
+  return <div ref={ref} />;
 };

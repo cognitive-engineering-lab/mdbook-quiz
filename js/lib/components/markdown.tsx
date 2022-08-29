@@ -1,7 +1,7 @@
 import React from "react";
 import Showdown, { ShowdownExtension } from "react-showdown";
 
-import { snippetToHtml } from "./snippet";
+import { snippetToNode } from "./snippet";
 
 let highlightExtension: ShowdownExtension = {
   type: "output",
@@ -18,10 +18,9 @@ let highlightExtension: ShowdownExtension = {
         }
       });
 
-      let html = snippetToHtml(node.textContent!, language);
-      let snippetDoc = parser.parseFromString(html, "text/html");
+      let newNode = snippetToNode(node.textContent!, language);
       let pre = node.parentNode as HTMLPreElement;
-      pre.replaceWith(snippetDoc.body.firstChild!);
+      pre.replaceWith(newNode);
     });
     return document.body.innerHTML;
   },

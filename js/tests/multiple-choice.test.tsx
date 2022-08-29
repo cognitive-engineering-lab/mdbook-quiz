@@ -22,6 +22,7 @@ describe("ShortAnswer", () => {
     submitted = null;
     render(
       <QuestionView
+        quizName={"Foobar"}
         question={question}
         index={1}
         onSubmit={answer => {

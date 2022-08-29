@@ -4,19 +4,17 @@ import React, { useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
-import { BadProgram, BadProgramMethods } from "./bad-program";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
 import { QuestionMethods } from "./types";
 
-export type Question = ShortAnswer | Tracing | MultipleChoice | BadProgram;
+export type Question = ShortAnswer | Tracing | MultipleChoice;
 
 let methodMapping = {
   ShortAnswer: ShortAnswerMethods,
   Tracing: TracingMethods,
   MultipleChoice: MultipleChoiceMethods,
-  BadProgram: BadProgramMethods,
 };
 
 export let getQuestionMethods = (type: Question["type"]): QuestionMethods<any, any> =>
@@ -139,8 +137,6 @@ export let AnswerView: React.FC<{
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
-  showCorrect = showCorrect && !correct;
-
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
@@ -159,7 +155,7 @@ export let AnswerView: React.FC<{
             />
           </div>
         </div>
-        {showCorrect ? (
+        {showCorrect && !correct ? (
           <div>
             <div className="answer-header">The correct answer is:</div>
             <div>
@@ -174,7 +170,7 @@ export let AnswerView: React.FC<{
       </div>
       {showCorrect && question.context ? (
         <div className="context">
-          <MarkdownView markdown={`**Context**: ` + question.context} />
+          <MarkdownView markdown={`**Context**:\n` + question.context} />
         </div>
       ) : null}
     </div>
