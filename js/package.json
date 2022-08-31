@@ -10,7 +10,8 @@
     "build": "node build.mjs",
     "lint": "eslint --ext js,ts,tsx lib",
     "fmt": "prettier -w \"{lib,tests}/**/*.{ts,tsx}\"",
-    "test": "jest"
+    "test": "jest",
+    "commit-check": "pnpm build && pnpm fmt && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",
