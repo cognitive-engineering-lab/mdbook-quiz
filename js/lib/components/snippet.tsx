@@ -6,6 +6,9 @@ export let snippetToNode = (snippet: string, language?: string): HTMLPreElement 
   // allow quiz authors to have leading/trailing whitespace
   snippet = snippet.trim();
 
+  // escape HTML entities
+  snippet = snippet.replace(/[<>]/g, t => ({ "<": "&lt;", ">": "&gt;" }[t] || t));
+
   // use `[]` to delimit <mark> regions
   snippet = snippet.replace(/`\[/g, "<mark>").replace(/\]`/g, "</mark>");
 
@@ -13,6 +16,8 @@ export let snippetToNode = (snippet: string, language?: string): HTMLPreElement 
   if (snippet.includes("\n")) {
     let lines = snippet.split("\n");
     snippet = lines.map(line => `<span class="line-number"></span><code>${line}</code>`).join("\n");
+  } else {
+    snippet = `<code>${snippet}</code>`;
   }
 
   let code = document.createElement("code");
@@ -25,6 +30,7 @@ export let snippetToNode = (snippet: string, language?: string): HTMLPreElement 
 
   let pre = document.createElement("pre");
   pre.innerHTML = code.innerHTML;
+
   return pre;
 };
 
