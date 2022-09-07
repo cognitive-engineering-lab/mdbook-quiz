@@ -7,11 +7,12 @@
   "license": "MIT",
   "main": "dist/export.js",
   "scripts": {
+    "clean": "rm -rf dist node_modules",
     "build": "node build.mjs",
     "lint": "eslint --ext js,ts,tsx lib",
     "fmt": "prettier -w \"{lib,tests}/**/*.{ts,tsx}\"",
     "test": "jest",
-    "commit-check": "pnpm build && pnpm fmt && pnpm lint && pnpm test"
+    "commit-check": "pnpm clean && pnpm install && pnpm build && pnpm fmt && pnpm lint && pnpm test"
   },
   "devDependencies": {
     "@codemirror/lang-rust": "^6.0.0",
