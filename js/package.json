@@ -14,6 +14,8 @@
     "commit-check": "pnpm build && pnpm fmt && pnpm lint && pnpm test"
   },
   "devDependencies": {
+    "@codemirror/lang-rust": "^6.0.0",
+    "@codemirror/view": "^6.2.2",
     "@iarna/toml": "^2.2.5",
     "@nota-lang/esbuild-utils": "^0.3.7",
     "@testing-library/dom": "^8.14.0",
@@ -31,6 +33,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
+    "@uiw/react-codemirror": "^4.12.1",
     "ajv": "^8.11.0",
     "axios": "^0.27.2",
     "better-ajv-errors": "^1.2.0",
@@ -60,9 +63,9 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
     "mobx": "^6.6.0",
-    "mobx-react": "^7.5.0"
+    "mobx-react": "^7.5.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
   }
 }

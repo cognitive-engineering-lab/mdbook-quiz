@@ -1,3 +1,5 @@
+import { rust } from "@codemirror/lang-rust";
+import CodeMirror from "@uiw/react-codemirror";
 import React from "react";
 
 import { MarkdownView } from "../components/markdown";
@@ -6,6 +8,9 @@ import { Markdown, QuestionFields, QuestionMethods } from "./types";
 export interface ShortAnswerPrompt {
   /** The text of the prompt. */
   prompt: Markdown;
+
+  /** Format of the response. */
+  response?: "short" | "long" | "code";
 }
 
 export interface ShortAnswerAnswer {
@@ -18,18 +23,34 @@ export type ShortAnswer = QuestionFields<"ShortAnswer", ShortAnswerPrompt, Short
 export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAnswer> = {
   PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
 
-  ResponseView: ({ submit, formValidators: { required } }) => (
-    <>
-      <input
-        {...required("answer")}
-        type="text"
-        placeholder="Write your short answer here..."
-        onKeyDown={e => {
-          if (e.key == "Enter") submit();
-        }}
-      />
-    </>
-  ),
+  ResponseView: ({ prompt, submit, formValidators: { required, setValue } }) => {
+    let formFields = required("answer");
+    return (
+      <>
+        {!prompt.response || prompt.response == "short" ? (
+          <input
+            {...formFields}
+            type="text"
+            placeholder="Write your answer here..."
+            onKeyDown={e => {
+              if (e.key == "Enter") submit();
+            }}
+          />
+        ) : prompt.response == "long" ? (
+          <textarea {...formFields} placeholder="Write your answer here..." />
+        ) : (
+          <CodeMirror
+            extensions={[rust()]}
+            height={"10em"}
+            indentWithTab={true}
+            theme={document.documentElement.classList.contains("light") ? "light" : "dark"}
+            placeholder={"Write your answer here..."}
+            onChange={v => setValue("answer", v)}
+          />
+        )}
+      </>
+    );
+  },
 
   AnswerView: ({ answer, baseline }) => (
     <code

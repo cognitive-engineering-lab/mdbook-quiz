@@ -100,15 +100,19 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     // while the quiz is active (e.g. to avoid using the search box).
     useEffect(() => {
       if (showFullscreen) {
-        let captureKeyboard = (e: KeyboardEvent) => {
-          e.stopPropagation();
-        };
+        let captureKeyboard = (e: KeyboardEvent) => e.stopPropagation();
 
-        // the "true" ensures this event listener will run before the
-        // default ones provided by mdBook
-        document.addEventListener("keydown", captureKeyboard, true);
+        // This gets added specifically to document.documentElement rather than document
+        // so bubbling events will hit this listener before ones added via document.addEventListener(...).
+        // All of the problematic mdBook interactions are created that way, so we ensure that
+        // the keyboard event does not propagate to those listeners.
+        //
+        // However, some widgets like Codemirror require keydown events but on local elements.
+        // So we can't just stopPropagation in the capture phase, or those widgets will break.
+        // This is the compromise!
+        document.documentElement.addEventListener("keydown", captureKeyboard, false);
 
-        return () => document.removeEventListener("keydown", captureKeyboard, true);
+        return () => document.removeEventListener("keydown", captureKeyboard, false);
       }
     }, [showFullscreen]);
 
