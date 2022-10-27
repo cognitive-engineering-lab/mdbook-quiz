@@ -11,11 +11,15 @@ export interface ShortAnswerPrompt {
 
   /** Format of the response. */
   response?: "short" | "long" | "code";
+  
 }
 
 export interface ShortAnswerAnswer {
   /** The exact string that answers the question. */
   answer: string;
+
+  /** Other acceptable strings answers. */
+  alternatives?: string[];
 }
 
 export type ShortAnswer = QuestionFields<"ShortAnswer", ShortAnswerPrompt, ShortAnswerAnswer>;
@@ -61,6 +65,8 @@ export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAns
   ),
 
   compareAnswers(providedAnswer: ShortAnswerAnswer, userAnswer: ShortAnswerAnswer): boolean {
-    return providedAnswer.answer.toLowerCase().trim() == userAnswer.answer.toLowerCase().trim();
+    let clean = (s: string) => s.toLowerCase().trim();
+    let possibleAnswers = [providedAnswer.answer].concat(providedAnswer.alternatives || []).map(clean);
+    return possibleAnswers.includes(clean(userAnswer.answer));
   },
 };

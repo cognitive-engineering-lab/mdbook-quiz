@@ -14,7 +14,7 @@ describe("ShortAnswer", () => {
   let question: ShortAnswer = {
     type: "ShortAnswer",
     prompt: { prompt: "Hello world" },
-    answer: { answer: "Yes" },
+    answer: { answer: "Yes", alternatives: ["Ok"] },
   };
 
   let submitted: any | null = null;
@@ -47,6 +47,16 @@ describe("ShortAnswer", () => {
     // answers should be case-insensitive and trim whitespace
     expect(submitted).toStrictEqual({
       answer: { answer: "yEs " },
+      correct: true,
+    });
+  });
+
+  it("accepts alternatives", async () => {
+    let input = screen.getByRole("textbox");
+    await user.type(input, "Ok");
+    await user.click(submitButton());
+    expect(submitted).toStrictEqual({
+      answer: { answer: "Ok" },
       correct: true,
     });
   });

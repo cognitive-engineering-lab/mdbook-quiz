@@ -145,6 +145,9 @@ export interface ShortAnswerPrompt {
 export interface ShortAnswerAnswer {
   /** The exact string that answers the question. */
   answer: string;
+
+  /** Other acceptable strings answers. */
+  alternatives?: string[];
 }
 
 export type ShortAnswer = QuestionFields<"ShortAnswer", ShortAnswerPrompt, ShortAnswerAnswer>;
