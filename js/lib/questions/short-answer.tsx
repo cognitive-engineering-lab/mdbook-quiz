@@ -11,7 +11,6 @@ export interface ShortAnswerPrompt {
 
   /** Format of the response. */
   response?: "short" | "long" | "code";
-  
 }
 
 export interface ShortAnswerAnswer {
@@ -66,7 +65,9 @@ export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAns
 
   compareAnswers(providedAnswer: ShortAnswerAnswer, userAnswer: ShortAnswerAnswer): boolean {
     let clean = (s: string) => s.toLowerCase().trim();
-    let possibleAnswers = [providedAnswer.answer].concat(providedAnswer.alternatives || []).map(clean);
+    let possibleAnswers = [providedAnswer.answer]
+      .concat(providedAnswer.alternatives || [])
+      .map(clean);
     return possibleAnswers.includes(clean(userAnswer.answer));
   },
 };
