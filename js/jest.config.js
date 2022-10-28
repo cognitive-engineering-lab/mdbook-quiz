@@ -7,5 +7,4 @@ module.exports = {
   },
   forceExit: true, // hack for http.Server shutdown issue
   transformIgnorePatterns: [],
-  setupFiles: ["./tests/setup-globals.js"],
 };

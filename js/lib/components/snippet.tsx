@@ -1,8 +1,7 @@
+import hljs from "highlight.js";
 import React, { useEffect, useRef } from "react";
 
 export let snippetToNode = (snippet: string, language?: string): HTMLPreElement => {
-  let hljs = (window as any).hljs;
-
   // allow quiz authors to have leading/trailing whitespace
   snippet = snippet.trim();
 
@@ -26,7 +25,7 @@ export let snippetToNode = (snippet: string, language?: string): HTMLPreElement 
 
   // goddamn hack for esbuild-jest
   let f = hljs.highlightBlock;
-  f(code, language);
+  f(code);
 
   let pre = document.createElement("pre");
   pre.innerHTML = code.innerHTML;
