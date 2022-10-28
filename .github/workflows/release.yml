@@ -24,4 +24,8 @@ jobs:
         with:          
           command: publish
           # --allow-dirty needed for js/dist files
-          args: --allow-dirty --token ${{ secrets.CARGO_TOKEN }} 
+          args: --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./js/package.json
