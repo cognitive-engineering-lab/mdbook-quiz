@@ -45,7 +45,7 @@ describe("ShortAnswer", () => {
     await user.type(input, "yEs ");
     await user.click(submitButton());
     // answers should be case-insensitive and trim whitespace
-    expect(submitted).toStrictEqual({
+    expect(submitted).toMatchObject({
       answer: { answer: "yEs " },
       correct: true,
     });
@@ -55,7 +55,7 @@ describe("ShortAnswer", () => {
     let input = screen.getByRole("textbox");
     await user.type(input, "Ok");
     await user.click(submitButton());
-    expect(submitted).toStrictEqual({
+    expect(submitted).toMatchObject({
       answer: { answer: "Ok" },
       correct: true,
     });

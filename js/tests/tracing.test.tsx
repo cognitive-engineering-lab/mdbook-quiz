@@ -58,7 +58,7 @@ describe("Tracing", () => {
     await user.type(input, "foobar");
     await user.click(submitButton());
 
-    expect(submitted).toStrictEqual({
+    expect(submitted).toMatchObject({
       answer: { doesCompile: true, stdout: "foobar" },
       correct: false,
     });

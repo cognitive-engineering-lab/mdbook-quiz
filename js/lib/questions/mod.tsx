@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
@@ -70,7 +70,11 @@ let BugReporter = ({ quizName, question }: { quizName: string; question: number 
 export interface TaggedAnswer {
   answer: any;
   correct: boolean;
+  start: number;
+  end: number;
 }
+
+let now = () => new Date().getTime();
 
 export let QuestionView: React.FC<{
   quizName: string;
@@ -78,6 +82,7 @@ export let QuestionView: React.FC<{
   index: number;
   onSubmit: (answer: TaggedAnswer) => void;
 }> = ({ quizName, question, index, onSubmit }) => {
+  let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
@@ -103,7 +108,7 @@ export let QuestionView: React.FC<{
     let answer = methods.getAnswerFromDOM ? methods.getAnswerFromDOM(data, ref.current!) : data;
     let comparator = methods.compareAnswers || _.isEqual;
     let correct = comparator(question.answer, answer);
-    onSubmit({ answer, correct });
+    onSubmit({ answer, correct, start, end: now() });
   });
 
   return (
