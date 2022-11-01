@@ -13,7 +13,13 @@ let initQuizzes = () => {
     let fullscreen = divEl.dataset.quizFullscreen !== undefined;
     let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
     root.render(
-      <QuizView name={name} quiz={quiz} fullscreen={fullscreen} cacheAnswers={cacheAnswers} />
+      <QuizView
+        name={name}
+        quiz={quiz}
+        fullscreen={fullscreen}
+        cacheAnswers={cacheAnswers}
+        allowRetry
+      />
     );
   });
 };

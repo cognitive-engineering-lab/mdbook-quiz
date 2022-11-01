@@ -6,6 +6,7 @@
   "homepage": "https://github.com/willcrichton/mdbook-quiz",
   "license": "MIT",
   "main": "dist/export.js",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf dist node_modules",
     "build": "node build.mjs",

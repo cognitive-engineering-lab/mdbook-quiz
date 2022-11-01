@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import _ from "lodash";
-import { action } from "mobx";
+import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
 import React, { useEffect, useState } from "react";
@@ -16,6 +16,8 @@ export interface QuizViewProps {
   quiz: Quiz;
   fullscreen?: boolean;
   cacheAnswers?: boolean;
+  allowRetry?: boolean;
+  onFinish?: (answers: TaggedAnswer[]) => void;
 }
 
 interface StoredAnswers {
@@ -60,7 +62,7 @@ class AnswerStorage {
 }
 
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({ quiz, name, fullscreen, cacheAnswers }) => {
+  ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
     let answerStorage = new AnswerStorage(name, quizHash);
     let state = useLocalObservable<{
@@ -146,11 +148,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       });
 
       if (state.index == n) {
-        if (_.every(state.answers, a => a.correct)) {
+        if (_.every(state.answers, a => a.correct) || !allowRetry) {
           state.confirmedDone = true;
         }
 
         saveToCache();
+        onFinish && onFinish(toJS(state.answers));
       }
     });
 

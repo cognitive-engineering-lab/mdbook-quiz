@@ -112,10 +112,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <div>
               <p>
                 The error occurs on the line number:{" "}
-                <select {...required("lineNumber")} defaultValue="__default">
-                  <option value="__default" disabled>
-                    Select...
-                  </option>
+                <select {...required("lineNumber")}>
+                  <option value="">Select...</option>
                   {lineNumbers.map((n, i) => (
                     <option key={i} value={n}>
                       Line {n}
