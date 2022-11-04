@@ -62,3 +62,51 @@ describe("Quiz configuration", () => {
     await waitFor(() => startButton());
   });
 });
+
+describe("Quiz retry", () => {
+  let longQuiz: Quiz = {
+    questions: [
+      {
+        type: "ShortAnswer",
+        prompt: { prompt: "Hey" },
+        answer: { answer: "Yes" },
+      },
+      {
+        type: "ShortAnswer",
+        prompt: { prompt: "Hello" },
+        answer: { answer: "No" },
+      },
+    ],
+  };
+
+  beforeEach(async () => {
+    render(<QuizView name="the-quiz" quiz={longQuiz} allowRetry />);
+    await waitFor(() => screen.getByText("Quiz"));
+    await user.click(startButton());
+    await waitFor(() => screen.getByText("Question 1"));
+
+    let input = await waitFor(() => screen.getByRole("textbox"));
+    await user.type(input, "Yes");
+    await user.click(submitButton());
+
+    input = await waitFor(() => screen.getByRole("textbox"));
+    await user.type(input, "Yes");
+    await user.click(submitButton());
+  });
+
+  it("allow for retrying after an incorrect answer", async () => {
+    let retryButton = screen.getByRole("button", { name: "retry the quiz" });
+    await user.click(retryButton);
+
+    // Skips first question, only shows question 2
+    await waitFor(() => screen.getByText("Question 2"));
+
+    // Provide a correct answer...
+    let input = await waitFor(() => screen.getByRole("textbox"));
+    await user.type(input, "No");
+    await user.click(submitButton());
+
+    // ...and button should disappear.
+    expect(() => screen.getByRole("button", { name: "retry the quiz" })).toThrow();
+  });
+});
