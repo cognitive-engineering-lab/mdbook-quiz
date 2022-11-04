@@ -80,7 +80,7 @@ impl QuizProcessorRef {
 
   fn validate_quiz(&self, path: impl AsRef<Path>) -> Result<()> {
     let path = path.as_ref();
-    let validator_path = self.config.js_dir.join("validator.js");
+    let validator_path = self.config.js_dir.join("validator.cjs");
     let status = Command::new("node")
       .arg(validator_path)
       .arg(path)

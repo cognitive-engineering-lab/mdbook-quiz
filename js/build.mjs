@@ -84,12 +84,21 @@ async function main() {
     format: "cjs",
     platform: "node",
     entryPoints: ["lib/entryPoints/validator.ts"],
+    outExtension: { ".js": ".cjs" },
   });
   let p3 = build({
     format: "esm",
     entryPoints: ["lib/export.ts"],
   });
-  await Promise.all([p1, p2, p3]);
+  let p4 = build({
+    format: "cjs",
+    platform: "node",
+    entryPoints: ["lib/entryPoints/build-quiz.ts"],
+    outExtension: { ".js": ".cjs" },
+    external: ["@iarna/toml"],
+    plugins: [sassPlugin()],
+  });
+  await Promise.all([p1, p2, p3, p4]);
 
   await generateSchemas();
 }
