@@ -56,8 +56,9 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   PromptView: ({ prompt }) => (
     <>
       <p>
-        Determine whether the program will pass the compiler. If it passes, say what will happen
-        when it is executed. If it does not pass, say what kind of compiler error you will get.
+        Determine whether the program will pass the compiler. If it passes, write the expected
+        output of the program if it were executed. If the program does not pass, indicate the last
+        line number involved in the compiler error.
       </p>
       <Snippet snippet={prompt.program} />
     </>
