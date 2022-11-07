@@ -134,6 +134,7 @@ export let QuestionView: React.FC<{
         <fieldset disabled={showExplanation}>
           <methods.ResponseView
             prompt={question.prompt}
+            answer={question.answer}
             submit={submit}
             formValidators={{ ...formValidators, required }}
           />

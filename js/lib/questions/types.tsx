@@ -18,6 +18,7 @@ export interface QuestionMethods<Prompt, Answer> {
 
   ResponseView: React.FC<{
     prompt: Prompt;
+    answer: Answer;
     submit: () => void;
     formValidators: UseFormReturn & {
       required: (

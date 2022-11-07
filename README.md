@@ -165,13 +165,12 @@ A question with multiple options that the user selects from.
 [[questions]]
 type = "MultipleChoice"
 prompt.prompt = "What does it mean if a variable `x` is immutable?"
-prompt.choices = [
+prompt.distractors = [
   "`x` is stored in the immutable region of memory.",
   "After being defined, `x` can be changed at most once.",
-  "`x` cannot be changed after being assigned to a value.",
   "You cannot create a reference to `x`."
 ]
-answer.answer = 2
+answer.answer = "`x` cannot be changed after being assigned to a value."
 context = """
 Immutable means "not mutable", or not changeable.
 """
@@ -183,14 +182,14 @@ Immutable means "not mutable", or not changeable.
 export interface MultipleChoicePrompt {
   /** The text of the prompt. */
   prompt: Markdown;
-  
-  /** An array of text explaining each choice. */
-  choices: Markdown[];
+
+  /** An array of incorrect answers. */
+  distractors: Markdown[];
 }
 
 export interface MultipleChoiceAnswer {
-  /** The index of the correct answer in the choices array (0-based). */
-  answer: number;
+  /** The correct answer. */
+  answer: Markdown;
 }
 ```
 

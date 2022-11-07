@@ -13,8 +13,8 @@ import { submitButton } from "./utils";
 describe("ShortAnswer", () => {
   let question: MultipleChoice = {
     type: "MultipleChoice",
-    prompt: { prompt: "Hello world", choices: ["A", "B", "C"] },
-    answer: { answer: 1 },
+    prompt: { prompt: "Hello world", distractors: ["B", "C"] },
+    answer: { answer: "A" },
   };
 
   let submitted: any | null = null;
@@ -42,11 +42,11 @@ describe("ShortAnswer", () => {
   });
 
   it("accepts valid input", async () => {
-    let input = screen.getByRole("radio", { name: "B" });
+    let input = screen.getByRole("radio", { name: "A" });
     await user.click(input);
     await user.click(submitButton());
     expect(submitted).toMatchObject({
-      answer: { answer: 1 },
+      answer: { answer: "A" },
       correct: true,
     });
   });
