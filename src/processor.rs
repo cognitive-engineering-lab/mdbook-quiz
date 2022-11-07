@@ -188,7 +188,13 @@ impl Preprocessor for QuizProcessor {
     };
     processor.copy_js_files()?;
 
-    // TODO: use std::thread::Scope once that gets stabilized
+    // Limit size of thread pool to avoid OS resource exhaustion
+    let nproc = std::thread::available_parallelism().map_or(1, |n| n.get());
+    rayon::ThreadPoolBuilder::new()
+      .num_threads(nproc)
+      .build_global()
+      .unwrap();
+
     rayon::scope(|s| {
       fn for_each_mut<'scope, 'proc: 'scope, 'item: 'scope>(
         s: &rayon::Scope<'scope>,
