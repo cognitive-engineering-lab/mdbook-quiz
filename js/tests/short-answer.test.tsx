@@ -25,6 +25,7 @@ describe("ShortAnswer", () => {
         quizName={"Foobar"}
         question={question}
         index={1}
+        attempt={0}
         onSubmit={answer => {
           submitted = answer;
         }}

@@ -7,14 +7,15 @@ import user from "@testing-library/user-event";
 import React from "react";
 
 import { QuestionView } from "../lib/questions/mod";
-import { MultipleChoice } from "../lib/questions/multiple-choice";
+import { ShortAnswer } from "../lib/questions/short-answer";
 import { submitButton } from "./utils";
 
-describe("ShortAnswer", () => {
-  let question: MultipleChoice = {
-    type: "MultipleChoice",
-    prompt: { prompt: "Hello world", choices: ["A", "B", "C"] },
-    answer: { answer: 1 },
+describe("Question prompt for explanation", () => {
+  let question: ShortAnswer = {
+    type: "ShortAnswer",
+    prompt: { prompt: "Hello world" },
+    answer: { answer: "Yes" },
+    promptExplanation: true,
   };
 
   let submitted: any | null = null;
@@ -34,20 +35,15 @@ describe("ShortAnswer", () => {
     await waitFor(() => screen.getByText("Hello world"));
   });
 
-  it("initially renders", () => {});
-
-  it("validates input", async () => {
+  it("accepts an explanation", async () => {
+    let input = screen.getByRole("textbox");
+    await user.type(input, "No");
     await user.click(submitButton());
-    expect(submitted).toBe(null);
-  });
 
-  it("accepts valid input", async () => {
-    let input = screen.getByRole("radio", { name: "B" });
-    await user.click(input);
+    input = screen.getByTitle("Explanation");
+    await user.type(input, "Because");
     await user.click(submitButton());
-    expect(submitted).toMatchObject({
-      answer: { answer: 1 },
-      correct: true,
-    });
+
+    expect(submitted.answer).toMatchObject({ explanation: "Because" });
   });
 });

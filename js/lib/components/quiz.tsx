@@ -255,6 +255,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
               key={state.index}
               quizName={name}
               index={state.index + 1}
+              attempt={state.attempt}
               question={quiz.questions[state.index]}
               onSubmit={onSubmit}
             />

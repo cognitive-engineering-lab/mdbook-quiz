@@ -4,6 +4,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
+import { MoreInfo } from "../components/more-info";
 import { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswer, ShortAnswerMethods } from "./short-answer";
 import { Tracing, TracingMethods } from "./tracing";
@@ -76,14 +77,22 @@ export interface TaggedAnswer {
 
 let now = () => new Date().getTime();
 
+const EXPLANATION_HELP = `
+Normally, we only observe *whether* readers get a question correct or incorrect. 
+This explanation helps us understand *why* a reader answers a particular way, so 
+we can better improve the surrounding text.
+`.trim();
+
 export let QuestionView: React.FC<{
   quizName: string;
   question: Question;
   index: number;
+  attempt: number;
   onSubmit: (answer: TaggedAnswer) => void;
-}> = ({ quizName, question, index, onSubmit }) => {
+}> = ({ quizName, question, index, attempt, onSubmit }) => {
   let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
+  let [showExplanation, setShowExplanation] = useState(false);
   let methods = getQuestionMethods(question.type);
   if (!methods) {
     return (
@@ -111,6 +120,8 @@ export let QuestionView: React.FC<{
     onSubmit({ answer, correct, start, end: now() });
   });
 
+  let shouldPrompt = question.promptExplanation && attempt == 0;
+
   return (
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
@@ -120,12 +131,30 @@ export let QuestionView: React.FC<{
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
-        <methods.ResponseView
-          prompt={question.prompt}
-          submit={submit}
-          formValidators={{ ...formValidators, required }}
-        />
-        <input type="submit" />
+        <fieldset disabled={showExplanation}>
+          <methods.ResponseView
+            prompt={question.prompt}
+            submit={submit}
+            formValidators={{ ...formValidators, required }}
+          />
+        </fieldset>
+        {showExplanation ? (
+          <>
+            <p>
+              <br />
+              <label htmlFor="explanation">
+                In 1-2 sentences, please explain why you picked this answer. &nbsp;&nbsp;
+                <MoreInfo markdown={EXPLANATION_HELP} />
+              </label>
+            </p>
+            <textarea title="Explanation" {...required("explanation")}></textarea>
+          </>
+        ) : null}
+        {shouldPrompt && !showExplanation ? (
+          <button onClick={() => setShowExplanation(true)}>Submit</button>
+        ) : (
+          <input type="submit" />
+        )}
       </form>
     </div>
   );

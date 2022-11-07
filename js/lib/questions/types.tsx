@@ -9,6 +9,7 @@ export interface QuestionFields<Type extends string, Prompt, Answer> {
   prompt: Prompt;
   answer: Answer;
   context?: Markdown;
+  promptExplanation?: boolean;
 }
 
 export interface QuestionMethods<Prompt, Answer> {

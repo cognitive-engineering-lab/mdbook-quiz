@@ -163,6 +163,12 @@ $error-color: #e16969;
   }
 
   .response {
+    fieldset {
+      border: none;
+      margin: 0 0 1em 0;
+      padding: 0;
+    }
+
     .response-block {
       margin-bottom: 0.5em;
 
