@@ -5,6 +5,7 @@ import { RegisterOptions, UseFormRegisterReturn, UseFormReturn } from "react-hoo
 export type Markdown = string;
 
 export interface QuestionFields<Type extends string, Prompt, Answer> {
+  id?: string;
   type: Type;
   prompt: Prompt;
   answer: Answer;

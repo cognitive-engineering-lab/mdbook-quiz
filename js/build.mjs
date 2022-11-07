@@ -98,7 +98,14 @@ async function main() {
     external: ["@iarna/toml"],
     plugins: [sassPlugin()],
   });
-  await Promise.all([p1, p2, p3, p4]);
+  let p5 = build({
+    format: "cjs",
+    platform: "node",
+    entryPoints: ["lib/entryPoints/gen-quiz-ids.ts"],
+    outExtension: { ".js": ".cjs" },
+    external: ["@iarna/toml"],    
+  });
+  await Promise.all([p1, p2, p3, p4, p5]);
 
   await generateSchemas();
 }
