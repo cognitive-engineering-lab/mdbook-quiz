@@ -21,7 +21,7 @@ let processQuiz = async (p: string) => {
   matches.forEach(match => {
     let { index } = match;
     let start = index! + header.length + 1;
-    if (contents.slice(start, start + key.length) != header) {
+    if (contents.slice(start, start + key.length) != key) {
       insertions.push({
         index: start,
         str: `${key}"${uuid.v4()}"\n`,
@@ -40,7 +40,8 @@ let processQuiz = async (p: string) => {
   });
   pieces.push(contents.slice(_.last(insertions)!.index));
 
-  await fs.writeFile(p, contents);
+  let finalContents = pieces.join("");
+  await fs.writeFile(p, finalContents);
 };
 
 let main = async () => {
