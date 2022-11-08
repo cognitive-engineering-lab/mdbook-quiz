@@ -30,7 +30,7 @@ export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, Multiple
   ResponseView: ({ prompt, answer, formValidators: { required } }) => {
     let choices = [answer.answer, ...prompt.distractors];
     let order = _.range(choices.length);
-    _.shuffle(order);
+    order = _.shuffle(order);
     return (
       <>
         {order.map(i => {
