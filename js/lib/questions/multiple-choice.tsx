@@ -11,6 +11,9 @@ export interface MultipleChoicePrompt {
 
   /** An array of incorrect answers. */
   distractors: Markdown[];
+
+  /** If true, don't randomize distractors and put answer at this index */
+  answerIndex?: number;
 }
 
 export interface MultipleChoiceAnswer {
@@ -28,14 +31,19 @@ export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, Multiple
   PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
 
   ResponseView: ({ prompt, answer, formValidators: { required } }) => {
-    let choices = [answer.answer, ...prompt.distractors];
-    let order = _.range(choices.length);
-    order = _.shuffle(order);
+    let choices: string[];
+    if (prompt.answerIndex) {
+      choices = [...prompt.distractors];
+      choices.splice(prompt.answerIndex, 0, answer.answer);
+    } else {
+      choices = [answer.answer, ...prompt.distractors];
+      choices = _.shuffle(choices);
+    }
+
     return (
       <>
-        {order.map(i => {
+        {choices.map((choice, i) => {
           let id = `answer${i}`;
-          let choice = choices[i];
           return (
             <div className="choice" key={i}>
               <input type="radio" {...required("answer")} value={choice} id={id} />

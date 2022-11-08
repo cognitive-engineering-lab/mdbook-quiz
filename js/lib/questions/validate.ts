@@ -1,4 +1,5 @@
 import type { Question } from "./mod";
+import { validateMultipleChoice } from "./multiple-choice.validate";
 import { validateTracing } from "./tracing.validate";
 
 export type Validator<Prompt, Answer> = (
@@ -8,4 +9,5 @@ export type Validator<Prompt, Answer> = (
 
 export let questionValidators: { [key in Question["type"]]?: Validator<any, any> } = {
   Tracing: validateTracing,
+  MultipleChoice: validateMultipleChoice,
 };
