@@ -73,6 +73,7 @@ export interface TaggedAnswer {
   correct: boolean;
   start: number;
   end: number;
+  explanation?: string;
 }
 
 let now = () => new Date().getTime();
@@ -117,7 +118,7 @@ export let QuestionView: React.FC<{
     let answer = methods.getAnswerFromDOM ? methods.getAnswerFromDOM(data, ref.current!) : data;
     let comparator = methods.compareAnswers || _.isEqual;
     let correct = comparator(question.answer, answer);
-    onSubmit({ answer, correct, start, end: now() });
+    onSubmit({ answer, correct, start, end: now(), explanation: data.explanation });
   });
 
   let shouldPrompt = question.promptExplanation && attempt == 0;
