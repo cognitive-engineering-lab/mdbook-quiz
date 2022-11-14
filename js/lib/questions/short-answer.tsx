@@ -57,7 +57,7 @@ export let ShortAnswerMethods: QuestionMethods<ShortAnswerPrompt, ShortAnswerAns
 
   AnswerView: ({ answer, baseline }) => (
     <code
-      className={ShortAnswerMethods.compareAnswers!(answer, baseline) ? "correct" : "incorrect"}
+      className={ShortAnswerMethods.compareAnswers!(baseline, answer) ? "correct" : "incorrect"}
     >
       {answer.answer}
     </code>
