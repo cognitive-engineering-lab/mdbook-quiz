@@ -185,10 +185,13 @@ export interface MultipleChoicePrompt {
 
   /** An array of incorrect answers. */
   distractors: Markdown[];
+
+  /** If defined, don't randomize distractors and put answer at this index. */
+  answerIndex?: number;
 }
 
 export interface MultipleChoiceAnswer {
-  /** The correct answer. */
+  /** The text of the correct answer. */
   answer: Markdown;
 }
 ```
