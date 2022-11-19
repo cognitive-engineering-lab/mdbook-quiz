@@ -204,11 +204,14 @@ impl Preprocessor for QuizProcessor {
         for item in items {
           if let BookItem::Chapter(chapter) = item {
             s.spawn(|_| {
-              let chapter_path = processor.src_dir.join(chapter.path.as_ref().unwrap());
-              let chapter_dir = chapter_path.parent().unwrap();
-              processor
-                .process_chapter(chapter_dir, &mut chapter.content)
-                .unwrap();
+              if let Some(chapter_path) =
+                  processor.src_dir.join(chapter.path.as_ref())
+              {
+                let chapter_dir = chapter_path.parent().unwrap();
+                processor
+                  .process_chapter(chapter_dir, &mut chapter.content)
+                  .unwrap();
+              }
             });
             for_each_mut(s, processor, &mut chapter.sub_items);
           }
