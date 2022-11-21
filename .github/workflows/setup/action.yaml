@@ -1,0 +1,27 @@
+name: Setup
+runs:
+  using: composite
+  steps:
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        components: clippy
+    - uses: Swatinem/rust-cache@v1
+    - name: Install JS dependencies
+      run: npm install -g pnpm
+      shell: bash
+    - name: Test Rust package
+      uses: actions-rs/cargo@v1
+      with:
+        command: test
+    - name: Lint Rust package
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+    # Build script in previous action should build js,
+    # so we don't need to run pnpm build here.
+    - name: Test JS package
+      run: pnpm test && pnpm lint
+      working-directory: js
+      shell: bash

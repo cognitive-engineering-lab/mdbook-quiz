@@ -5,21 +5,13 @@ on:
     tags:
       - "v*"
 
-
 jobs:
   publish:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - run: npm install -g pnpm
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-      - run: pnpm test && pnpm lint
-        working-directory: js
+      - name: Setup
+        uses: ./.github/workflows/setup
       - uses: actions-rs/cargo@v1
         with:          
           command: publish
@@ -29,3 +21,18 @@ jobs:
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./js/package.json
+      - name: Install mdbook
+        run: |
+          mkdir bin
+          curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
+          echo "$(pwd)/bin" >> ${GITHUB_PATH}
+      - name: Install mdbook-quiz
+        run: cargo install --path . --debug --locked
+      - name: Build example mdbook
+        run: mdbook build
+        working-directory: example
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./example/book

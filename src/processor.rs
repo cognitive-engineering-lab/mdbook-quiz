@@ -39,7 +39,7 @@ pub struct QuizProcessor;
 struct QuizProcessorRef {
   config: QuizConfig,
   src_dir: PathBuf,
-  epilogue: String,
+  assets: Vec<PathBuf>,
 }
 
 lazy_static::lazy_static! {
@@ -63,17 +63,7 @@ impl QuizProcessorRef {
       fs::copy(src, target_dir.join(file))?;
     }
 
-    self.epilogue = files
-      .into_iter()
-      .map(|file| {
-        if Path::new(file).extension().unwrap().to_string_lossy() == "js" {
-          format!(r#"<script type="text/javascript" src="mdbook-quiz/{file}"></script>"#)
-        } else {
-          format!(r#"<link rel="stylesheet" type="text/css" href="mdbook-quiz/{file}">"#)
-        }
-      })
-      .collect::<Vec<_>>()
-      .join("\n");
+    self.assets = files.into_iter().map(PathBuf::from).collect();
 
     Ok(())
   }
@@ -150,7 +140,23 @@ impl QuizProcessorRef {
         content.replace_range(range, &html);
       }
 
-      content.push_str(&self.epilogue);
+      // If a chapter is located at foo/bar/the_chapter.md, then the generated source files
+      // will be at foo/bar/the_chapter.html. So they need to reference mdbook-quiz files
+      // at ../../mdbook-quiz/embed.js, i.e. we generate the right number of "..".
+      let chapter_rel_path = chapter_dir.strip_prefix(&self.src_dir).unwrap();
+      let depth = chapter_rel_path.components().count();
+      let prefix = vec![".."; depth].into_iter().collect::<PathBuf>();
+
+      for asset in &self.assets {
+        let asset_rel = prefix.join("mdbook-quiz").join(asset);
+        let asset_str = asset_rel.display().to_string();
+        let link = if asset_rel.extension().unwrap().to_string_lossy() == "js" {
+          format!(r#"<script type="text/javascript" src="{asset_str}"></script>"#)
+        } else {
+          format!(r#"<link rel="stylesheet" type="text/css" href="{asset_str}">"#)
+        };
+        content.push_str(&link);
+      }
     }
 
     Ok(())
@@ -184,7 +190,7 @@ impl Preprocessor for QuizProcessor {
     let mut processor = QuizProcessorRef {
       config,
       src_dir: ctx.root.join(&ctx.config.book.src),
-      epilogue: String::new(),
+      assets: Vec::new(),
     };
     processor.copy_js_files()?;
 
@@ -203,17 +209,16 @@ impl Preprocessor for QuizProcessor {
       ) {
         for item in items {
           if let BookItem::Chapter(chapter) = item {
-            s.spawn(|_| {
-              if let Some(chapter_path) =
-                  processor.src_dir.join(chapter.path.as_ref())
-              {
-                let chapter_dir = chapter_path.parent().unwrap();
+            if chapter.path.is_some() {
+              s.spawn(|_| {
+                let chapter_path_abs = processor.src_dir.join(chapter.path.as_ref().unwrap());
+                let chapter_dir = chapter_path_abs.parent().unwrap();
                 processor
                   .process_chapter(chapter_dir, &mut chapter.content)
                   .unwrap();
-              }
-            });
-            for_each_mut(s, processor, &mut chapter.sub_items);
+              });
+              for_each_mut(s, processor, &mut chapter.sub_items);
+            }
           }
         }
       }

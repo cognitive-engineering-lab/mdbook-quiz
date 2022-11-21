@@ -1,44 +1,9 @@
 name: Tests
-on: [push]
+on: [push, pull_request]
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          components: clippy
-      - uses: Swatinem/rust-cache@v1
-      - name: Install JS dependencies
-        run: npm install -g pnpm
-      - name: Test Rust package
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-      - name: Lint Rust package
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-      # Build script in previous action should build js,
-      # so we don't need to run pnpm build here.
-      - name: Test JS package
-        run: pnpm test && pnpm lint
-        working-directory: js
-      - name: Install mdbook
-        run: |
-          mkdir bin
-          curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
-          echo "$(pwd)/bin" >> ${GITHUB_PATH}
-      - name: Install mdbook-quiz
-        run: cargo install --path . --debug --locked
-      - name: Build example mdbook
-        run: mdbook build
-        working-directory: example
-      - name: Deploy to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./example/book
-            
+      - name: Setup
+        uses: ./.github/workflows/setup
