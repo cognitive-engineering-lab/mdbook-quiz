@@ -106,8 +106,9 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     }>(() => {
       let stored = answerStorage.load();
 
-      // If an outdated quiz didn't store wrongAnswers, then we need to 
-      // clear that cache
+      // If an outdated quiz didn't store wrongAnswers, then we need to
+      // clear that cache.
+      // TODO: we should be able to remove this code eventually?
       let badSchema = stored && stored.attempt > 0 && !stored.confirmedDone && !stored.wrongAnswers;
 
       if (cacheAnswers && stored && !badSchema) {
