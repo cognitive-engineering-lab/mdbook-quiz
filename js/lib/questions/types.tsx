@@ -13,7 +13,7 @@ export interface QuestionFields<Type extends string, Prompt, Answer> {
   promptExplanation?: boolean;
 }
 
-export interface QuestionMethods<Prompt, Answer, State = {}> {
+export interface QuestionMethods<Prompt, Answer, State = any> {
   PromptView: React.FC<{ prompt: Prompt }>;
 
   ResponseView: React.FC<{
