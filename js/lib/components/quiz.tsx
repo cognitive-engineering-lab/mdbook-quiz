@@ -105,7 +105,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       wrongAnswers?: number[];
     }>(() => {
       let stored = answerStorage.load();
-      if (cacheAnswers && stored) {
+
+      // If an outdated quiz didn't store wrongAnswers, then we need to 
+      // clear that cache
+      let badSchema = stored && stored.attempt > 0 && !stored.confirmedDone && !stored.wrongAnswers;
+
+      if (cacheAnswers && stored && !badSchema) {
         return {
           started: true,
           index: quiz.questions.length,
