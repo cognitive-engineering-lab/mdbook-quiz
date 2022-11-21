@@ -89,8 +89,9 @@ export let QuestionView: React.FC<{
   question: Question;
   index: number;
   attempt: number;
+  questionState?: any;
   onSubmit: (answer: TaggedAnswer) => void;
-}> = ({ quizName, question, index, attempt, onSubmit }) => {
+}> = ({ quizName, question, index, attempt, questionState, onSubmit }) => {
   let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
   let [showExplanation, setShowExplanation] = useState(false);
@@ -134,9 +135,11 @@ export let QuestionView: React.FC<{
         <h4>Response</h4>
         <fieldset disabled={showExplanation}>
           <methods.ResponseView
+            key={`${quizName}-question${index}`}
             prompt={question.prompt}
             answer={question.answer}
             submit={submit}
+            state={questionState}
             formValidators={{ ...formValidators, required }}
           />
         </fieldset>

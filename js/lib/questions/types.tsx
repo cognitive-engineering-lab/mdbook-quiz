@@ -13,13 +13,14 @@ export interface QuestionFields<Type extends string, Prompt, Answer> {
   promptExplanation?: boolean;
 }
 
-export interface QuestionMethods<Prompt, Answer> {
+export interface QuestionMethods<Prompt, Answer, State = {}> {
   PromptView: React.FC<{ prompt: Prompt }>;
 
   ResponseView: React.FC<{
     prompt: Prompt;
     answer: Answer;
     submit: () => void;
+    state?: State;
     formValidators: UseFormReturn & {
       required: (
         name: string,
@@ -27,6 +28,8 @@ export interface QuestionMethods<Prompt, Answer> {
       ) => UseFormRegisterReturn & { className: string };
     };
   }>;
+
+  questionState?(prompt: Prompt, answer: Answer): State;
 
   getAnswerFromDOM?(data: { [key: string]: any }, container: HTMLFormElement): Answer;
 

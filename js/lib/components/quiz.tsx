@@ -3,9 +3,15 @@ import _ from "lodash";
 import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 
-import { AnswerView, Question, QuestionView, TaggedAnswer } from "../questions/mod";
+import {
+  AnswerView,
+  Question,
+  QuestionView,
+  TaggedAnswer,
+  getQuestionMethods,
+} from "../questions/mod";
 
 export interface Quiz {
   questions: Question[];
@@ -82,6 +88,14 @@ export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
     let answerStorage = new AnswerStorage(name, quizHash);
+    let questionStates = useMemo(
+      () =>
+        quiz.questions.map(q => {
+          let methods = getQuestionMethods(q.type);
+          return methods.questionState && methods.questionState(q.prompt, q.answer);
+        }),
+      [quiz]
+    );
     let state = useLocalObservable<{
       started: boolean;
       index: number;
@@ -145,8 +159,9 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           {state.started ? (
             !ended ? (
               <>
-                Question {state.index + 1} /{" "}
-                {state.attempt == 0 ? quiz.questions.length : state.wrongAnswers!.length}
+                Question{" "}
+                {(state.attempt == 0 ? state.index : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
+                / {state.attempt == 0 ? quiz.questions.length : state.wrongAnswers!.length}
               </>
             ) : null
           ) : (
@@ -257,6 +272,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
               index={state.index + 1}
               attempt={state.attempt}
               question={quiz.questions[state.index]}
+              questionState={questionStates[state.index]}
               onSubmit={onSubmit}
             />
           )

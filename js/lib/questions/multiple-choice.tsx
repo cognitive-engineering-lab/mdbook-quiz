@@ -27,10 +27,18 @@ export type MultipleChoice = QuestionFields<
   MultipleChoiceAnswer
 >;
 
-export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, MultipleChoiceAnswer> = {
+interface MultipleChoiceState {
+  choices: string[];
+}
+
+export let MultipleChoiceMethods: QuestionMethods<
+  MultipleChoicePrompt,
+  MultipleChoiceAnswer,
+  MultipleChoiceState
+> = {
   PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
 
-  ResponseView: ({ prompt, answer, formValidators: { required } }) => {
+  questionState(prompt, answer) {
     let choices: string[];
     if (prompt.answerIndex) {
       choices = [...prompt.distractors];
@@ -39,23 +47,24 @@ export let MultipleChoiceMethods: QuestionMethods<MultipleChoicePrompt, Multiple
       choices = [answer.answer, ...prompt.distractors];
       choices = _.shuffle(choices);
     }
-
-    return (
-      <>
-        {choices.map((choice, i) => {
-          let id = `answer${i}`;
-          return (
-            <div className="choice" key={i}>
-              <input type="radio" {...required("answer")} value={choice} id={id} />
-              <label htmlFor={id}>
-                <MarkdownView markdown={choice} />
-              </label>
-            </div>
-          );
-        })}
-      </>
-    );
+    return { choices };
   },
+
+  ResponseView: ({ state, formValidators: { required } }) => (
+    <>
+      {state!.choices.map((choice, i) => {
+        let id = `answer${i}`;
+        return (
+          <div className="choice" key={i}>
+            <input type="radio" {...required("answer")} value={choice} id={id} />
+            <label htmlFor={id}>
+              <MarkdownView markdown={choice} />
+            </label>
+          </div>
+        );
+      })}
+    </>
+  ),
 
   getAnswerFromDOM(data) {
     return { answer: data.answer };
