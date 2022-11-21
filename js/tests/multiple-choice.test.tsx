@@ -7,7 +7,7 @@ import user from "@testing-library/user-event";
 import React from "react";
 
 import { QuestionView } from "../lib/questions/mod";
-import { MultipleChoice } from "../lib/questions/multiple-choice";
+import { MultipleChoice, MultipleChoiceMethods } from "../lib/questions/multiple-choice";
 import { submitButton } from "./utils";
 
 describe("ShortAnswer", () => {
@@ -20,12 +20,14 @@ describe("ShortAnswer", () => {
   let submitted: any | null = null;
   beforeEach(async () => {
     submitted = null;
+    let state = MultipleChoiceMethods.questionState!(question.prompt, question.answer);
     render(
       <QuestionView
         quizName={"Foobar"}
         question={question}
         index={1}
         attempt={0}
+        questionState={state}
         onSubmit={answer => {
           submitted = answer;
         }}
