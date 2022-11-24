@@ -6,7 +6,49 @@ on:
       - "v*"
 
 jobs:
+  build-artifacts:
+    strategy:
+      matrix:
+        include:
+          # x86
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          ## TODO: Windows needs specific configuration to find
+          ## NPM globally installed binaries, and I couldn't figure 
+          ## it out in ~30 minutes. Deal with this later.
+          # - os: windows-latest
+          #   target: x86_64-pc-windows-msvc
+          # ARM
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - os: macos-latest
+            target: aarch64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          profile: minimal
+          override: true
+      - name: Install JS dependencies
+        run: |
+          npm install -g pnpm
+      - name: Build Rust package
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.target }}
+          path: target/release/mdbook-quiz*
+      
   publish:
+    needs: build-artifacts
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -36,43 +78,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./example/book
-
-  build-artifacts:
-    strategy:
-      matrix:
-        include:
-          # x86
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-          - os: macos-latest
-            target: x86_64-apple-darwin
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-          # ARM
-          - os: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-          - os: macos-latest
-            target: aarch64-apple-darwin
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: ${{ matrix.target }}
-          profile: minimal
-          override: true
-      - name: Install JS dependencies
-        run: npm install -g pnpm
-      - name: Build Rust package
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ matrix.target }}
-          path: target/release/mdbook-quiz*
       
   publish-artifacts:
     needs: build-artifacts
@@ -83,8 +88,7 @@ jobs:
         with:
           files: |
             x86_64-unknown-linux-gnu/mdbook-quiz
-            x86_64-apple-darwin/mdbook-quiz
-            x86_64-pc-windows-msvc/mdbook-quiz.exe
+            x86_64-apple-darwin/mdbook-quiz            
             aarch64-unknown-linux-gnu/mdbook-quiz
             aarch64-apple-darwin/mdbook-quiz
       
