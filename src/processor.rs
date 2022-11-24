@@ -13,6 +13,7 @@ use mdbook::{
   BookItem,
 };
 use regex::Regex;
+use tempfile::{self, NamedTempFile};
 
 pub struct QuizConfig {
   /// If true, then mdbook-quiz will validate your quiz TOML files using
@@ -27,52 +28,83 @@ pub struct QuizConfig {
   /// and displayed to them upon revisiting a completed quiz.
   cache_answers: Option<bool>,
 
-  /// Path to the directory containing the mdbook-quiz Javascript files.
-  /// Defaults to the directory installed with the mdbook-quiz source.
-  js_dir: PathBuf,
-
   dev_mode: bool,
 }
 
 pub struct QuizProcessor;
 
-struct QuizProcessorRef {
+struct QuizProcessorCtxt {
   config: QuizConfig,
   src_dir: PathBuf,
-  assets: Vec<PathBuf>,
+  validator_path: NamedTempFile,
+  assets: Vec<Asset>,
 }
+
+#[derive(Copy, Clone)]
+struct Asset {
+  name: &'static str,
+  contents: &'static str,
+}
+
+macro_rules! make_asset {
+  ($name:expr) => {
+    (
+      Asset {
+        name: $name,
+        contents: include_str!(concat!("../js/dist/", $name)),
+      },
+      Asset {
+        name: $name,
+        contents: include_str!(concat!("../js/dist/", $name, ".map")),
+      },
+    )
+  };
+}
+
+const FRONTEND_ASSETS: [(Asset, Asset); 2] = [make_asset!("embed.js"), make_asset!("embed.css")];
+const VALIDATOR_ASSET: Asset = make_asset!("validator.cjs").0;
 
 lazy_static::lazy_static! {
   static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
 }
 
-impl QuizProcessorRef {
-  fn copy_js_files(&mut self) -> Result<()> {
+impl QuizProcessorCtxt {
+  pub fn build(config: QuizConfig, src_dir: PathBuf) -> Result<Self> {
     // Rather than copying directly to the build directory, we instead copy to the book source
     // since mdBook will clean the build-dir after preprocessing. See mdBook#1087 for more.
-    let target_dir = self.src_dir.join("mdbook-quiz");
-    fs::create_dir_all(&target_dir)?;
+    let dst_dir = src_dir.join("mdbook-quiz");
+    fs::create_dir_all(&dst_dir)?;
 
-    let mut files = vec!["embed.js", "embed.css"];
-    if self.config.dev_mode {
-      files.extend(["embed.js.map", "embed.css.map"]);
+    let assets = FRONTEND_ASSETS
+      .into_iter()
+      .flat_map(|(asset, src_map)| {
+        let mut assets = vec![asset];
+        if config.dev_mode {
+          assets.push(src_map);
+        }
+        assets
+      })
+      .collect::<Vec<_>>();
+
+    for asset in &assets {
+      fs::write(dst_dir.join(asset.name), asset.contents)?;
     }
 
-    for file in &files {
-      let src = self.config.js_dir.join(file).canonicalize()?;
-      fs::copy(src, target_dir.join(file))?;
-    }
+    let validator_path = tempfile::Builder::new().suffix(".cjs").tempfile()?;
+    fs::write(&validator_path, VALIDATOR_ASSET.contents)?;
 
-    self.assets = files.into_iter().map(PathBuf::from).collect();
-
-    Ok(())
+    Ok(QuizProcessorCtxt {
+      config,
+      src_dir,
+      assets,
+      validator_path,
+    })
   }
 
   fn validate_quiz(&self, path: impl AsRef<Path>) -> Result<()> {
     let path = path.as_ref();
-    let validator_path = self.config.js_dir.join("validator.cjs");
     let status = Command::new("node")
-      .arg(validator_path)
+      .arg(self.validator_path.path())
       .arg(path)
       .status()?;
     if !status.success() {
@@ -151,7 +183,7 @@ impl QuizProcessorRef {
       content.push_str("\n\n");
 
       for asset in &self.assets {
-        let asset_rel = prefix.join("mdbook-quiz").join(asset);
+        let asset_rel = prefix.join("mdbook-quiz").join(asset.name);
         let asset_str = asset_rel.display().to_string();
         let link = if asset_rel.extension().unwrap().to_string_lossy() == "js" {
           format!(r#"<script type="text/javascript" src="{asset_str}"></script>"#)
@@ -175,27 +207,14 @@ impl Preprocessor for QuizProcessor {
     let config_toml = ctx.config.get_preprocessor(self.name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
 
-    let js_dir = match config_toml.get("js-dir") {
-      Some(dir) => dir.as_str().unwrap().into(),
-      None => PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("js")
-        .join("dist"),
-    };
-
     let config = QuizConfig {
-      js_dir,
       fullscreen: parse_bool("fullscreen"),
       validate: parse_bool("validate"),
       cache_answers: parse_bool("cache-answers"),
       dev_mode: env::var("QUIZ_DEV_MODE").is_ok(),
     };
 
-    let mut processor = QuizProcessorRef {
-      config,
-      src_dir: ctx.root.join(&ctx.config.book.src),
-      assets: Vec::new(),
-    };
-    processor.copy_js_files()?;
+    let ctxt = QuizProcessorCtxt::build(config, ctx.root.join(&ctx.config.book.src))?;
 
     // Limit size of thread pool to avoid OS resource exhaustion
     let nproc = std::thread::available_parallelism().map_or(1, |n| n.get());
@@ -207,26 +226,26 @@ impl Preprocessor for QuizProcessor {
     rayon::scope(|s| {
       fn for_each_mut<'scope, 'proc: 'scope, 'item: 'scope>(
         s: &rayon::Scope<'scope>,
-        processor: &'proc QuizProcessorRef,
+        ctxt: &'proc QuizProcessorCtxt,
         items: impl IntoIterator<Item = &'item mut BookItem>,
       ) {
         for item in items {
           if let BookItem::Chapter(chapter) = item {
             if chapter.path.is_some() {
               s.spawn(|_| {
-                let chapter_path_abs = processor.src_dir.join(chapter.path.as_ref().unwrap());
+                let chapter_path_abs = ctxt.src_dir.join(chapter.path.as_ref().unwrap());
                 let chapter_dir = chapter_path_abs.parent().unwrap();
-                processor
+                ctxt
                   .process_chapter(chapter_dir, &mut chapter.content)
                   .unwrap();
               });
-              for_each_mut(s, processor, &mut chapter.sub_items);
+              for_each_mut(s, ctxt, &mut chapter.sub_items);
             }
           }
         }
       }
 
-      for_each_mut(s, &processor, &mut book.sections);
+      for_each_mut(s, &ctxt, &mut book.sections);
     });
 
     Ok(book)
@@ -278,7 +297,9 @@ mod test {
           "root": dir.display().to_string(),
           "config": {
             "preprocessor": {
-              "quiz": {}
+              "quiz": {
+                "validate": true
+              }
             },
           },
           "renderer": "html",

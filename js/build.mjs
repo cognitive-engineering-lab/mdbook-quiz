@@ -51,9 +51,7 @@ class QuestionFormatter {
   }
 }
 
-async function generateSchemas() {
-  await fs.mkdir("dist", { recursive: true });
-
+function generateSchemas() {
   let config = {
     tsconfig: "tsconfig.json",
   };
@@ -69,8 +67,8 @@ async function generateSchemas() {
     schema.definitions[k].$async = true;
   });
   schema.$async = true;
-  let outPath = path.join("dist", "Quiz.schema.json");
-  await fs.writeFile(outPath, JSON.stringify(schema, null, 2));
+
+  return schema;
 }
 
 async function main() {
@@ -78,12 +76,19 @@ async function main() {
   let p1 = build({
     format: "iife",
     entryPoints: ["lib/entryPoints/embed.tsx"],
+    sourcemap: true,
     plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
   });
   let p2 = build({
     format: "cjs",
     platform: "node",
     entryPoints: ["lib/entryPoints/validator.ts"],
+    sourcemap: true,
+    bundle: true,
+    minify: false,
+    define: {
+      QUIZ_SCHEMA: JSON.stringify(generateSchemas()),
+    },
     outExtension: { ".js": ".cjs" },
   });
   let p3 = build({
@@ -103,11 +108,9 @@ async function main() {
     platform: "node",
     entryPoints: ["lib/entryPoints/gen-quiz-ids.ts"],
     outExtension: { ".js": ".cjs" },
-    external: ["@iarna/toml"],    
+    external: ["@iarna/toml"],
   });
   await Promise.all([p1, p2, p3, p4, p5]);
-
-  await generateSchemas();
 }
 
 main();

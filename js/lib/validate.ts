@@ -8,6 +8,10 @@ import path from "path";
 import type { Question } from "./questions/mod";
 import { questionValidators } from "./questions/validate";
 
+declare global {
+  var QUIZ_SCHEMA: AsyncSchema;
+}
+
 export class Validator {
   constructor(readonly schema: any, readonly validator: AsyncValidateFunction<void>) {}
 
@@ -43,12 +47,9 @@ export class Validator {
       return true;
     });
 
-    let schemaPath = path.join(distDir, "Quiz.schema.json");
-    let schemaRaw = await fs.readFile(schemaPath, "utf-8");
-    let schema: AsyncSchema = JSON.parse(schemaRaw);
-    let validator = ajv.compile<void>(schema);
+    let validator = ajv.compile<void>(QUIZ_SCHEMA);
 
-    return new Validator(schema, validator);
+    return new Validator(QUIZ_SCHEMA, validator);
   }
 
   async validate(input: string, quizPath: string): Promise<string | undefined> {
