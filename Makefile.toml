@@ -7,10 +7,10 @@ skip_core_tasks = true
 script = "cargo fmt && cargo clippy"
 
 [tasks.precommit-js]
-script = "cd js && pnpm fmt && pnpm lint"
+script = "cd js && pnpm commit-check"
 
 [tasks.precommit.run_task]
-name = ["precommit-cargo", "precommit-js"]
+name = ["precommit-js", "precommit-cargo"]
 
 
 # Watch

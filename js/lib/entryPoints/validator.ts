@@ -2,9 +2,11 @@ import fs from "fs/promises";
 
 import { Validator } from "../validate";
 
+export { Validator } from "../validate";
+
 let main = async () => {
   let quizPath = process.argv[2];
-  let validator = await Validator.load(__dirname);
+  let validator = await Validator.load();
   let contents = await fs.readFile(quizPath, "utf-8");
   let errors = await validator.validate(contents, quizPath);
   if (errors) {
@@ -13,4 +15,6 @@ let main = async () => {
   }
 };
 
-main();
+if (typeof require !== "undefined" && require.main === module) {
+  main;
+}

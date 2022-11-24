@@ -1,12 +1,13 @@
 import TOML from "@iarna/toml";
 
+//@ts-ignore
+import { Validator } from "../dist/validator";
 import { Quiz } from "../lib/components/quiz";
-import { Validator } from "../lib/validate";
 
 describe("validateQuiz", () => {
   let validator: Validator;
   beforeAll(async () => {
-    validator = await Validator.load("dist");
+    validator = await Validator.load();
   });
 
   let runInput = (quiz: any) => validator.validate(TOML.stringify(quiz), "quiz.toml");

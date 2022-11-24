@@ -1,9 +1,7 @@
 import toml from "@iarna/toml";
 import Ajv, { AsyncSchema, AsyncValidateFunction } from "ajv";
 import betterAjvErrors from "better-ajv-errors";
-import fs from "fs/promises";
 import _ from "lodash";
-import path from "path";
 
 import type { Question } from "./questions/mod";
 import { questionValidators } from "./questions/validate";
@@ -15,7 +13,7 @@ declare global {
 export class Validator {
   constructor(readonly schema: any, readonly validator: AsyncValidateFunction<void>) {}
 
-  static async load(distDir: string): Promise<Validator> {
+  static async load(): Promise<Validator> {
     let ajv = new Ajv();
 
     ajv.addKeyword({
