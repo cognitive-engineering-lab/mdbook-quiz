@@ -147,6 +147,9 @@ impl QuizProcessorRef {
       let depth = chapter_rel_path.components().count();
       let prefix = vec![".."; depth].into_iter().collect::<PathBuf>();
 
+      // Ensure there's space between existing markdown and inserted HTML
+      content.push_str("\n\n");
+
       for asset in &self.assets {
         let asset_rel = prefix.join("mdbook-quiz").join(asset);
         let asset_str = asset_rel.display().to_string();
