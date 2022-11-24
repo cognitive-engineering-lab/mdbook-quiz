@@ -35,20 +35,34 @@ jobs:
           profile: minimal
           override: true
       - name: Install JS dependencies
-        run: |
-          npm install -g pnpm
+        run: npm install -g pnpm
       - name: Build Rust package
         uses: actions-rs/cargo@v1
         with:
           command: build
           args: --release
+      - name: Package artifact
+        run: tar -czf mdbook-quiz-${{ matrix.target }}.tar.gz target/release/mdbook-quiz
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.target }}
-          path: target/release/mdbook-quiz*
-      
-  publish:
+          path: mdbook-quiz-${{ matrix.target }}.tar.gz
+  
+  publish-artifacts:
     needs: build-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            x86_64-unknown-linux-gnu/mdbook-quiz-x86_64-unknown-linux-gnu.tar.gz
+            x86_64-apple-darwin/mdbook-quiz-x86_64-apple-darwin.tar.gz
+            aarch64-unknown-linux-gnu/mdbook-quiz-aarch64-unknown-linux-gnu.tar.gz
+            aarch64-apple-darwin/mdbook-quiz-aarch64-apple-darwin.tar.gz      
+    
+  publish-crate:
+    needs: publish-artifacts
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -79,18 +93,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./example/book
       
-  publish-artifacts:
-    needs: build-artifacts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v2
-      - uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            x86_64-unknown-linux-gnu/mdbook-quiz
-            x86_64-apple-darwin/mdbook-quiz            
-            aarch64-unknown-linux-gnu/mdbook-quiz
-            aarch64-apple-darwin/mdbook-quiz
-      
-
     
