@@ -149,4 +149,14 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
       </div>
     );
   },
+
+  compareAnswers(providedAnswer: TracingAnswer, userAnswer: TracingAnswer): boolean {
+    let clean = (s: string) => s.trim();
+    return (
+      providedAnswer.doesCompile == userAnswer.doesCompile &&
+      (providedAnswer.doesCompile
+        ? clean(userAnswer.stdout!) == clean(providedAnswer.stdout!)
+        : userAnswer.lineNumber! == providedAnswer.lineNumber!)
+    );
+  },
 };

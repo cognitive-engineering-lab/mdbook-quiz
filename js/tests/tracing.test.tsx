@@ -56,11 +56,42 @@ describe("Tracing", () => {
     await user.click(checkbox);
 
     let input = screen.getByRole("textbox");
-    await user.type(input, "foobar");
+    await user.type(input, "Yes ");
     await user.click(submitButton());
 
     expect(submitted).toMatchObject({
-      answer: { doesCompile: true, stdout: "foobar" },
+      answer: { doesCompile: true, stdout: "Yes " },
+      correct: true,
+    });
+  });
+
+  it("rejects fully invalid input", async () => {
+    let checkbox = screen.getByRole("radio", {
+      name: "does NOT compile",
+    });
+
+    await user.click(checkbox);
+
+    let input = screen.getByRole("combobox");
+    await user.selectOptions(input, "1");
+    await user.click(submitButton());
+
+    expect(submitted).toMatchObject({
+      answer: { doesCompile: false, lineNumber: 1 },
+      correct: false,
+    });
+  });
+
+  it("rejects partially invalid input", async () => {
+    let checkbox = getCheckbox();
+    await user.click(checkbox);
+
+    let input = screen.getByRole("textbox");
+    await user.type(input, "No");
+    await user.click(submitButton());
+
+    expect(submitted).toMatchObject({
+      answer: { doesCompile: true, stdout: "No" },
       correct: false,
     });
   });
