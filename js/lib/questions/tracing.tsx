@@ -143,7 +143,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
           </>
         ) : (
           <p className={correctnessClass("lineNumber")}>
-            The error occurs on the line number: <code>{answer.lineNumber}</code>
+            The last line number in the error is: <code>{answer.lineNumber}</code>
           </p>
         )}
       </div>
