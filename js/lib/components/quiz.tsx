@@ -17,15 +17,6 @@ export interface Quiz {
   questions: Question[];
 }
 
-export interface QuizViewProps {
-  name: string;
-  quiz: Quiz;
-  fullscreen?: boolean;
-  cacheAnswers?: boolean;
-  allowRetry?: boolean;
-  onFinish?: (answers: TaggedAnswer[]) => void;
-}
-
 interface StoredAnswers {
   answers: TaggedAnswer[];
   confirmedDone: boolean;
@@ -84,6 +75,126 @@ let ExitExplanation = () => {
   );
 };
 
+interface QuizState {
+  started: boolean;
+  index: number;
+  confirmedDone: boolean;
+  attempt: number;
+  answers: TaggedAnswer[];
+  wrongAnswers?: number[];
+}
+
+let loadState = ({
+  quiz,
+  answerStorage,
+  cacheAnswers,
+}: {
+  quiz: Quiz;
+  answerStorage: AnswerStorage;
+  cacheAnswers?: boolean;
+}): QuizState => {
+  let stored = answerStorage.load();
+
+  // If an outdated quiz didn't store wrongAnswers, then we need to
+  // clear that cache.
+  // TODO: we should be able to remove this code eventually?
+  let badSchema = stored && stored.attempt > 0 && !stored.confirmedDone && !stored.wrongAnswers;
+
+  if (cacheAnswers && stored && !badSchema) {
+    return {
+      started: true,
+      index: quiz.questions.length,
+      answers: stored.answers,
+      // note: need to provide defaults if schema changes
+      confirmedDone: stored.confirmedDone || false,
+      attempt: stored.attempt || 0,
+      wrongAnswers: stored.wrongAnswers || undefined,
+    };
+  } else {
+    return { started: false, index: 0, attempt: 0, confirmedDone: false, answers: [] };
+  }
+};
+
+let Header = observer(
+  ({ quiz, state, ended }: { quiz: Quiz; state: QuizState; ended: boolean }) => (
+    <header>
+      <h3>Quiz</h3>
+      <div className="counter">
+        {state.started ? (
+          !ended ? (
+            <>
+              Question{" "}
+              {(state.attempt == 0 ? state.index : state.wrongAnswers!.indexOf(state.index)) + 1} /{" "}
+              {state.attempt == 0 ? quiz.questions.length : state.wrongAnswers!.length}
+            </>
+          ) : null
+        ) : (
+          <>
+            {quiz.questions.length} question{quiz.questions.length > 1 ? "s" : null}
+          </>
+        )}
+      </div>
+    </header>
+  )
+);
+
+let AnswerReview = ({
+  quiz,
+  state,
+  name,
+  nCorrect,
+  onRetry,
+  onGiveUp,
+}: {
+  quiz: Quiz;
+  state: QuizState;
+  name: string;
+  nCorrect: number;
+  onRetry: () => void;
+  onGiveUp: () => void;
+}) => (
+  <>
+    <h3>Answer Review</h3>
+    <p>
+      You answered{" "}
+      <strong>
+        {nCorrect}/{quiz.questions.length}
+      </strong>{" "}
+      questions correctly.
+    </p>
+    {!state.confirmedDone ? (
+      <p style={{ marginBottom: "1em" }}>
+        You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
+        <button onClick={onGiveUp}>see the correct answers</button>.
+      </p>
+    ) : null}
+    {quiz.questions.map((question, i) => {
+      let { answer, correct } = state.answers[i];
+      return (
+        <div className="answer-wrapper" key={i}>
+          <AnswerView
+            index={i + 1}
+            quizName={name}
+            question={question}
+            userAnswer={answer}
+            correct={correct}
+            showCorrect={state.confirmedDone}
+          />
+        </div>
+      );
+    })}
+  </>
+);
+
+export interface QuizViewProps {
+  name: string;
+  quiz: Quiz;
+  fullscreen?: boolean;
+  cacheAnswers?: boolean;
+  allowRetry?: boolean;
+  onFinish?: (answers: TaggedAnswer[]) => void;
+}
+
 export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
@@ -96,35 +207,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         }),
       [quiz]
     );
-    let state = useLocalObservable<{
-      started: boolean;
-      index: number;
-      confirmedDone: boolean;
-      attempt: number;
-      answers: TaggedAnswer[];
-      wrongAnswers?: number[];
-    }>(() => {
-      let stored = answerStorage.load();
-
-      // If an outdated quiz didn't store wrongAnswers, then we need to
-      // clear that cache.
-      // TODO: we should be able to remove this code eventually?
-      let badSchema = stored && stored.attempt > 0 && !stored.confirmedDone && !stored.wrongAnswers;
-
-      if (cacheAnswers && stored && !badSchema) {
-        return {
-          started: true,
-          index: quiz.questions.length,
-          answers: stored.answers,
-          // note: need to provide defaults if schema changes
-          confirmedDone: stored.confirmedDone || false,
-          attempt: stored.attempt || 0,
-          wrongAnswers: stored.wrongAnswers || undefined,
-        };
-      } else {
-        return { started: false, index: 0, attempt: 0, confirmedDone: false, answers: [] };
-      }
-    });
+    let state = useLocalObservable(() => loadState({ quiz, answerStorage, cacheAnswers }));
 
     let saveToCache = () => {
       if (cacheAnswers) answerStorage.save(state.answers, state.confirmedDone, state.attempt);
@@ -152,32 +235,11 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         document.documentElement.addEventListener("keydown", captureKeyboard, false);
 
         return () => document.removeEventListener("keydown", captureKeyboard, false);
-      } else if (fullscreen && state.started) {
+      } else if (fullscreen && state.started && !state.confirmedDone) {
         let top = ref.current!.getBoundingClientRect().top + document.documentElement.scrollTop;
         window.scrollTo({ top: top - 20 });
       }
     }, [showFullscreen]);
-
-    let header = (
-      <header>
-        <h3>Quiz</h3>
-        <div className="counter">
-          {state.started ? (
-            !ended ? (
-              <>
-                Question{" "}
-                {(state.attempt == 0 ? state.index : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
-                / {state.attempt == 0 ? quiz.questions.length : state.wrongAnswers!.length}
-              </>
-            ) : null
-          ) : (
-            <>
-              {quiz.questions.length} question{quiz.questions.length > 1 ? "s" : null}
-            </>
-          )}
-        </div>
-      </header>
-    );
 
     let onSubmit = action((answer: TaggedAnswer) => {
       answer = _.cloneDeep(answer);
@@ -215,62 +277,25 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
     let nCorrect = state.answers.filter(a => a.correct).length;
     state.confirmedDone; // HACK: need this component to observe confirmedDone on first render...
-    let AnswerReview = () => (
-      <>
-        <h3>Answer Review</h3>
-        <p>
-          You answered{" "}
-          <strong>
-            {nCorrect}/{quiz.questions.length}
-          </strong>{" "}
-          questions correctly.
-        </p>
-        {!state.confirmedDone ? (
-          <p style={{ marginBottom: "1em" }}>
-            You can either{" "}
-            <button
-              onClick={action(() => {
-                state.index = state.wrongAnswers![0];
-                state.attempt += 1;
-              })}
-            >
-              retry the quiz
-            </button>{" "}
-            or{" "}
-            <button
-              onClick={action(() => {
-                state.confirmedDone = true;
-                saveToCache();
-              })}
-            >
-              see the correct answers
-            </button>
-            .
-          </p>
-        ) : null}
-        {quiz.questions.map((question, i) => {
-          let { answer, correct } = state.answers[i];
-          return (
-            <div className="answer-wrapper" key={i}>
-              <AnswerView
-                index={i + 1}
-                quizName={name}
-                question={question}
-                userAnswer={answer}
-                correct={correct}
-                showCorrect={state.confirmedDone}
-              />
-            </div>
-          );
-        })}
-      </>
-    );
 
     let body = (
       <section>
         {state.started ? (
           ended ? (
-            <AnswerReview />
+            <AnswerReview
+              quiz={quiz}
+              name={name}
+              state={state}
+              nCorrect={nCorrect}
+              onRetry={action(() => {
+                state.index = state.wrongAnswers![0];
+                state.attempt += 1;
+              })}
+              onGiveUp={action(() => {
+                state.confirmedDone = true;
+                saveToCache();
+              })}
+            />
           ) : (
             <QuestionView
               key={state.index}
@@ -316,7 +341,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
               <ExitExplanation />
             </>
           ) : null}
-          {header}
+          <Header quiz={quiz} state={state} ended={ended} />
           {body}
         </div>
       </div>

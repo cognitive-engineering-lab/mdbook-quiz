@@ -54,7 +54,7 @@ macro_rules! make_asset {
         contents: include_str!(concat!("../js/dist/", $name)),
       },
       Asset {
-        name: $name,
+        name: concat!($name, ".map"),
         contents: include_str!(concat!("../js/dist/", $name, ".map")),
       },
     )

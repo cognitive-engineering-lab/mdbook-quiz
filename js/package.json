@@ -23,6 +23,7 @@
   "devDependencies": {
     "@codemirror/lang-rust": "^6.0.0",
     "@codemirror/view": "^6.2.2",
+    "@iarna/toml": "^2.2.5",
     "@nota-lang/esbuild-utils": "^0.3.7",
     "@testing-library/dom": "^8.14.0",
     "@testing-library/jest-dom": "^5.16.4",
@@ -63,12 +64,12 @@
     "prettier": "^2.6.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-error-boundary": "^3.1.4",
     "react-hook-form": "^7.32.2",
     "react-showdown": "^2.3.1",
     "ts-json-schema-generator": "^1.0.0",
     "typescript": "4.6.4",
-    "uuid": "^8.3.2",
-    "@iarna/toml": "^2.2.5"
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "mobx": "^6.6.0",

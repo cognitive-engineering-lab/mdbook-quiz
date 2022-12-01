@@ -45,6 +45,7 @@ specifiers:
   prettier: ^2.6.2
   react: ^18.1.0
   react-dom: ^18.1.0
+  react-error-boundary: ^3.1.4
   react-hook-form: ^7.32.2
   react-showdown: ^2.3.1
   ts-json-schema-generator: ^1.0.0
@@ -98,6 +99,7 @@ devDependencies:
   prettier: 2.6.2
   react: 18.1.0
   react-dom: 18.1.0_react@18.1.0
+  react-error-boundary: 3.1.4_react@18.1.0
   react-hook-form: 7.32.2_react@18.1.0
   react-showdown: 2.3.1_react@18.1.0
   ts-json-schema-generator: 1.0.0
@@ -5204,6 +5206,16 @@ packages:
       loose-envify: 1.4.0
       react: 18.1.0
       scheduler: 0.22.0
+    dev: true
+
+  /react-error-boundary/3.1.4_react@18.1.0:
+    resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
+    engines: {node: '>=10', npm: '>=6'}
+    peerDependencies:
+      react: '>=16.13.1'
+    dependencies:
+      '@babel/runtime': 7.19.0
+      react: 18.1.0
     dev: true
 
   /react-hook-form/7.32.2_react@18.1.0:
