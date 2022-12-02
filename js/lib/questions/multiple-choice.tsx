@@ -18,7 +18,7 @@ export interface MultipleChoicePrompt {
 
 export interface MultipleChoiceAnswer {
   /** The text of the correct answer. */
-  answer: Markdown;
+  answer: Markdown | Markdown[];
 }
 
 export type MultipleChoice = QuestionFields<
@@ -40,23 +40,34 @@ export let MultipleChoiceMethods: QuestionMethods<
 
   questionState(prompt, answer) {
     let choices: string[];
+    let answers = answer.answer instanceof Array ? answer.answer : [answer.answer];
     if (prompt.answerIndex) {
       choices = [...prompt.distractors];
-      choices.splice(prompt.answerIndex, 0, answer.answer);
+      choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
-      choices = [answer.answer, ...prompt.distractors];
+      choices = [...answers, ...prompt.distractors];
       choices = _.shuffle(choices);
     }
     return { choices };
   },
 
-  ResponseView: ({ state, formValidators: { required } }) => (
+  ResponseView: ({ answer, state, formValidators: { required, register } }) => (
     <>
       {state!.choices.map((choice, i) => {
         let id = `answer${i}`;
+        let multiAnswer = answer.answer instanceof Array;
         return (
           <div className="choice" key={i}>
-            <input type="radio" {...required("answer")} value={choice} id={id} />
+            <input
+              type={multiAnswer ? "checkbox" : "radio"}
+              {...(multiAnswer
+                ? register("answer", {
+                    validate: args => args.length > 0,
+                  })
+                : required("answer"))}
+              value={choice}
+              id={id}
+            />
             <label htmlFor={id}>
               <MarkdownView markdown={choice} />
             </label>
@@ -67,14 +78,33 @@ export let MultipleChoiceMethods: QuestionMethods<
   ),
 
   getAnswerFromDOM(data) {
+    if (data.answer instanceof Array) data.answer.sort();
     return { answer: data.answer };
+  },
+
+  compareAnswers(provided, user) {
+    let toList = (s: Markdown | Markdown[]) => _.sortBy(s instanceof Array ? s : [s]);
+    return _.isEqual(toList(provided.answer), toList(user.answer));
   },
 
   AnswerView: ({ answer, baseline }) => (
     <div
-      className={classNames("md-flex", answer.answer == baseline.answer ? "correct" : "incorrect")}
+      className={classNames(
+        "md-flex",
+        MultipleChoiceMethods.compareAnswers!(baseline, answer) ? "correct" : "incorrect"
+      )}
     >
-      <MarkdownView markdown={answer.answer} />
+      {answer.answer instanceof Array ? (
+        <ul>
+          {answer.answer.map((a, i) => (
+            <li key={i}>
+              <MarkdownView markdown={a} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <MarkdownView markdown={answer.answer} />
+      )}
     </div>
   ),
 };

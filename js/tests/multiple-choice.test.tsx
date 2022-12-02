@@ -10,7 +10,7 @@ import { QuestionView } from "../lib/questions/mod";
 import { MultipleChoice, MultipleChoiceMethods } from "../lib/questions/multiple-choice";
 import { submitButton } from "./utils";
 
-describe("ShortAnswer", () => {
+describe("MultipleChoice", () => {
   let question: MultipleChoice = {
     type: "MultipleChoice",
     prompt: { prompt: "Hello world", distractors: ["B", "C"] },
@@ -49,6 +49,53 @@ describe("ShortAnswer", () => {
     await user.click(submitButton());
     expect(submitted).toMatchObject({
       answer: { answer: "A" },
+      correct: true,
+    });
+  });
+});
+
+describe("MultipleChoice multi-answer", () => {
+  let question: MultipleChoice = {
+    type: "MultipleChoice",
+    prompt: { prompt: "Hello world", distractors: ["C", "D"] },
+    answer: { answer: ["A", "B"] },
+  };
+
+  let submitted: any | null = null;
+  beforeEach(async () => {
+    submitted = null;
+    let state = MultipleChoiceMethods.questionState!(question.prompt, question.answer);
+    render(
+      <QuestionView
+        quizName={"Foobar"}
+        question={question}
+        index={1}
+        attempt={0}
+        questionState={state}
+        onSubmit={answer => {
+          submitted = answer;
+        }}
+      />
+    );
+    await waitFor(() => screen.getByText("Hello world"));
+  });
+
+  it("initially renders", () => {});
+
+  it("validates input", async () => {
+    await user.click(submitButton());
+    expect(submitted).toBe(null);
+  });
+
+  it("accepts valid input", async () => {
+    for (let name of ["A", "B"]) {
+      let input = screen.getByRole("checkbox", { name });
+      await user.click(input);
+    }
+
+    await user.click(submitButton());    
+    expect(submitted).toMatchObject({
+      answer: { answer: ["A", "B"] },
       correct: true,
     });
   });
