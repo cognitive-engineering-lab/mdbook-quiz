@@ -8,6 +8,9 @@ edition = "2021"
 include = ["/src", "/js/dist/"]
 repository = "https://github.com/willcrichton/mdbook-quiz"
 
+[features]
+rust-editor = []
+
 [dependencies]
 serde_json = "1"
 anyhow = {version = "1", features = ["backtrace"]}

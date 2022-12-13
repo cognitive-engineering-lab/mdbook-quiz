@@ -11,6 +11,9 @@ import { Tracing, TracingMethods } from "./tracing";
 import { QuestionMethods } from "./types";
 
 export type Question = ShortAnswer | Tracing | MultipleChoice;
+export { MultipleChoice, MultipleChoiceMethods } from "./multiple-choice";
+export { ShortAnswer, ShortAnswerMethods } from "./short-answer";
+export { Tracing, TracingMethods } from "./tracing";
 
 let methodMapping = {
   ShortAnswer: ShortAnswerMethods,

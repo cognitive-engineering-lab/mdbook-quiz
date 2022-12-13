@@ -1,6 +1,8 @@
 import { cli, copyPlugin } from "@nota-lang/esbuild-utils";
 import { sassPlugin } from "esbuild-sass-plugin";
-import fs from "fs/promises";
+import fs from "fs-extra";
+import _ from "lodash";
+import { createRequire } from "module";
 import path from "path";
 import * as tsSchema from "ts-json-schema-generator";
 import { AliasType } from "ts-json-schema-generator";
@@ -71,13 +73,67 @@ function generateSchemas() {
   return schema;
 }
 
+let peerfixPlugin = ({ modules, meta }) => ({
+  name: "peerfix",
+  setup(build) {
+    let require = createRequire(meta.url);
+    modules = modules.filter(m => !(build.initialOptions.external || []).includes(m));
+    if (modules.length == 0) return;
+
+    let filter = new RegExp(modules.map(k => `(^${_.escapeRegExp(k)}$)`).join("|"));
+    build.onResolve({ filter }, args => {
+      let resolved = require.resolve(args.path);
+      return { path: resolved };
+    });
+  },
+});
+
 async function main() {
   let build = cli();
   let p1 = build({
     format: "iife",
     entryPoints: ["lib/entryPoints/embed.tsx"],
     sourcemap: true,
-    plugins: [copyPlugin({ extensions: [".html"] }), sassPlugin()],
+    plugins: [
+      copyPlugin({ extensions: [".html"] }),
+      sassPlugin(),
+      peerfixPlugin({ modules: ["react"], meta: import.meta }),
+      {
+        name: "rust-editor",
+        setup(build) {
+          if (process.env.RUST_EDITOR === undefined) {
+            build.onResolve({ filter: /@wcrichto\/rust-editor/ }, args => ({
+              path: args.path,
+              namespace: "rust-editor",
+            }));
+            build.onLoad({ filter: /.*/, namespace: "rust-editor" }, () => ({
+              contents: "module.exports = {}",
+            }));
+            return;
+          }
+
+          build.onEnd(() => {
+            let files = ["editor.worker.js", "ra-worker.js", "wasm_demo_bg.wasm"];
+            files.forEach(f =>
+              fs.copyFileSync(
+                path.join("node_modules/@wcrichto/rust-editor/dist", f),
+                path.join("dist", f)
+              )
+            );
+
+            ["ra-worker"].forEach(name => {
+              let assetPath = path.join("dist", `${name}.js`);
+              let contents = fs.readFileSync(assetPath, "utf-8");
+              contents = contents.replace(
+                /import\.meta\.url/g,
+                `"http://localhost:3000/mdbook-quiz/"`
+              );
+              fs.writeFileSync(assetPath, contents);
+            });
+          });
+        },
+      },
+    ],
   });
   let p2 = build({
     format: "cjs",

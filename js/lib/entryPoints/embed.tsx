@@ -1,9 +1,10 @@
+import * as rustEditor from "@wcrichto/rust-editor";
 import React from "react";
 import * as ReactDOM from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";
 
-import "../../index.scss";
 import { Quiz, QuizView } from "../components/quiz";
+import "../index.scss";
 
 let onError = ({ error }: { error: Error }) => {
   document.body.style.overflowY = "auto";
@@ -21,6 +22,7 @@ let onError = ({ error }: { error: Error }) => {
 };
 
 let initQuizzes = () => {
+  if (rustEditor.raSetup) rustEditor.raSetup("./mdbook-quiz");
   document.querySelectorAll(".quiz-placeholder").forEach(el => {
     let divEl = el as HTMLDivElement;
     let name = divEl.dataset.quizName!;

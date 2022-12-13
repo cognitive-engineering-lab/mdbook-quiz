@@ -43,26 +43,33 @@ struct QuizProcessorCtxt {
 #[derive(Copy, Clone)]
 struct Asset {
   name: &'static str,
-  contents: &'static str,
+  contents: &'static [u8],
 }
 
 macro_rules! make_asset {
   ($name:expr) => {
-    (
-      Asset {
-        name: $name,
-        contents: include_str!(concat!("../js/dist/", $name)),
-      },
-      Asset {
-        name: concat!($name, ".map"),
-        contents: include_str!(concat!("../js/dist/", $name, ".map")),
-      },
-    )
+    Asset {
+      name: $name,
+      contents: include_bytes!(concat!("../js/dist/", $name)),
+    }
   };
 }
 
-const FRONTEND_ASSETS: [(Asset, Asset); 2] = [make_asset!("embed.js"), make_asset!("embed.css")];
-const VALIDATOR_ASSET: Asset = make_asset!("validator.cjs").0;
+const FRONTEND_ASSETS: [(Asset, Asset); 2] = [
+  (make_asset!("embed.js"), make_asset!("embed.js.map")),
+  (make_asset!("embed.css"), make_asset!("embed.css.map")),
+];
+
+#[cfg(feature = "rust-editor")]
+const RA_ASSETS: [Asset; 3] = [
+  make_asset!("ra-worker.js"),
+  make_asset!("editor.worker.js"),
+  make_asset!("wasm_demo_bg.wasm"),
+];
+#[cfg(not(feature = "rust-editor"))]
+const RA_ASSETS: [Asset; 0] = [];
+
+const VALIDATOR_ASSET: Asset = make_asset!("validator.cjs");
 
 lazy_static::lazy_static! {
   static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
@@ -86,7 +93,7 @@ impl QuizProcessorCtxt {
       })
       .collect::<Vec<_>>();
 
-    for asset in &assets {
+    for asset in assets.iter().chain(&RA_ASSETS) {
       fs::write(dst_dir.join(asset.name), asset.contents)?;
     }
 
@@ -106,7 +113,8 @@ impl QuizProcessorCtxt {
     let status = Command::new("node")
       .arg(self.validator_path.path())
       .arg(path)
-      .status()?;
+      .status()
+      .context("Validator process failed")?;
     if !status.success() {
       bail!("Validation failed for quiz: {}", path.display());
     } else {
@@ -207,11 +215,12 @@ impl Preprocessor for QuizProcessor {
     let config_toml = ctx.config.get_preprocessor(self.name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
 
+    let dev_mode = env::var("QUIZ_DEV_MODE").is_ok();
     let config = QuizConfig {
       fullscreen: parse_bool("fullscreen"),
-      validate: parse_bool("validate"),
+      validate: parse_bool("validate").map(|b| b && !dev_mode),
       cache_answers: parse_bool("cache-answers"),
-      dev_mode: env::var("QUIZ_DEV_MODE").is_ok(),
+      dev_mode,
     };
 
     let ctxt = QuizProcessorCtxt::build(config, ctx.root.join(&ctx.config.book.src))?;

@@ -167,6 +167,11 @@ $error-color: #e16969;
       border: none;
       margin: 0 0 1em 0;
       padding: 0;
+
+      label {
+        display: inline-block;
+        width: 100%;
+      }
     }
 
     .response-block {
@@ -253,7 +258,22 @@ $error-color: #e16969;
       background: var(--highlight);
     }
   }
+  
+  .editor {
+    .monaco-editor, .monaco-editor-background {
+      background: none!important;
+    }
 
+    .monaco-hover hr {
+      // Fix tooltips having weird spacing between type and description
+      margin-bottom: 4px;
+    }
+
+    .highlight {
+      background: var(--highlight);
+    }
+  }
+  
   p,
   pre {
     &:first-child {
