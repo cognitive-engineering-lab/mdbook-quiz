@@ -35,7 +35,7 @@ jobs:
           profile: minimal
           override: true
       - name: Install JS dependencies
-        run: npm install -g pnpm
+        run: npm install -g graco
       - name: Build Rust package
         uses: actions-rs/cargo@v1
         with:

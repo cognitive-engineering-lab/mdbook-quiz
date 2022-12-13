@@ -1,0 +1,59 @@
+{
+  "name": "@wcrichto/quiz",
+  "version": "0.2.7",
+  "description": "",
+  "author": "Will Crichton <wcrichto@cs.stanford.edu>",
+  "homepage": "https://github.com/willcrichton/mdbook-quiz",
+  "license": "MIT",
+  "main": "dist/lib.js",
+  "type": "module",
+  "bin": {
+    "build-quiz": "dist/build-quiz.cjs",
+    "gen-quiz-ids": "dist/gen-quiz-ids.cjs"
+  },
+  "scripts": {
+    "clean": "rm -rf dist node_modules",
+    "build": "node build.mjs",
+    "init-repo": "pnpm install && pnpm build",
+    "lint": "eslint --ext js,ts,tsx lib",
+    "fmt": "prettier -w \"{lib,tests}/**/*.{ts,tsx}\"",
+    "test": "jest",
+    "commit-check": "pnpm clean && pnpm init-repo && pnpm fmt && pnpm lint && pnpm test"
+  },
+  "devDependencies": {
+    "@codemirror/lang-rust": "^6.0.0",
+    "@codemirror/view": "^6.2.2",
+    "@testing-library/dom": "^8.14.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^14.2.1",
+    "@types/object-hash": "^2.2.1",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@types/showdown": "^2.0.0",
+    "@uiw/react-codemirror": "^4.12.1",
+    "@wcrichto/quiz-schema": "workspace:^",
+    "@wcrichto/rust-editor": "^0.1.1",
+    "axios": "^0.27.2",
+    "classnames": "^2.3.1",
+    "highlight.js": "10.1.1",
+    "jest-environment-jsdom": "^29.3.1",
+    "lodash": "^4.17.21",
+    "mobx": "^6.6.0",
+    "mobx-react": "^7.5.0",
+    "object-hash": "^3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.32.2",
+    "react-showdown": "^2.3.1"
+  },
+  "peerDependencies": {
+    "mobx": "^6.6.0",
+    "mobx-react": "^7.5.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

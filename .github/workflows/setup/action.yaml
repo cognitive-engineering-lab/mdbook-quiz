@@ -9,7 +9,7 @@ runs:
         components: clippy
     - uses: Swatinem/rust-cache@v1
     - name: Install JS dependencies
-      run: npm install -g pnpm
+      run: npm install -g graco
       shell: bash
     - name: Test Rust package
       uses: actions-rs/cargo@v1
@@ -22,6 +22,6 @@ runs:
     # Build script in previous action should build js,
     # so we don't need to run pnpm build here.
     - name: Test JS package
-      run: pnpm test && pnpm lint
+      run: graco test
       working-directory: js
       shell: bash

@@ -4,9 +4,9 @@ const JS_DIST_DIR: &str = "js/dist";
 
 fn main() {
   if !Path::new(JS_DIST_DIR).exists() {
-    let status = Command::new("pnpm")
+    let status = Command::new("graco")
       .current_dir("js")
-      .arg("init-repo")
+      .arg("prepare")
       .status()
       .unwrap();
     if !status.success() {

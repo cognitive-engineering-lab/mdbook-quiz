@@ -1,0 +1,14 @@
+{
+    "name": "@wcrichto/quiz-builder",
+    "version": "0.1.0",
+    "bin": {
+        "quiz-builder": "dist/main.js"
+    },
+    "dependencies": {
+        "@iarna/toml": "^2.2.5",
+        "fs-extra": "^10.1.0"
+    },
+    "devDependencies": {
+        "highlight.js": "10.1.1"
+    }
+}

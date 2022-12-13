@@ -50,14 +50,14 @@ macro_rules! make_asset {
   ($name:expr) => {
     Asset {
       name: $name,
-      contents: include_bytes!(concat!("../js/dist/", $name)),
+      contents: include_bytes!(concat!("../js/packages/quiz-embed/dist/", $name)),
     }
   };
 }
 
 const FRONTEND_ASSETS: [(Asset, Asset); 2] = [
-  (make_asset!("embed.js"), make_asset!("embed.js.map")),
-  (make_asset!("embed.css"), make_asset!("embed.css.map")),
+  (make_asset!("lib.js"), make_asset!("lib.js.map")),
+  (make_asset!("lib.css"), make_asset!("lib.css.map")),
 ];
 
 #[cfg(feature = "rust-editor")]
@@ -69,7 +69,7 @@ const RA_ASSETS: [Asset; 3] = [
 #[cfg(not(feature = "rust-editor"))]
 const RA_ASSETS: [Asset; 0] = [];
 
-const VALIDATOR_ASSET: Asset = make_asset!("validator.cjs");
+const VALIDATOR_ASSET: Asset = make_asset!("../../quiz-validator/dist/main.cjs");
 
 lazy_static::lazy_static! {
   static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();

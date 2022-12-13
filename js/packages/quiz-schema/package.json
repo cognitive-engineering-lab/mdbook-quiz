@@ -1,0 +1,15 @@
+{
+    "name": "@wcrichto/quiz-schema",
+    "version": "0.1.0",
+    "type": "module",
+    "main": "dist/lib.js",
+    "files": [
+        "dist"
+    ],
+    "devDependencies": {
+        "@types/lodash": "^4.14.182",
+        "@types/node": "^18.0.0",
+        "lodash": "^4.17.21",
+        "ts-json-schema-generator": "^1.0.0"
+    }
+}
