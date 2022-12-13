@@ -1,6 +1,10 @@
 import fs from "fs";
 import path from "path";
 
+let baseUrl = true
+  ? "https://willcrichton.net/misc/rust-book/ownership-inventory/"
+  : "http://localhost:3000/mdbook-quiz/";
+
 let rustEditorPlugin = {
   name: "rust-editor",
   setup(build) {
@@ -20,7 +24,7 @@ let rustEditorPlugin = {
         let contents = fs.readFileSync(assetPath, "utf-8");
         contents = contents.replace(
           /import\.meta\.url/g,
-          `"http://localhost:3000/mdbook-quiz/"`
+          JSON.stringify(baseUrl)
         );
         fs.writeFileSync(assetPath, contents);
       });

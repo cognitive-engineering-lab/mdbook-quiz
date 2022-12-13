@@ -1,6 +1,7 @@
 import TOML from "@iarna/toml";
 import { Quiz } from "@wcrichto/quiz-schema";
 
+//@ts-ignore
 import { Validator } from "../dist/main";
 
 describe("validateQuiz", () => {
