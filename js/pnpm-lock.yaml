@@ -50,11 +50,7 @@ importers:
       classnames: 2.3.1
       highlight.js: 10.1.1
       lodash: 4.17.21
-      mobx: 6.6.0
-      mobx-react: 7.5.0_5bx6dzokqdjvseagkoblw2h36i
       object-hash: 3.0.0
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
       react-hook-form: 7.32.2_react@18.2.0
       react-showdown: 2.3.1_react@18.2.0
     devDependencies:
@@ -68,6 +64,10 @@ importers:
       '@types/showdown': 2.0.0
       '@wcrichto/quiz-schema': link:../quiz-schema
       jest-environment-jsdom: 29.3.1
+      mobx: 6.6.0
+      mobx-react: 7.5.0_5bx6dzokqdjvseagkoblw2h36i
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
 
   packages/quiz-builder:
     specifiers:
@@ -1335,7 +1335,7 @@ packages:
       mobx: 6.6.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
+    dev: true
 
   /mobx-react/7.5.0_5bx6dzokqdjvseagkoblw2h36i:
     resolution: {integrity: sha512-riHu0XZJA6f64L1iXZoAaDjVt6suYoy8I2HIfuz2tX3O4FFaAe4lVA2CoObttmUQTTFPM7j3Df6T4re0cHkghQ==}
@@ -1354,11 +1354,11 @@ packages:
       mobx-react-lite: 3.4.0_5bx6dzokqdjvseagkoblw2h36i
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
+    dev: true
 
   /mobx/6.6.0:
     resolution: {integrity: sha512-MNTKevLH/6DShLZcmSL351+JgiJPO56A4GUpoiDQ3/yZ0mAtclNLdHK9q4BcQhibx8/JSDupfTpbX2NZPemlRg==}
-    dev: false
+    dev: true
 
   /monaco-editor/0.34.1:
     resolution: {integrity: sha512-FKc80TyiMaruhJKKPz5SpJPIjL+dflGvz4CpuThaPMc94AyN7SeC9HQ8hrvaxX7EyHdJcUY5i4D0gNyJj1vSZQ==}

@@ -77,7 +77,7 @@ jobs:
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: ./js/package.json
+          package: ./js/packages/quiz/package.json
       - name: Install mdbook
         run: |
           mkdir bin

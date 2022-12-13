@@ -1,6 +1,7 @@
 {
     "name": "@wcrichto/quiz-gen-ids",
     "version": "0.1.0",
+    "private": true,
     "bin": {
         "quiz-gen-ids": "dist/main.js"
     },

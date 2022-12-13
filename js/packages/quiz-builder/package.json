@@ -1,6 +1,7 @@
 {
     "name": "@wcrichto/quiz-builder",
     "version": "0.1.0",
+    "private": true,
     "bin": {
         "quiz-builder": "dist/main.js"
     },
