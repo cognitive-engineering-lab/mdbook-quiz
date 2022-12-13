@@ -11,6 +11,11 @@ runs:
     - name: Install JS dependencies
       run: npm install -g graco
       shell: bash
+    # Note: we have to build before test so the build script is executed
+    - name: Build Rust package
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
     - name: Test Rust package
       uses: actions-rs/cargo@v1
       with:

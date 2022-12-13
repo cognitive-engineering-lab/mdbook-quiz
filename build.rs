@@ -1,6 +1,6 @@
 use std::{path::Path, process::Command};
 
-const JS_DIST_DIR: &str = "js/dist";
+const JS_DIST_DIR: &str = "js/packages/quiz-embed/dist";
 
 fn main() {
   if !Path::new(JS_DIST_DIR).exists() {
