@@ -1,9 +1,30 @@
 import fs from "fs";
+import _ from "lodash";
 import path from "path";
+import { createRequire } from "module";
 
 let baseUrl = true
   ? "https://willcrichton.net/misc/rust-book/ownership-inventory/"
   : "http://localhost:3000/mdbook-quiz/";
+
+let peerfixPlugin = ({ modules, meta }) => ({
+  name: "peerfix",
+  setup(build) {
+    let require = createRequire(meta.url);
+    modules = modules.filter(
+      m => !(build.initialOptions.external || []).includes(m)
+    );
+    if (modules.length == 0) return;
+
+    let filter = new RegExp(
+      modules.map(k => `(^${_.escapeRegExp(k)}$)`).join("|")
+    );
+    build.onResolve({ filter }, args => {
+      let resolved = require.resolve(args.path);
+      return { path: resolved };
+    });
+  },
+});
 
 let rustEditorPlugin = {
   name: "rust-editor",
@@ -34,5 +55,5 @@ let rustEditorPlugin = {
 
 export default {
   format: "iife",
-  plugins: [rustEditorPlugin],
+  plugins: [rustEditorPlugin, peerfixPlugin({ modules: ["react"], meta: import.meta })],
 };

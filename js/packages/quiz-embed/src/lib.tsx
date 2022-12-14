@@ -1,4 +1,4 @@
-import { QuizView } from "@wcrichto/quiz";
+import { QuizView, renderIde } from "@wcrichto/quiz";
 import type { Quiz } from "@wcrichto/quiz-schema";
 import * as rustEditor from "@wcrichto/rust-editor";
 import React from "react";
@@ -24,7 +24,11 @@ let onError = ({ error }: { error: Error }) => {
 };
 
 let initQuizzes = () => {
-  if (rustEditor.raSetup) rustEditor.raSetup("./mdbook-quiz");
+  if (rustEditor.raSetup) {
+    rustEditor.raSetup("./mdbook-quiz");
+    renderIde(document.documentElement);
+  }
+
   document.querySelectorAll(".quiz-placeholder").forEach(el => {
     let divEl = el as HTMLDivElement;
     let name = divEl.dataset.quizName!;

@@ -10,7 +10,12 @@ export let ShortAnswerMethods: QuestionMethods<
   ShortAnswerPrompt,
   ShortAnswerAnswer
 > = {
-  PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
+  PromptView: ({ prompt }) => (
+    <MarkdownView
+      markdown={prompt.prompt}
+      snippetOptions={{ lineNumbers: true }}
+    />
+  ),
 
   ResponseView: ({
     prompt,

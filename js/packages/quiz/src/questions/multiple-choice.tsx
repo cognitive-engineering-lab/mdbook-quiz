@@ -19,7 +19,12 @@ export let MultipleChoiceMethods: QuestionMethods<
   MultipleChoiceAnswer,
   MultipleChoiceState
 > = {
-  PromptView: ({ prompt }) => <MarkdownView markdown={prompt.prompt} />,
+  PromptView: ({ prompt }) => (
+    <MarkdownView
+      markdown={prompt.prompt}
+      snippetOptions={{ lineNumbers: true }}
+    />
+  ),
 
   questionState(prompt, answer) {
     let choices: string[];

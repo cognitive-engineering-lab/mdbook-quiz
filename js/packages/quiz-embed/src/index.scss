@@ -136,6 +136,10 @@ $error-color: #e16969;
   .prompt {
     background: var(--quote-bg);
     margin-bottom: 1em;
+    
+    pre {
+      overflow-x: auto;
+    }
 
     .bug-report {
       position: absolute;
@@ -224,13 +228,15 @@ $error-color: #e16969;
   // Add automatic line-numbers to code snippets
   // https://stackoverflow.com/a/64917958
   pre {
-    counter-reset: line;
+    &.line-numbers {
+      counter-reset: line;
 
-    display: grid;
-    grid-template-columns: min-content 1fr;
-    grid-auto-rows: 1em;
-    gap: 0.2em;
-
+      display: grid;
+      grid-template-columns: min-content 1fr;
+      grid-auto-rows: 1em;
+      gap: 0.2em;  
+    }
+    
     @include mobile {
       overflow-x: auto;
       overflow-y: hidden; 
@@ -260,7 +266,7 @@ $error-color: #e16969;
   }
   
   .editor {
-    .monaco-editor, .monaco-editor-background {
+    .monaco-editor, .monaco-editor-background, .monaco-editor .margin {
       background: none!important;
     }
 
