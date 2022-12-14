@@ -41,11 +41,12 @@ And you can check your version by running `mdbook-quiz -V`. This repository uses
 
 ### From source
 
-You need Cargo and [pnpm](https://pnpm.io/) installed. Then run:
+You need Cargo and [npm](https://npmjs.org/) installed. Then run:
 
 ```
 git clone https://github.com/willcrichton/mdbook-quiz
 cd mdbook-quiz
+npm install -g graco
 cargo install --path .
 ```
 

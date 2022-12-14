@@ -69,7 +69,10 @@ const RA_ASSETS: [Asset; 3] = [
 #[cfg(not(feature = "rust-editor"))]
 const RA_ASSETS: [Asset; 0] = [];
 
-const VALIDATOR_ASSET: Asset = make_asset!("../../quiz-validator/dist/main.cjs");
+const VALIDATOR_ASSET: Asset = Asset {
+  name: "main.cjs",
+  contents: include_bytes!("../js/packages/quiz-validator/dist/main.cjs"),
+};
 
 lazy_static::lazy_static! {
   static ref QUIZ_REGEX: Regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();

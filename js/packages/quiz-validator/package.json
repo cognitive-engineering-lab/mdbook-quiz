@@ -1,6 +1,7 @@
 {
     "name": "@wcrichto/quiz-validator",
     "version": "0.1.0",
+    "private": true,
     "bin": {
         "validator": "dist/main.js"
     },

@@ -15,7 +15,7 @@ name = ["precommit-js", "precommit-cargo"]
 
 # Watch
 [tasks.watch-cargo]
-script = "cargo watch -x 'install --path . --debug --offline'"
+script = "cargo watch -x 'install --path . --debug --offline' -w src -w js/packages/quiz-embed/dist"
 install_crate = { crate_name = "cargo-watch" }
 
 [tasks.watch-js]

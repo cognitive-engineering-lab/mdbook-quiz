@@ -5,7 +5,7 @@ description = "Interactive quizzes for your mdBook"
 license = "MIT"
 version = "0.2.8"
 edition = "2021"
-include = ["/src", "/js/packages/quiz-embed/dist/"]
+include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator/dist/"]
 repository = "https://github.com/willcrichton/mdbook-quiz"
 
 [features]
