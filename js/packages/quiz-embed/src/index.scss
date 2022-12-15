@@ -173,9 +173,12 @@ $error-color: #e16969;
       margin: 0 0 1em 0;
       padding: 0;
 
-      label {
-        display: inline-block;
+      label {        
         width: 100%;
+      }
+
+      .choice label {
+        display: inline-block;
       }
     }
 

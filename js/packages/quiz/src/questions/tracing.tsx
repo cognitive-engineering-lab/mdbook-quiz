@@ -127,7 +127,13 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
         </p>
         {answer.doesCompile ? (
           <>
-            <p className={correctnessClass("stdout")}>
+            <p
+              className={
+                answer.stdout!.trim() == baseline.stdout!.trim()
+                  ? "correct"
+                  : "incorrect"
+              }
+            >
               The output of this program will be:
             </p>
             <pre>{answer.stdout}</pre>
