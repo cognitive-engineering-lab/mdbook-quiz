@@ -4,8 +4,8 @@ import { createRequire } from "module";
 import path from "path";
 
 let baseUrl = true
-  ? "https://willcrichton.net/misc/rust-book/ownership-inventory/"
-  : "http://localhost:3000/mdbook-quiz/";
+  ? "https://rust-book.cs.brown.edu/"
+  : "http://localhost:3000/";
 
 let peerfixPlugin = ({ modules, meta }) => ({
   name: "peerfix",
@@ -52,7 +52,7 @@ let rustEditorPlugin = {
           let contents = fs.readFileSync(assetPath, "utf-8");
           contents = contents.replace(
             /import\.meta\.url/g,
-            JSON.stringify(baseUrl)
+            JSON.stringify(baseUrl + "mdbook-quiz/")
           );
           fs.writeFileSync(assetPath, contents);
         });
