@@ -1,7 +1,7 @@
 import fs from "fs";
 import _ from "lodash";
-import path from "path";
 import { createRequire } from "module";
+import path from "path";
 
 let baseUrl = true
   ? "https://willcrichton.net/misc/rust-book/ownership-inventory/"
@@ -29,31 +29,42 @@ let peerfixPlugin = ({ modules, meta }) => ({
 let rustEditorPlugin = {
   name: "rust-editor",
   setup(build) {
-    build.onEnd(() => {
-      if (process.env.RUST_EDITOR === undefined) return;
-
-      let files = ["editor.worker.js", "ra-worker.js", "wasm_demo_bg.wasm"];
-      files.forEach(f =>
-        fs.copyFileSync(
-          path.join("node_modules/@wcrichto/rust-editor/dist", f),
-          path.join("dist", f)
-        )
-      );
-
-      ["ra-worker"].forEach(name => {
-        let assetPath = path.join("dist", `${name}.js`);
-        let contents = fs.readFileSync(assetPath, "utf-8");
-        contents = contents.replace(
-          /import\.meta\.url/g,
-          JSON.stringify(baseUrl)
+    if (process.env.RUST_EDITOR === undefined) {
+      build.onResolve({ filter: /@wcrichto\/rust-editor/ }, args => ({
+        path: args.path,
+        namespace: "rust-editor",
+      }));
+      build.onLoad({ filter: /.*/, namespace: "rust-editor" }, () => ({
+        contents: "module.exports = {}",
+      }));
+    } else {
+      build.onEnd(() => {
+        let files = ["editor.worker.js", "ra-worker.js", "wasm_demo_bg.wasm"];
+        files.forEach(f =>
+          fs.copyFileSync(
+            path.join("node_modules/@wcrichto/rust-editor/dist", f),
+            path.join("dist", f)
+          )
         );
-        fs.writeFileSync(assetPath, contents);
+
+        ["ra-worker"].forEach(name => {
+          let assetPath = path.join("dist", `${name}.js`);
+          let contents = fs.readFileSync(assetPath, "utf-8");
+          contents = contents.replace(
+            /import\.meta\.url/g,
+            JSON.stringify(baseUrl)
+          );
+          fs.writeFileSync(assetPath, contents);
+        });
       });
-    });
+    }
   },
 };
 
 export default {
   format: "iife",
-  plugins: [rustEditorPlugin, peerfixPlugin({ modules: ["react"], meta: import.meta })],
+  plugins: [
+    rustEditorPlugin,
+    peerfixPlugin({ modules: ["react"], meta: import.meta }),
+  ],
 };

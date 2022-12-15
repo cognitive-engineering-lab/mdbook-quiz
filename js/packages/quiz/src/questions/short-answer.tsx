@@ -1,5 +1,3 @@
-import { rust } from "@codemirror/lang-rust";
-import CodeMirror from "@uiw/react-codemirror";
 import { ShortAnswerAnswer, ShortAnswerPrompt } from "@wcrichto/quiz-schema";
 import React from "react";
 
@@ -17,11 +15,7 @@ export let ShortAnswerMethods: QuestionMethods<
     />
   ),
 
-  ResponseView: ({
-    prompt,
-    submit,
-    formValidators: { required, setValue },
-  }) => {
+  ResponseView: ({ prompt, submit, formValidators: { required } }) => {
     let formFields = required("answer");
     return (
       <>
@@ -34,21 +28,9 @@ export let ShortAnswerMethods: QuestionMethods<
               if (e.key == "Enter") submit();
             }}
           />
-        ) : prompt.response == "long" ? (
-          <textarea {...formFields} placeholder="Write your answer here..." />
         ) : (
-          <CodeMirror
-            extensions={[rust()]}
-            height={"10em"}
-            indentWithTab={true}
-            theme={
-              document.documentElement.classList.contains("light")
-                ? "light"
-                : "dark"
-            }
-            placeholder={"Write your answer here..."}
-            onChange={v => setValue("answer", v)}
-          />
+          /* prompt.response == "long" */
+          <textarea {...formFields} placeholder="Write your answer here..." />
         )}
       </>
     );

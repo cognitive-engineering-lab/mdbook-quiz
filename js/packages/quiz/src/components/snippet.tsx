@@ -1,8 +1,14 @@
 import * as rustEditor from "@wcrichto/rust-editor";
 import type { monaco } from "@wcrichto/rust-editor";
-import hljs from "highlight.js";
+//@ts-ignore
+import hljs from "highlight.js/lib/core";
+//@ts-ignore
+import rust from "highlight.js/lib/languages/rust";
 import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
+
+// This reduces bundle size by not including a bunch of extra languages
+hljs.registerLanguage("rust", rust);
 
 export interface SnippetOptions {
   snippet: string;
