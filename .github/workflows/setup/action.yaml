@@ -9,7 +9,10 @@ runs:
         components: clippy
     - uses: Swatinem/rust-cache@v1
     - name: Install JS dependencies
-      run: npm install -g graco
+      run: |
+        npm install -g pnpm
+        git clone https://github.com/willcrichton/graco
+        cd graco && npm install && npm link && cd ..
       shell: bash
     # Note: we have to build before test so the build script is executed
     - name: Build Rust package
