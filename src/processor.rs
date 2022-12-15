@@ -37,7 +37,6 @@ struct QuizProcessorCtxt {
   config: QuizConfig,
   src_dir: PathBuf,
   validator_path: NamedTempFile,
-  assets: Vec<Asset>,
 }
 
 #[derive(Copy, Clone)]
@@ -55,10 +54,7 @@ macro_rules! make_asset {
   };
 }
 
-const FRONTEND_ASSETS: [(Asset, Asset); 2] = [
-  (make_asset!("lib.js"), make_asset!("lib.js.map")),
-  (make_asset!("lib.css"), make_asset!("lib.css.map")),
-];
+const FRONTEND_ASSETS: [Asset; 2] = [make_asset!("lib.js"), make_asset!("lib.css")];
 
 #[cfg(feature = "rust-editor")]
 const RA_ASSETS: [Asset; 3] = [
@@ -68,6 +64,11 @@ const RA_ASSETS: [Asset; 3] = [
 ];
 #[cfg(not(feature = "rust-editor"))]
 const RA_ASSETS: [Asset; 0] = [];
+
+#[cfg(feature = "source-map")]
+const SOURCE_MAP_ASSETS: [Asset; 2] = [make_asset!("lib.js.map"), make_asset!("lib.css.map")];
+#[cfg(not(feature = "source-map"))]
+const SOURCE_MAP_ASSETS: [Asset; 0] = [];
 
 const VALIDATOR_ASSET: Asset = Asset {
   name: "main.cjs",
@@ -85,18 +86,7 @@ impl QuizProcessorCtxt {
     let dst_dir = src_dir.join("mdbook-quiz");
     fs::create_dir_all(&dst_dir)?;
 
-    let assets = FRONTEND_ASSETS
-      .into_iter()
-      .flat_map(|(asset, src_map)| {
-        let mut assets = vec![asset];
-        if config.dev_mode {
-          assets.push(src_map);
-        }
-        assets
-      })
-      .collect::<Vec<_>>();
-
-    for asset in assets.iter().chain(&RA_ASSETS) {
+    for asset in FRONTEND_ASSETS.iter().chain(&RA_ASSETS).chain(&SOURCE_MAP_ASSETS) {
       fs::write(dst_dir.join(asset.name), asset.contents)?;
     }
 
@@ -106,7 +96,6 @@ impl QuizProcessorCtxt {
     Ok(QuizProcessorCtxt {
       config,
       src_dir,
-      assets,
       validator_path,
     })
   }
@@ -193,7 +182,7 @@ impl QuizProcessorCtxt {
       // Ensure there's space between existing markdown and inserted HTML
       content.push_str("\n\n");
 
-      for asset in &self.assets {
+      for asset in &FRONTEND_ASSETS {
         let asset_rel = prefix.join("mdbook-quiz").join(asset.name);
         let asset_str = asset_rel.display().to_string();
         let link = if asset_rel.extension().unwrap().to_string_lossy() == "js" {

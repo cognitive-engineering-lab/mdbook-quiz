@@ -3,7 +3,7 @@ import _ from "lodash";
 import { createRequire } from "module";
 import path from "path";
 
-let baseUrl = true
+let baseUrl = !process.argv.includes("-w")
   ? "https://rust-book.cs.brown.edu/"
   : "http://localhost:3000/";
 

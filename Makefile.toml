@@ -15,7 +15,7 @@ name = ["precommit-js", "precommit-cargo"]
 
 # Watch
 [tasks.watch-cargo]
-script = "cargo watch -x 'install --path . --debug --offline --features rust-editor' -w src -w js/packages/quiz-embed/dist --ignore-nothing"
+script = "cargo watch -x 'install --path . --debug --offline --features rust-editor --features source-map' -w src -w js/packages/quiz-embed/dist --ignore-nothing"
 install_crate = { crate_name = "cargo-watch" }
 
 [tasks.watch-js]
