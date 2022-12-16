@@ -241,7 +241,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
     let saveToCache = () => {
       if (cacheAnswers)
-        answerStorage.save(state.answers, state.confirmedDone, state.attempt);
+        answerStorage.save(
+          state.answers,
+          state.confirmedDone,
+          state.attempt,
+          state.wrongAnswers
+        );
     };
 
     // Don't allow any keyboard inputs to reach external listeners

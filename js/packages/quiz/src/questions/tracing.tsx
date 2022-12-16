@@ -129,7 +129,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
           <>
             <p
               className={
-                answer.stdout!.trim() == baseline.stdout!.trim()
+                baseline.stdout && answer.stdout!.trim() == baseline.stdout!.trim()
                   ? "correct"
                   : "incorrect"
               }
