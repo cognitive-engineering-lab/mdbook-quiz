@@ -10,7 +10,7 @@ import "./index.scss";
 let onError = ({ error }: { error: Error }) => {
   document.body.style.overflowY = "auto";
 
-  window.telemetry?.log("runtime-error", {
+  window.telemetry?.log("runtime_error", {
     error: error.stack || error.message,
   });
 

@@ -114,7 +114,9 @@ let loadState = ({
       // note: need to provide defaults if schema changes
       confirmedDone: stored.confirmedDone || false,
       attempt: stored.attempt || 0,
-      wrongAnswers: stored.wrongAnswers || undefined,
+      wrongAnswers:
+        stored.wrongAnswers ||
+        (stored.attempt > 0 ? _.range(quiz.questions.length) : undefined),
     };
   } else {
     return {
