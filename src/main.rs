@@ -183,7 +183,7 @@ mod test {
   #[test]
   fn test_quiz_generator() -> Result<()> {
     let harness = MdbookTestHarness::new()?;
-    let quiz_path = harness.dir.join("quiz.toml");
+    let quiz_path = harness.root().join("quiz.toml");
     fs::write(
       &quiz_path,
       r#"
@@ -194,7 +194,7 @@ mod test {
     "#,
     )?;
 
-    let chapter_path = harness.dir.join("src").join("chapter_1.md");
+    let chapter_path = harness.root().join("src").join("chapter_1.md");
     fs::write(
       &chapter_path,
       r#"
