@@ -524,17 +524,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "mdbook-preprocessor-utils"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c9ea17fd3c124ef0396c45eb334bde744c001d8ab89bfd6c9ed0603373320f2"
+dependencies = [
+ "anyhow",
+ "clap",
+ "mdbook",
+ "rayon",
+ "semver",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
 name = "mdbook-quiz"
 version = "0.2.10"
 dependencies = [
  "anyhow",
- "clap",
  "html-escape",
- "lazy_static",
- "mdbook",
- "rayon",
+ "mdbook-preprocessor-utils",
  "regex",
- "semver",
  "serde_json",
  "tempfile",
  "toml",
