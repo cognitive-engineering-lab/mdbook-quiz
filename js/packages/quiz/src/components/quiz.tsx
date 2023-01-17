@@ -277,7 +277,11 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         );
 
         return () =>
-          document.removeEventListener("keydown", captureKeyboard, false);
+          document.documentElement.removeEventListener(
+            "keydown",
+            captureKeyboard,
+            false
+          );
       } else if (fullscreen && state.started && !state.confirmedDone) {
         let top =
           ref.current!.getBoundingClientRect().top +
