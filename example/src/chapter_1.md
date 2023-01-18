@@ -4,4 +4,4 @@ mdbook-quiz is a tool for embedding interactive quizzes into your mdBook. Here's
 
 {{#quiz ./quiz.toml}}
 
-For more documentation, go to <https://github.com/willcrichton/mdbook-quiz>.
+For more documentation, go to <https://github.com/cognitive-engineering-lab/mdbook-quiz>.

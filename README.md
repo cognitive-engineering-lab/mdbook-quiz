@@ -1,6 +1,6 @@
 # mdbook-quiz: interactive quizzes for Markdown
 
-[![tests](https://github.com/willcrichton/mdbook-quiz/actions/workflows/main.yml/badge.svg)](https://github.com/willcrichton/mdbook-quiz/actions/workflows/main.yml)
+[![tests](https://github.com/cognitive-engineering-lab/mdbook-quiz/actions/workflows/main.yml/badge.svg)](https://github.com/cognitive-engineering-lab/mdbook-quiz/actions/workflows/main.yml)
 [![crates.io](https://img.shields.io/crates/v/mdbook-quiz.svg)](https://crates.io/crates/mdbook-quiz)
 
 _[live demo](https://willcrichton.net/mdbook-quiz/)_
@@ -44,7 +44,7 @@ And you can check your version by running `mdbook-quiz -V`. This repository uses
 You need Cargo and [npm](https://npmjs.org/) installed. Then run:
 
 ```
-git clone https://github.com/willcrichton/mdbook-quiz
+git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
 cd mdbook-quiz
 npm install -g graco
 cargo install --path .

@@ -6,7 +6,7 @@ license = "MIT"
 version = "0.2.11"
 edition = "2021"
 include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator/dist/"]
-repository = "https://github.com/willcrichton/mdbook-quiz"
+repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [features]
 rust-editor = []
