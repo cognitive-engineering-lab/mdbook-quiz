@@ -25,7 +25,7 @@ let onError = ({ error }: { error: Error }) => {
 
 let initQuizzes = () => {
   if (rustEditor.raSetup) {
-    rustEditor.raSetup("./mdbook-quiz");
+    rustEditor.raSetup("./quiz");
     renderIde(document.documentElement);
   }
 

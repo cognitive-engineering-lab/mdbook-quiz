@@ -52,7 +52,7 @@ let rustEditorPlugin = {
           let contents = fs.readFileSync(assetPath, "utf-8");
           contents = contents.replace(
             /import\.meta\.url/g,
-            JSON.stringify(baseUrl + "mdbook-quiz/")
+            JSON.stringify(baseUrl + "quiz/")
           );
           fs.writeFileSync(assetPath, contents);
         });
