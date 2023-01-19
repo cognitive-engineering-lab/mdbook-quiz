@@ -9,7 +9,6 @@
         "@iarna/toml": "^2.2.5",
         "@types/lodash": "^4.14.182",
         "@types/node": "^18.0.0",
-        "@types/spellchecker": "^3.5.0",
         "@wcrichto/quiz-schema": "workspace:~",
         "ajv": "^8.11.0",
         "better-ajv-errors": "^1.2.0",

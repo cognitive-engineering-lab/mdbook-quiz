@@ -126,7 +126,6 @@ importers:
       '@iarna/toml': ^2.2.5
       '@types/lodash': ^4.14.182
       '@types/node': ^18.0.0
-      '@types/spellchecker': ^3.5.0
       '@wcrichto/quiz-schema': workspace:~
       ajv: ^8.11.0
       better-ajv-errors: ^1.2.0
@@ -142,7 +141,6 @@ importers:
       '@iarna/toml': 2.2.5
       '@types/lodash': 4.14.182
       '@types/node': 18.11.13
-      '@types/spellchecker': 3.5.0
       '@wcrichto/quiz-schema': link:../quiz-schema
       ajv: 8.11.0
       better-ajv-errors: 1.2.0_ajv@8.11.0
@@ -412,10 +410,6 @@ packages:
 
   /@types/showdown/2.0.0:
     resolution: {integrity: sha512-70xBJoLv+oXjB5PhtA8vo7erjLDp9/qqI63SRHm4REKrwuPOLs8HhXwlZJBJaB4kC18cCZ1UUZ6Fb/PLFW4TCA==}
-    dev: true
-
-  /@types/spellchecker/3.5.0:
-    resolution: {integrity: sha512-be0LXe/Byo2hXlhNLYSGgaOoogWObmAEAeqOnwuICAAcSi3xMKmmfteXpqY45vx+ZAiKc7pqzUyyRqKfxWy4TQ==}
     dev: true
 
   /@types/stack-utils/2.0.1:

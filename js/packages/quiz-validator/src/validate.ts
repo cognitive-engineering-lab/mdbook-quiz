@@ -5,6 +5,7 @@ import Ajv, { AsyncSchema, AsyncValidateFunction } from "ajv";
 import betterAjvErrors from "better-ajv-errors";
 import _ from "lodash";
 import remarkParse from "remark-parse";
+//@ts-ignore
 import spellchecker from "spellchecker";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
@@ -45,16 +46,17 @@ export class Validator {
     });
 
     // TODO: figure out how to let user specify custom words for spellchecker
+    let sc = new spellchecker.Spellchecker();
+    sc.setDictionary("en_US", spellchecker.getDictionaryPath());
     ajv.addKeyword({
       keyword: "markdown",
       async: true,
-
       async validate(_true: boolean, data: string) {
         let tree = unified().use(remarkParse).parse(data);
         visit(tree, node => {
           if (node.type != "text") return;
 
-          let misspellings = spellchecker.checkSpelling(node.value);
+          let misspellings: {start: number, end: number}[] = sc.checkSpelling(node.value);
           if (misspellings.length > 0) {
             let bad = misspellings.map(
               ({ start, end }) => `"${node.value.slice(start, end)}"`
