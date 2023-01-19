@@ -64,7 +64,7 @@ ${indentString(answer.stdout!, 2)}
         return message;
       }
 
-      let anyErrorHasLine = _.some(errors, error =>
+      /*let anyErrorHasLine = _.some(errors, error =>
         _.some(error.spans, span => span.line_start == answer.lineNumber)
       );
       if (!anyErrorHasLine) {
@@ -81,7 +81,7 @@ ${indentString(answer.stdout!, 2)}
           ),
         ].join("\n");
         return message;
-      }
+      }*/
     }
   };
 

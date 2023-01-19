@@ -60,7 +60,7 @@ describe("validateQuiz", () => {
         {
           type: "ShortAnswer",
           prompt: { prompt: "A mispeling" },
-          answer: { answer: "Yes" }
+          answer: { answer: "Yes" },
         },
       ],
     };

@@ -72,12 +72,12 @@ describe("Tracing", () => {
 
     await user.click(checkbox);
 
-    let input = screen.getByRole("combobox");
-    await user.selectOptions(input, "1");
+    // let input = screen.getByRole("combobox");
+    // await user.selectOptions(input, "1");
     await user.click(submitButton());
 
     expect(submitted).toMatchObject({
-      answer: { doesCompile: false, lineNumber: 1 },
+      answer: { doesCompile: false /* lineNumber: 1 */ },
       correct: false,
     });
   });

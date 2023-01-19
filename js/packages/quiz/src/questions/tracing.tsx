@@ -3,23 +3,23 @@ import classNames from "classnames";
 import _ from "lodash";
 import React, { useState } from "react";
 
-import { MoreInfo } from "../components/more-info";
+// import { MoreInfo } from "../components/more-info";
 import { Snippet } from "../components/snippet";
 import { QuestionMethods } from "./types";
 
-let HELP_TEXT = `Errors may involve multiple line numbers. For example:
+// let HELP_TEXT = `Errors may involve multiple line numbers. For example:
 
-\`\`\`
-let mut x = 1;
-let y = &x;
-let z = &mut x;
-*z = *y;
-\`\`\`
+// \`\`\`
+// let mut x = 1;
+// let y = &x;
+// let z = &mut x;
+// *z = *y;
+// \`\`\`
 
-Here, lines 2, 3, and 4 all interact to cause a compiler error. 
-To resolve this ambiguity, you should mark the _last_ line which is involved in the error. 
-Here, that would be line 4. (Since without line 4, this program would compile!)
-`;
+// Here, lines 2, 3, and 4 all interact to cause a compiler error.
+// To resolve this ambiguity, you should mark the _last_ line which is involved in the error.
+// Here, that would be line 4. (Since without line 4, this program would compile!)
+// `;
 
 export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   PromptView: ({ prompt }) => (
@@ -35,7 +35,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   ),
 
   ResponseView: ({
-    prompt,
+    // prompt,
     formValidators: {
       required,
       formState: { errors },
@@ -44,9 +44,9 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     let [doesCompile, setDoesCompile] = useState<boolean | undefined>(
       undefined
     );
-    let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(
-      i => i + 1
-    );
+    // let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(
+    //   i => i + 1
+    // );
     return (
       <>
         <div className="response-block">
@@ -83,23 +83,21 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
                 placeholder="Write the program's stdout here..."
               ></textarea>
             </div>
-          ) : (
-            <div>
-              <p>
-                The error occurs on the line number:{" "}
-                <select {...required("lineNumber")}>
-                  <option value="">Select...</option>
-                  {lineNumbers.map((n, i) => (
-                    <option key={i} value={n}>
-                      Line {n}
-                    </option>
-                  ))}
-                </select>
-                &nbsp;&nbsp;
-                <MoreInfo markdown={HELP_TEXT} />
-              </p>
-            </div>
-          )
+          ) : /*<div>
+          <p>
+            The error occurs on the line number:{" "}
+            <select {...required("lineNumber")}>
+              <option value="">Select...</option>
+              {lineNumbers.map((n, i) => (
+                <option key={i} value={n}>
+                  Line {n}
+                </option>
+              ))}
+            </select>
+            &nbsp;&nbsp;
+            <MoreInfo markdown={HELP_TEXT} />
+          </p>
+        </div>*/ null
         ) : null}
       </>
     );
@@ -111,8 +109,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
       let stdout = data.stdout;
       return { doesCompile, stdout };
     } else {
-      let lineNumber = parseInt(data.lineNumber);
-      return { doesCompile, lineNumber };
+      return { doesCompile };
     }
   },
 
@@ -139,12 +136,11 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             </p>
             <pre>{answer.stdout}</pre>
           </>
-        ) : (
-          <p className={correctnessClass("lineNumber")}>
+        ) : /*<p className={correctnessClass("lineNumber")}>
             The last line number in the error is:{" "}
             <code>{answer.lineNumber}</code>
-          </p>
-        )}
+          </p>*/
+        null}
       </div>
     );
   },
@@ -158,7 +154,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
       providedAnswer.doesCompile == userAnswer.doesCompile &&
       (providedAnswer.doesCompile
         ? clean(userAnswer.stdout!) == clean(providedAnswer.stdout!)
-        : userAnswer.lineNumber! == providedAnswer.lineNumber!)
+        : true)
+      // : userAnswer.lineNumber! == providedAnswer.lineNumber!)
     );
   },
 };

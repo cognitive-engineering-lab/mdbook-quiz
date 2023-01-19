@@ -217,7 +217,6 @@ fn main() {
 }
 """
 answer.doesCompile = false
-answer.lineNumber = 4
 context = """
 This is a compiler error because line 4 tries to mutate `x` when `x` is not marked as `mut`.
 """
@@ -236,10 +235,7 @@ export interface TracingAnswer {
   doesCompile: boolean;
 
   /** If doesCompile=true, then the contents of stdout after running the program */
-  stdout?: string;
-
-  /** If doesCompile=false, then the line number of the code causing the error */
-  lineNumber?: number;
+  stdout?: string;  
 }
 
 export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
