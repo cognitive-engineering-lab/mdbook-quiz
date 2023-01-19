@@ -8,7 +8,7 @@ let main = async () => {
   let quizPath = process.argv[2];
   let validator = await Validator.load();
   let contents = await fs.readFile(quizPath, "utf-8");
-  let {errors, warnings} = await validator.validate(contents, quizPath);
+  let { errors, warnings } = await validator.validate(contents, quizPath);
   if (warnings) {
     console.warn(warnings);
   }

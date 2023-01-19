@@ -15,7 +15,8 @@ import { questionValidators } from "./validators";
 export class Validator {
   constructor(
     readonly schema: any,
-    readonly validator: AsyncValidateFunction<void>
+    readonly validator: AsyncValidateFunction<void>,
+    private validatorWarnings: any[]
   ) {}
 
   static async load(): Promise<Validator> {
@@ -48,15 +49,18 @@ export class Validator {
     // TODO: figure out how to let user specify custom words for spellchecker
     let sc = new spellchecker.Spellchecker();
     sc.setDictionary("en_US", spellchecker.getDictionaryPath());
+    let validatorWarnings: any[] = [];
     ajv.addKeyword({
       keyword: "markdown",
       async: true,
-      async validate(_true: boolean, data: string) {
+      async validate(_true, data, _schema, ctxt) {
         let tree = unified().use(remarkParse).parse(data);
         visit(tree, node => {
           if (node.type != "text") return;
 
-          let misspellings: {start: number, end: number}[] = sc.checkSpelling(node.value);
+          let misspellings: { start: number; end: number }[] = sc.checkSpelling(
+            node.value
+          );
           if (misspellings.length > 0) {
             let bad = misspellings.map(
               ({ start, end }) => `"${node.value.slice(start, end)}"`
@@ -64,12 +68,11 @@ export class Validator {
             let message = `Misspelled: [${bad.join(", ")}] (full text: "${
               node.value
             }")`;
-            throw new Ajv.ValidationError([
-              {
-                keyword: "markdown",
-                message,
-              },
-            ]);
+            validatorWarnings.push({
+              keyword: "markdown",
+              message,
+              instancePath: ctxt?.instancePath,
+            });
           }
         });
         return true;
@@ -78,7 +81,7 @@ export class Validator {
 
     let validator = ajv.compile<void>(SCHEMA as AsyncSchema);
 
-    return new Validator(SCHEMA, validator);
+    return new Validator(SCHEMA, validator, validatorWarnings);
   }
 
   async validate(
@@ -86,35 +89,32 @@ export class Validator {
     quizPath: string
   ): Promise<{ errors?: string; warnings?: string }> {
     let quiz: any;
+    let errors: string | undefined;
+    let fmt = (errors: any) =>
+      betterAjvErrors(this.schema, quiz, errors, {
+        indent: 2,
+      });
+
     try {
       quiz = toml.parse(input);
+      this.validatorWarnings.length = 0;
       await this.validator(quiz);
-      return {};
     } catch (err: any) {
       if (quiz && err instanceof Ajv.ValidationError) {
         let allErrors = err.errors.filter(
           err => !["const", "anyOf"].includes(err.keyword!)
         );
-        let [mdErrors, otherErrors] = _.partition(
-          allErrors,
-          err => err.keyword === "markdown"
-        );
-        let fmt = (errors: any) =>
-          betterAjvErrors(this.schema, quiz, errors, {
-            indent: 2,
-          });
-        let errors =
-          otherErrors.length > 0
-            ? `Invalid quiz: ${quizPath}\n${fmt(otherErrors)}`
-            : undefined;
-        let warnings =
-          mdErrors.length > 0
-            ? `Misspellings in quiz: ${quizPath}\n${fmt(mdErrors)}`
-            : undefined;
-        return { errors, warnings };
+        errors = `Invalid quiz: ${quizPath}\n${fmt(allErrors)}`;
       } else {
-        return { errors: err.toString() };
+        errors = err.toString();
       }
     }
+
+    let warnings =
+      this.validatorWarnings.length > 0
+        ? `Misspellings in quiz: ${quizPath}\n${fmt(this.validatorWarnings)}`
+        : undefined;
+
+    return { errors, warnings };
   }
 }
