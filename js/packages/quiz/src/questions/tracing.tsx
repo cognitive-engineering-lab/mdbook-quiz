@@ -26,9 +26,9 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     <>
       <p>
         Determine whether the program will pass the compiler. If it passes,
-        write the expected output of the program if it were executed. If the
-        program does not pass, indicate the last line number involved in the
-        compiler error.
+        write the expected output of the program if it were executed. 
+        {/* If the program does not pass, indicate the last line number involved in the
+        compiler error. */}
       </p>
       <Snippet snippet={prompt.program} lineNumbers />
     </>
