@@ -31,6 +31,7 @@ export let validateTracing: Validator<TracingPrompt, TracingAnswer> = async (
 ) => {
   let dir = await fs.mkdtemp(path.join(os.tmpdir(), "mdbook-quiz-"));
   let inner = async () => {
+    if (!prompt.program) return "Missing program keyword";
     let inputPath = path.join(dir, "main.rs");
     await fs.writeFile(inputPath, prompt.program);
 

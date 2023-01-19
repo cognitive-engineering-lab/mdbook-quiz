@@ -4,6 +4,10 @@ import { SCHEMA } from "@wcrichto/quiz-schema/dist/schema";
 import Ajv, { AsyncSchema, AsyncValidateFunction } from "ajv";
 import betterAjvErrors from "better-ajv-errors";
 import _ from "lodash";
+import remarkParse from "remark-parse";
+import spellchecker from "spellchecker";
+import { unified } from "unified";
+import { visit } from "unist-util-visit";
 
 import { questionValidators } from "./validators";
 
@@ -40,9 +44,34 @@ export class Validator {
       },
     });
 
-    ajv.addFormat("markdown", (_data: string) => {
-      // TODO: how should we validate Markdown? Print it to the console for visual inspection?
-      return true;
+    // TODO: figure out how to let user specify custom words for spellchecker
+    ajv.addKeyword({
+      keyword: "markdown",
+      async: true,
+
+      async validate(_true: boolean, data: string) {
+        let tree = unified().use(remarkParse).parse(data);
+        visit(tree, node => {
+          if (node.type != "text") return;
+
+          let misspellings = spellchecker.checkSpelling(node.value);
+          if (misspellings.length > 0) {
+            let bad = misspellings.map(
+              ({ start, end }) => `"${node.value.slice(start, end)}"`
+            );
+            let message = `Misspelled: [${bad.join(", ")}] (full text: "${
+              node.value
+            }")`;
+            throw new Ajv.ValidationError([
+              {
+                keyword: "markdown",
+                message,
+              },
+            ]);
+          }
+        });
+        return true;
+      },
     });
 
     let validator = ajv.compile<void>(SCHEMA as AsyncSchema);
@@ -50,26 +79,39 @@ export class Validator {
     return new Validator(SCHEMA, validator);
   }
 
-  async validate(input: string, quizPath: string): Promise<string | undefined> {
-    let quiz;
+  async validate(
+    input: string,
+    quizPath: string
+  ): Promise<{ errors?: string; warnings?: string }> {
+    let quiz: any;
     try {
       quiz = toml.parse(input);
       await this.validator(quiz);
+      return {};
     } catch (err: any) {
       if (quiz && err instanceof Ajv.ValidationError) {
-        let formattedErrors = betterAjvErrors(
-          this.schema,
-          quiz,
-          err.errors.filter(
-            err => !["const", "anyOf"].includes(err.keyword!)
-          ) as any,
-          {
-            indent: 2,
-          }
+        let allErrors = err.errors.filter(
+          err => !["const", "anyOf"].includes(err.keyword!)
         );
-        return `Invalid quiz: ${quizPath}\n${formattedErrors}`;
+        let [mdErrors, otherErrors] = _.partition(
+          allErrors,
+          err => err.keyword === "markdown"
+        );
+        let fmt = (errors: any) =>
+          betterAjvErrors(this.schema, quiz, errors, {
+            indent: 2,
+          });
+        let errors =
+          otherErrors.length > 0
+            ? `Invalid quiz: ${quizPath}\n${fmt(otherErrors)}`
+            : undefined;
+        let warnings =
+          mdErrors.length > 0
+            ? `Misspellings in quiz: ${quizPath}\n${fmt(mdErrors)}`
+            : undefined;
+        return { errors, warnings };
       } else {
-        return err.toString();
+        return { errors: err.toString() };
       }
     }
   }

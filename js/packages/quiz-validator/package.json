@@ -9,10 +9,17 @@
         "@iarna/toml": "^2.2.5",
         "@types/lodash": "^4.14.182",
         "@types/node": "^18.0.0",
+        "@types/spellchecker": "^3.5.0",
         "@wcrichto/quiz-schema": "workspace:~",
         "ajv": "^8.11.0",
         "better-ajv-errors": "^1.2.0",
         "fs-extra": "^10.1.0",
-        "lodash": "^4.17.21"
+        "lodash": "^4.17.21",
+        "remark-parse": "^10.0.1",
+        "unified": "^10.1.2",
+        "unist-util-visit": "^4.1.1"
+    },
+    "dependencies": {
+        "spellchecker": "^3.7.1"
     }
 }

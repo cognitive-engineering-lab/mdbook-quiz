@@ -8,7 +8,10 @@ let main = async () => {
   let quizPath = process.argv[2];
   let validator = await Validator.load();
   let contents = await fs.readFile(quizPath, "utf-8");
-  let errors = await validator.validate(contents, quizPath);
+  let {errors, warnings} = await validator.validate(contents, quizPath);
+  if (warnings) {
+    console.warn(warnings);
+  }
   if (errors) {
     console.error(errors);
     process.exit(1);
@@ -16,5 +19,5 @@ let main = async () => {
 };
 
 if (typeof require !== "undefined" && require.main === module) {
-  main;
+  main();
 }

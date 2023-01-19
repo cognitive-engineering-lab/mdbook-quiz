@@ -249,6 +249,6 @@ export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
 
 You can configure mdbook-quiz by adding options to the `[preprocessor.quiz]` section of `book.toml`. The options are:
 
-* `validate` (boolean): If true, then mdbook-quiz will validate your quiz TOML files using the validator.js script installed with mdbook-quiz. You must have NodeJS installed on your machine and PATH for this to work.
+* `validate` (boolean): If true, then mdbook-quiz will validate your quiz TOML files using the validator.js script installed with mdbook-quiz. You must have NodeJS installed on your machine and PATH for this to work. You must also install the [spellchecker](https://www.npmjs.com/package/spellchecker) package on your NODE_PATH, e.g. via `npm i -g spellchecker`.
 * `fullscreen` (boolean): If true, then a quiz will take up the web page's full screen during use.
 * `cache-answers` (boolean): If true, then the user's answers will be saved in their browser's `localStorage`. Then the quiz will show the user's answers even after they reload the page.

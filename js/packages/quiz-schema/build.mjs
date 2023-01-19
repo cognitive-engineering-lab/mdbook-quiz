@@ -13,7 +13,7 @@ class MarkdownFormatter {
   getDefinition(_type) {
     return {
       type: "string",
-      format: "markdown",
+      markdown: true
     };
   }
 
