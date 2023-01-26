@@ -10,10 +10,7 @@ runs:
     - uses: Swatinem/rust-cache@v1
     - name: Install JS dependencies
       run: |
-        npm install -g pnpm
-        git clone https://github.com/willcrichton/graco
-        cd graco && npm install && npm link && cd ..
-        npm install -g spellchecker
+        npm install -g graco spellchecker
         echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
       shell: bash
     # Note: we have to build before test so the build script is executed
@@ -32,6 +29,6 @@ runs:
     # Build script in previous action should build js,
     # so we don't need to run pnpm build here.
     - name: Test JS package
-      run: graco test
+      run: NODE_LOG=debug graco test
       working-directory: js
       shell: bash
