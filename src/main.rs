@@ -1,10 +1,12 @@
 use anyhow::{bail, Context, Result};
+use mdbook_aquascope::AquascopePreprocessor;
 use mdbook_preprocessor_utils::{
   mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
 };
 use regex::Regex;
 use std::{env, fmt::Write, fs, path::Path, process::Command};
 use tempfile::{self, NamedTempFile};
+use toml::Value;
 
 mdbook_preprocessor_utils::asset_generator!("../js/packages/quiz-embed/dist/");
 
@@ -49,6 +51,7 @@ struct QuizPreprocessor {
   config: QuizConfig,
   validator_path: NamedTempFile,
   regex: Regex,
+  aquascope: AquascopePreprocessor,
 }
 
 impl QuizPreprocessor {
@@ -66,6 +69,31 @@ impl QuizPreprocessor {
     }
   }
 
+  // TODO: this shouldn't be baked into mdbook-quiz. 
+  // Need to figure out an extension mechanism to add custom blocks w/ pre-rendering.
+  fn add_aquascope_blocks(&self, config: &mut Value) -> Result<()> {
+    let config = config.as_table_mut().unwrap();
+    let questions = config
+      .get_mut("questions")
+      .context("Must contain questions")?
+      .as_array_mut()
+      .unwrap();
+    for question in questions.iter_mut() {
+      let question = question.as_table_mut().unwrap();
+      let prompt = question.get_mut("prompt").unwrap().as_table_mut().unwrap();
+      if let Some(text_val) = prompt.get_mut("prompt") {
+        let text = text_val.as_str().unwrap();
+        let replacements = self.aquascope.replacements(text)?;
+        let mut new_text = String::from(text);
+        for (range, html) in replacements.into_iter().rev() {
+          new_text.replace_range(range, &html);
+        }
+        *text_val = Value::String(new_text);
+      }
+    }
+    Ok(())
+  }
+
   fn process_quiz(&self, chapter_dir: &Path, quiz_path: &str) -> Result<String> {
     let quiz_path_rel = Path::new(quiz_path);
     let quiz_path_abs = chapter_dir.join(quiz_path_rel);
@@ -79,7 +107,9 @@ impl QuizPreprocessor {
     let content_toml = std::fs::read_to_string(&quiz_path_abs)
       .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
 
-    let content = content_toml.parse::<toml::Value>()?;
+    let mut content = content_toml.parse::<toml::Value>()?;
+    self.add_aquascope_blocks(&mut content)?;
+
     let content_json = serde_json::to_string(&content)?;
 
     let mut html = String::from("<div class=\"quiz-placeholder\"");
@@ -131,10 +161,13 @@ impl SimplePreprocessor for QuizPreprocessor {
 
     let regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
 
+    let aquascope = AquascopePreprocessor::new()?;
+
     Ok(QuizPreprocessor {
       config,
       validator_path,
       regex,
+      aquascope,
     })
   }
 

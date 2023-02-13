@@ -34,12 +34,19 @@ let highlightExtension = (
   },
 });
 
+declare global {
+  function initAquascopeBlocks(root: HTMLElement): void;
+}
+
 export let MarkdownView: React.FC<{
   markdown: string;
   snippetOptions?: Partial<SnippetOptions>;
 }> = ({ markdown, snippetOptions }) => {
   let ref = useRef<HTMLDivElement>(null);
-  useEffect(() => renderIde(ref.current!, snippetOptions), [markdown]);
+  useEffect(() => {
+    renderIde(ref.current!, snippetOptions);
+    window.initAquascopeBlocks && window.initAquascopeBlocks(ref.current!);
+  }, [markdown]);
 
   return (
     <div ref={ref}>

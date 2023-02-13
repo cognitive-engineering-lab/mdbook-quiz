@@ -20,6 +20,10 @@ html-escape = "0.2"
 toml = "0.5"
 tempfile = "3"
 mdbook-preprocessor-utils = "0.1"
+mdbook-aquascope = "0.1"
 
 [dev-dependencies]
 mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }
+
+[patch.crates-io]
+mdbook-aquascope = { git = "https://github.com/willcrichton/aquascope", branch = "dev" }
