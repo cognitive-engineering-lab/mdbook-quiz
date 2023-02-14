@@ -254,8 +254,8 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     // Don't allow any keyboard inputs to reach external listeners
     // while the quiz is active (e.g. to avoid using the search box).
     let ended = state.index == quiz.questions.length;
-    let showFullscreen = fullscreen && state.started && !ended;
-    let ref = useRef<HTMLDivElement>(null);
+    let showFullscreen = fullscreen && state.started && !ended;    
+    let [lastTop, setLastTop] = useState<number | undefined>();
     useLayoutEffect(() => {
       document.body.style.overflowY = showFullscreen ? "hidden" : "auto";
 
@@ -275,6 +275,8 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           captureKeyboard,
           false
         );
+        
+        setLastTop(window.scrollY + 100);
 
         return () =>
           document.documentElement.removeEventListener(
@@ -282,11 +284,8 @@ export let QuizView: React.FC<QuizViewProps> = observer(
             captureKeyboard,
             false
           );
-      } else if (fullscreen && state.started && !state.confirmedDone) {
-        let top =
-          ref.current!.getBoundingClientRect().top +
-          document.documentElement.scrollTop;
-        window.scrollTo({ top: top - 20 });
+      } else if (fullscreen && lastTop !== undefined) {      
+        window.scrollTo(0, lastTop);
       }
     }, [showFullscreen]);
 
@@ -389,7 +388,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     );
 
     return (
-      <div className={wrapperClass} ref={ref}>
+      <div className={wrapperClass}>
         <div className="mdbook-quiz">
           {showFullscreen ? (
             <>
