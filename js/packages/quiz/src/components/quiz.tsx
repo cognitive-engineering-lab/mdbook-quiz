@@ -223,6 +223,35 @@ export interface QuizViewProps {
   onFinish?: (answers: TaggedAnswer[]) => void;
 }
 
+export let useCaptureMdbookShortcuts = (capture: boolean) => {
+  useLayoutEffect(() => {
+    if (capture) {
+      let captureKeyboard = (e: KeyboardEvent) => e.stopPropagation();
+
+      // This gets added specifically to document.documentElement rather than document
+      // so bubbling events will hit this listener before ones added via document.addEventListener(...).
+      // All of the problematic mdBook interactions are created that way, so we ensure that
+      // the keyboard event does not propagate to those listeners.
+      //
+      // However, some widgets like Codemirror require keydown events but on local elements.
+      // So we can't just stopPropagation in the capture phase, or those widgets will break.
+      // This is the compromise!
+      document.documentElement.addEventListener(
+        "keydown",
+        captureKeyboard,
+        false
+      );
+
+      return () =>
+        document.documentElement.removeEventListener(
+          "keydown",
+          captureKeyboard,
+          false
+        );
+    }
+  }, [capture]);
+};
+
 export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
@@ -254,37 +283,17 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     // Don't allow any keyboard inputs to reach external listeners
     // while the quiz is active (e.g. to avoid using the search box).
     let ended = state.index == quiz.questions.length;
-    let showFullscreen = fullscreen && state.started && !ended;    
+    let inProgress = state.started && !ended;
+    useCaptureMdbookShortcuts(inProgress);
+
+    // Restore the user's scroll position after leaving fullscreen mode
     let [lastTop, setLastTop] = useState<number | undefined>();
+    let showFullscreen = inProgress && (fullscreen ?? false);
     useLayoutEffect(() => {
       document.body.style.overflowY = showFullscreen ? "hidden" : "auto";
-
       if (showFullscreen) {
-        let captureKeyboard = (e: KeyboardEvent) => e.stopPropagation();
-
-        // This gets added specifically to document.documentElement rather than document
-        // so bubbling events will hit this listener before ones added via document.addEventListener(...).
-        // All of the problematic mdBook interactions are created that way, so we ensure that
-        // the keyboard event does not propagate to those listeners.
-        //
-        // However, some widgets like Codemirror require keydown events but on local elements.
-        // So we can't just stopPropagation in the capture phase, or those widgets will break.
-        // This is the compromise!
-        document.documentElement.addEventListener(
-          "keydown",
-          captureKeyboard,
-          false
-        );
-        
         setLastTop(window.scrollY + 100);
-
-        return () =>
-          document.documentElement.removeEventListener(
-            "keydown",
-            captureKeyboard,
-            false
-          );
-      } else if (fullscreen && lastTop !== undefined) {      
+      } else if (fullscreen && lastTop !== undefined) {
         window.scrollTo(0, lastTop);
       }
     }, [showFullscreen]);

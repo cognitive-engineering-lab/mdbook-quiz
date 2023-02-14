@@ -144,7 +144,6 @@ $error-color: #e16969;
 
     .bug-report {
       position: absolute;
-      z-index: 999;
       max-width: 70%;
       right: 0.5em;
       top: 0.5em;
@@ -164,6 +163,7 @@ $error-color: #e16969;
         border-radius: 4px;
         box-shadow: 1px 1px 4px $light-border-color;
         position: relative;
+        z-index: 1000;
 
         .close {
           position: absolute;

@@ -6,6 +6,7 @@ import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
 import { MoreInfo } from "../components/more-info";
+import { useCaptureMdbookShortcuts } from "../lib";
 import { MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswerMethods } from "./short-answer";
 import { TracingMethods } from "./tracing";
@@ -45,6 +46,11 @@ let BugReporter = ({
   question: number;
 }) => {
   let [show, setShow] = useState(false);
+
+  // Disable mdbook shortcuts if the bug reporter is opened and we're not
+  // fullscreen
+  useCaptureMdbookShortcuts(show);
+
   let onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     let data = new FormData(event.target as any);
     let feedback = data.get("feedback")!.toString();
