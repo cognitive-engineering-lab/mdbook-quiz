@@ -1,12 +1,12 @@
 use anyhow::{bail, Context, Result};
-use mdbook_aquascope::AquascopePreprocessor;
 use mdbook_preprocessor_utils::{
   mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
 };
 use regex::Regex;
 use std::{env, fmt::Write, fs, path::Path, process::Command};
 use tempfile::{self, NamedTempFile};
-use toml::Value;
+#[cfg(feature = "aquascope")]
+use {mdbook_aquascope::AquascopePreprocessor, toml::Value};
 
 mdbook_preprocessor_utils::asset_generator!("../js/packages/quiz-embed/dist/");
 
@@ -51,6 +51,7 @@ struct QuizPreprocessor {
   config: QuizConfig,
   validator_path: NamedTempFile,
   regex: Regex,
+  #[cfg(feature = "aquascope")]
   aquascope: AquascopePreprocessor,
 }
 
@@ -69,8 +70,9 @@ impl QuizPreprocessor {
     }
   }
 
-  // TODO: this shouldn't be baked into mdbook-quiz. 
+  // TODO: this shouldn't be baked into mdbook-quiz.
   // Need to figure out an extension mechanism to add custom blocks w/ pre-rendering.
+  #[cfg(feature = "aquascope")]
   fn add_aquascope_blocks(&self, config: &mut Value) -> Result<()> {
     let config = config.as_table_mut().unwrap();
     let questions = config
@@ -107,7 +109,10 @@ impl QuizPreprocessor {
     let content_toml = std::fs::read_to_string(&quiz_path_abs)
       .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
 
+    #[allow(unused_mut)]
     let mut content = content_toml.parse::<toml::Value>()?;
+
+    #[cfg(feature = "aquascope")]
     self.add_aquascope_blocks(&mut content)?;
 
     let content_json = serde_json::to_string(&content)?;
@@ -161,13 +166,12 @@ impl SimplePreprocessor for QuizPreprocessor {
 
     let regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
 
-    let aquascope = AquascopePreprocessor::new()?;
-
     Ok(QuizPreprocessor {
       config,
       validator_path,
       regex,
-      aquascope,
+      #[cfg(feature = "aquascope")]
+      aquascope: AquascopePreprocessor::new()?,
     })
   }
 

@@ -9,7 +9,8 @@ include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [features]
-rust-editor = []
+rust-editor = ["aquascope"]
+aquascope = ["mdbook-aquascope"]
 source-map = []
 
 [dependencies]
@@ -20,7 +21,7 @@ html-escape = "0.2"
 toml = "0.5"
 tempfile = "3"
 mdbook-preprocessor-utils = "0.1"
-mdbook-aquascope = "0.1"
+mdbook-aquascope = {version = "0.1", optional = true}
 
 [dev-dependencies]
 mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }
