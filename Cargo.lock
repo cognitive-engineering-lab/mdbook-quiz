@@ -670,7 +670,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz"
-version = "0.2.12"
+version = "0.2.13"
 dependencies = [
  "anyhow",
  "html-escape",
