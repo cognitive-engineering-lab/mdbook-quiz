@@ -66,6 +66,9 @@ let BugReporter = ({
       </button>
       {show ? (
         <div className="reporter">
+          <button className="close" onClick={() => setShow(false)}>
+            ✕
+          </button>
           <h3>Report a bug</h3>
           <p>
             If you found an issue in this question (e.g. a typo or an incorrect

@@ -163,6 +163,13 @@ $error-color: #e16969;
         text-align: left;
         border-radius: 4px;
         box-shadow: 1px 1px 4px $light-border-color;
+        position: relative;
+
+        .close {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+        }
       }
     }
   }
