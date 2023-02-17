@@ -20,6 +20,7 @@ regex = "1"
 html-escape = "0.2"
 toml = "0.5"
 tempfile = "3"
+mdbook = "= 0.4.25"
 mdbook-preprocessor-utils = "0.1"
 mdbook-aquascope = {version = "0.1", optional = true}
 
