@@ -9,7 +9,7 @@ include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [features]
-rust-editor = ["aquascope"]
+rust-editor = []
 aquascope = ["mdbook-aquascope"]
 source-map = []
 
