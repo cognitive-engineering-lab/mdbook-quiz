@@ -3,7 +3,7 @@ use mdbook_preprocessor_utils::{
   mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
 };
 use regex::Regex;
-use std::{env, fmt::Write, fs, path::Path, process::Command};
+use std::{collections::HashSet, env, fmt::Write, fs, path::Path, process::Command, sync::Mutex};
 use tempfile::{self, NamedTempFile};
 #[cfg(feature = "aquascope")]
 use {mdbook_aquascope::AquascopePreprocessor, toml::Value};
@@ -51,6 +51,7 @@ struct QuizPreprocessor {
   config: QuizConfig,
   validator_path: NamedTempFile,
   regex: Regex,
+  question_ids: Mutex<HashSet<String>>,
   #[cfg(feature = "aquascope")]
   aquascope: AquascopePreprocessor,
 }
@@ -112,6 +113,22 @@ impl QuizPreprocessor {
     #[allow(unused_mut)]
     let mut content = content_toml.parse::<toml::Value>()?;
 
+    let config = content.as_table().unwrap();
+    let questions = config
+      .get("questions")
+      .context("Must contain questions")?
+      .as_array()
+      .unwrap();
+    for question in questions.iter() {
+      if let Some(id) = question.get("id") {
+        let id = id.as_str().unwrap();
+        let new_id = self.question_ids.lock().unwrap().insert(id.to_string());
+        if !new_id {
+          bail!("Duplicate question ID: {id}");
+        }
+      }
+    }
+
     #[cfg(feature = "aquascope")]
     self.add_aquascope_blocks(&mut content)?;
 
@@ -149,7 +166,7 @@ impl SimplePreprocessor for QuizPreprocessor {
     "quiz"
   }
 
-  fn build(ctx: &PreprocessorContext) -> Result<Self> {
+  fn build(ctx: &PreprocessorContext) -> Result<Self> {    
     let config_toml = ctx.config.get_preprocessor(Self::name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
 
@@ -170,6 +187,7 @@ impl SimplePreprocessor for QuizPreprocessor {
       config,
       validator_path,
       regex,
+      question_ids: Mutex::default(),
       #[cfg(feature = "aquascope")]
       aquascope: AquascopePreprocessor::new()?,
     })
