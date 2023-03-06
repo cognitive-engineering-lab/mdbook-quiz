@@ -180,13 +180,27 @@ $error-color: #e16969;
       margin: 0 0 1em 0;
       padding: 0;
 
-      label {        
-        width: 100%;
-      }
+      .choice {
+        max-width: 100%;
+        
+        label {
+          display: block;
+          flex-grow: 1;
 
-      .choice label {
-        display: inline-block;
-      }
+          // this hack is needed to get monaco to have the right width, idk why
+          width: 0; 
+        }
+
+        pre, .editor {
+          border: 1px solid $light-border-color;
+          border-radius: 4px;
+          padding: 2px 4px;
+        }
+
+        pre {
+          width: max-content;
+        }
+      }      
     }
 
     .response-block {
