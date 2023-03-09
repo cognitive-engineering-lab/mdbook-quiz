@@ -30,8 +30,8 @@ export let MultipleChoiceMethods: QuestionMethods<
     let choices: string[];
     let answers =
       answer.answer instanceof Array ? answer.answer : [answer.answer];
-    if (prompt.answerIndex) {
-      choices = [...prompt.distractors];
+    if (prompt.answerIndex !== undefined) {
+      choices = [...prompt.distractors];      
       choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
       choices = [...answers, ...prompt.distractors];
