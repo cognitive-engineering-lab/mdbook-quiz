@@ -1,7 +1,7 @@
 import { TracingAnswer, TracingPrompt } from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 
 // import { MoreInfo } from "../components/more-info";
 import { Snippet } from "../components/snippet";
@@ -47,6 +47,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     // let lineNumbers = _.range(prompt.program.trim().split("\n").length).map(
     //   i => i + 1
     // );
+    let [doesCompileTrueId, doesCompileFalseId] = [useId(), useId()];
     return (
       <>
         <div className="response-block">
@@ -55,22 +56,22 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <input
               type="radio"
               {...required("doesCompile")}
-              id="doesCompileTrue"
+              id={doesCompileTrueId}
               value="true"
               onClick={() => setDoesCompile(true)}
             />{" "}
-            <label htmlFor="doesCompileTrue">DOES compile</label>
+            <label htmlFor={doesCompileTrueId}>DOES compile</label>
           </span>
           <span className="option-separator">OR</span>
           <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
               {...required("doesCompile")}
-              id="doesCompileFalse"
+              id={doesCompileFalseId}
               value="false"
               onClick={() => setDoesCompile(false)}
             />{" "}
-            <label htmlFor="doesCompileFalse">does NOT compile</label>
+            <label htmlFor={doesCompileFalseId}>does NOT compile</label>
           </span>
         </div>
 

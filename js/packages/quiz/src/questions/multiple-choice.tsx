@@ -5,7 +5,7 @@ import {
 } from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
-import React from "react";
+import React, { useId } from "react";
 
 import { MarkdownView } from "../components/markdown";
 import { QuestionMethods } from "./types";
@@ -31,7 +31,7 @@ export let MultipleChoiceMethods: QuestionMethods<
     let answers =
       answer.answer instanceof Array ? answer.answer : [answer.answer];
     if (prompt.answerIndex !== undefined) {
-      choices = [...prompt.distractors];      
+      choices = [...prompt.distractors];
       choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
       choices = [...answers, ...prompt.distractors];
@@ -43,7 +43,7 @@ export let MultipleChoiceMethods: QuestionMethods<
   ResponseView: ({ answer, state, formValidators: { required, register } }) => (
     <>
       {state!.choices.map((choice, i) => {
-        let id = `answer${i}`;
+        let id = useId();
         let multiAnswer = answer.answer instanceof Array;
         return (
           <div className="choice" key={i}>

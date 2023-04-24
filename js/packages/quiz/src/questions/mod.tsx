@@ -1,7 +1,7 @@
 import { Question } from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useId, useMemo, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
 import { MarkdownView } from "../components/markdown";
@@ -153,6 +153,7 @@ export let QuestionView: React.FC<{
   });
 
   let shouldPrompt = question.promptExplanation && attempt == 0;
+  let explanationId = useId();
 
   return (
     <div className={classNames("question", questionClass)}>
@@ -179,13 +180,14 @@ export let QuestionView: React.FC<{
           <>
             <p>
               <br />
-              <label htmlFor="explanation">
+              <label htmlFor={explanationId}>
                 In 1-2 sentences, please explain why you picked this answer.
                 &nbsp;&nbsp;
                 <MoreInfo markdown={EXPLANATION_HELP} />
               </label>
             </p>
             <textarea
+              id={explanationId}
               title="Explanation"
               {...required("explanation")}
             ></textarea>
