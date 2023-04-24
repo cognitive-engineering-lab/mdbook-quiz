@@ -36,6 +36,7 @@ let initQuizzes = () => {
     let root = ReactDOM.createRoot(el);
     let fullscreen = divEl.dataset.quizFullscreen !== undefined;
     let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
+    let defaultLanguage = divEl.dataset.quizDefaultLanguage;
     root.render(
       <ErrorBoundary FallbackComponent={onError}>
         <QuizView
@@ -43,6 +44,7 @@ let initQuizzes = () => {
           quiz={quiz}
           fullscreen={fullscreen}
           cacheAnswers={cacheAnswers}
+          defaultLanguage={defaultLanguage}
           allowRetry
         />
       </ErrorBoundary>

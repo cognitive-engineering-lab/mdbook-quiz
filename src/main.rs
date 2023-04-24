@@ -44,6 +44,9 @@ struct QuizConfig {
   /// and displayed to them upon revisiting a completed quiz.
   cache_answers: Option<bool>,
 
+  /// Sets the default language for syntax highlighting.
+  default_language: Option<String>,
+
   dev_mode: bool,
 }
 
@@ -154,6 +157,9 @@ impl QuizPreprocessor {
         add_data("quiz-cache-answers", "")?;
       }
     }
+    if let Some(lang) = &self.config.default_language {
+      add_data("quiz-default-language", lang)?;
+    }
 
     html.push_str("></div>");
 
@@ -166,7 +172,7 @@ impl SimplePreprocessor for QuizPreprocessor {
     "quiz"
   }
 
-  fn build(ctx: &PreprocessorContext) -> Result<Self> {    
+  fn build(ctx: &PreprocessorContext) -> Result<Self> {
     let config_toml = ctx.config.get_preprocessor(Self::name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
 
@@ -175,6 +181,9 @@ impl SimplePreprocessor for QuizPreprocessor {
       fullscreen: parse_bool("fullscreen"),
       validate: parse_bool("validate").map(|b| b && !dev_mode),
       cache_answers: parse_bool("cache-answers"),
+      default_language: config_toml
+        .get("default-language")
+        .map(|value| value.as_str().unwrap().to_string()),
       dev_mode,
     };
 

@@ -29,6 +29,7 @@ importers:
       axios: ^0.27.2
       classnames: ^2.3.1
       highlight.js: 10.1.1
+      highlightjs-lean: ^1.1.0
       jest-environment-jsdom: ^29.4.0
       lodash: ^4.17.21
       mobx: ^6.6.0
@@ -43,6 +44,7 @@ importers:
       axios: 0.27.2
       classnames: 2.3.1
       highlight.js: 10.1.1
+      highlightjs-lean: 1.1.0
       lodash: 4.17.21
       object-hash: 3.0.0
       react-hook-form: 7.32.2_react@18.2.0
@@ -945,6 +947,10 @@ packages:
   /highlight.js/10.1.1:
     resolution: {integrity: sha512-b4L09127uVa+9vkMgPpdUQP78ickGbHEQTWeBrQFTJZ4/n2aihWOGS0ZoUqAwjVmfjhq/C76HRzkqwZhK4sBbg==}
     deprecated: Potential vulnerability. Upgrade to @latest
+
+  /highlightjs-lean/1.1.0:
+    resolution: {integrity: sha512-/PHUun4P7z/9BJKUTdx30Z78nRzyVyzTZxkK3QZVOHKtplIwH+EDvW+YhJRYYabukbvolOxsr4SzuHE0JdNafw==}
+    dev: false
 
   /html-encoding-sniffer/3.0.0:
     resolution: {integrity: sha512-oWv4T4yJ52iKrufjnyZPkrN0CH3QnrUqdB6In1g5Fe1mia8GmF36gnfNySxoZtxD5+NmYw1EElVXiBk93UeskA==}

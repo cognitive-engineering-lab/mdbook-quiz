@@ -4,14 +4,22 @@ import type { monaco } from "@wcrichto/rust-editor";
 import hljs from "highlight.js/lib/core";
 //@ts-ignore
 import rust from "highlight.js/lib/languages/rust";
-import React, { useEffect, useRef } from "react";
+//@ts-ignore
+import lean from "highlightjs-lean";
+import React, { useContext, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
 
 // This reduces bundle size by not including a bunch of extra languages
 hljs.registerLanguage("rust", rust);
+hljs.registerLanguage("lean", lean);
+
+export let DefaultLanguageContext = React.createContext<string | undefined>(
+  undefined
+);
 
 export interface SnippetOptions {
   snippet: string;
+  defaultLanguage?: string;
   lineNumbers?: boolean;
   language?: string;
 }
@@ -20,6 +28,7 @@ export let snippetToNode = ({
   snippet,
   language,
   lineNumbers,
+  defaultLanguage,
 }: SnippetOptions): HTMLPreElement => {
   // allow quiz authors to have leading/trailing whitespace
   snippet = snippet.trim();
@@ -44,7 +53,8 @@ export let snippetToNode = ({
   }
 
   let code = document.createElement("code");
-  code.className = `language-${language || "rust"}`;
+  language = language ?? defaultLanguage;
+  if (language) code.className = `language-${language}`;
   code.innerHTML = snippet;
 
   // goddamn hack for esbuild-jest
@@ -138,8 +148,9 @@ export let renderIde = (
 
 export let Snippet: React.FC<SnippetOptions> = options => {
   let ref = useRef<HTMLDivElement>(null);
+  let defaultLanguage = useContext(DefaultLanguageContext);
   useEffect(() => {
-    ref.current!.appendChild(snippetToNode(options));
+    ref.current!.appendChild(snippetToNode({ defaultLanguage, ...options }));
   }, []);
   return <div ref={ref} />;
 };
