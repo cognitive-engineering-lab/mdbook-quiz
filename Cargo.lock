@@ -65,8 +65,9 @@ dependencies = [
 
 [[package]]
 name = "aquascope_workspace_utils"
-version = "0.1.2"
-source = "git+https://github.com/cognitive-engineering-lab/aquascope#f6c326f3a6ed151d421f2b475ec48d76ea8638e9"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce1d679eec076e75aeefe5aac16222cd13afafd56126e01b64566d855e9c1e7c"
 dependencies = [
  "anyhow",
  "toml",
@@ -912,6 +913,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
 name = "libc"
 version = "0.2.139"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1013,14 +1020,16 @@ dependencies = [
 
 [[package]]
 name = "mdbook-aquascope"
-version = "0.1.2"
-source = "git+https://github.com/cognitive-engineering-lab/aquascope#f6c326f3a6ed151d421f2b475ec48d76ea8638e9"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b82867b59d1b97d69827fdc27add0b30615ecab395a3bdbf12e6e1a592cc09ab"
 dependencies = [
  "anyhow",
  "aquascope_workspace_utils",
  "flate2",
  "html-escape",
  "itertools",
+ "lazy_static",
  "mdbook-preprocessor-utils",
  "nom",
  "nom_locate",
@@ -2317,3 +2326,8 @@ name = "windows_x86_64_msvc"
 version = "0.42.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "447660ad36a13288b1db4d4248e857b510e8c3a225c822ba4fb748c0aafecffd"
+
+[[patch.unused]]
+name = "mdbook-aquascope"
+version = "0.1.2"
+source = "git+https://github.com/cognitive-engineering-lab/aquascope#f6c326f3a6ed151d421f2b475ec48d76ea8638e9"
