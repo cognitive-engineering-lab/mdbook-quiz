@@ -26,6 +26,3 @@ mdbook-aquascope = {version = "0.2", optional = true}
 
 [dev-dependencies]
 mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }
-
-[patch.crates-io]
-mdbook-aquascope = { git = "https://github.com/cognitive-engineering-lab/aquascope" }
