@@ -153,6 +153,7 @@ export let QuestionView: React.FC<{
   });
 
   let shouldPrompt = question.promptExplanation && attempt == 0;
+
   let explanationId = useId();
 
   return (

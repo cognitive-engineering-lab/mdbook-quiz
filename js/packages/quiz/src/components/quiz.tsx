@@ -4,7 +4,7 @@ import _ from "lodash";
 import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
-import React, { useLayoutEffect, useMemo, useState } from "react";
+import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import {
   AnswerView,
@@ -12,7 +12,6 @@ import {
   TaggedAnswer,
   getQuestionMethods,
 } from "../questions/mod";
-import { DefaultLanguageContext } from "./snippet";
 
 interface StoredAnswers {
   answers: TaggedAnswer[];
@@ -221,7 +220,6 @@ export interface QuizViewProps {
   fullscreen?: boolean;
   cacheAnswers?: boolean;
   allowRetry?: boolean;
-  defaultLanguage?: string;
   onFinish?: (answers: TaggedAnswer[]) => void;
 }
 
@@ -255,15 +253,7 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
 };
 
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({
-    quiz,
-    name,
-    fullscreen,
-    cacheAnswers,
-    allowRetry,
-    defaultLanguage,
-    onFinish,
-  }) => {
+  ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
     let [quizHash] = useState(() => hash.MD5(quiz));
     let answerStorage = new AnswerStorage(name, quizHash);
     let questionStates = useMemo(
@@ -407,20 +397,18 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     );
 
     return (
-      <DefaultLanguageContext.Provider value={defaultLanguage ?? "rust"}>
-        <div className={wrapperClass}>
-          <div className="mdbook-quiz">
-            {showFullscreen ? (
-              <>
-                {exitButton}
-                <ExitExplanation />
-              </>
-            ) : null}
-            <Header quiz={quiz} state={state} ended={ended} />
-            {body}
-          </div>
+      <div className={wrapperClass}>
+        <div className="mdbook-quiz">
+          {showFullscreen ? (
+            <>
+              {exitButton}
+              <ExitExplanation />
+            </>
+          ) : null}
+          <Header quiz={quiz} state={state} ended={ended} />
+          {body}
         </div>
-      </DefaultLanguageContext.Provider>
+      </div>
     );
   }
 );

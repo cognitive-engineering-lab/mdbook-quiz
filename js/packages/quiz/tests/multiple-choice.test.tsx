@@ -1,10 +1,10 @@
-import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { MultipleChoice } from "@wcrichto/quiz-schema";
 import React from "react";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import { MultipleChoiceMethods, QuestionView } from "../dist/lib";
+import { MultipleChoiceMethods, QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("MultipleChoice", () => {

@@ -1,16 +1,29 @@
 {
-    "name": "@wcrichto/quiz-schema",
-    "version": "0.1.0",
-    "private": true,
-    "type": "module",
-    "main": "dist/lib.js",
-    "files": [
-        "dist"
-    ],
-    "devDependencies": {
-        "@types/lodash": "^4.14.182",
-        "@types/node": "^18.0.0",
-        "lodash": "^4.17.21",
-        "ts-json-schema-generator": "^1.0.0"
+  "name": "@wcrichto/quiz-schema",
+  "version": "0.1.0",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/lib.js",
+  "exports": {
+    ".": {
+      "default": "./dist/lib.js"
+    },
+    "./*": {
+      "default": "./dist/*.js"
     }
+  },
+  "type": "module",
+  "graco": {
+    "platform": "browser"
+  },
+  "typedoc": {
+    "entryPoint": "./src/lib.ts"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^18.0.0",
+    "lodash": "^4.17.21",
+    "ts-json-schema-generator": "^1.0.0"
+  }
 }

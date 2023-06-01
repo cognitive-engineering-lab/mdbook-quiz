@@ -75,6 +75,6 @@ function generateSchemas() {
 
 fs.writeFileSync(
   "dist/schema.js",
-  `export const SCHEMA = ${JSON.stringify(generateSchemas())}`
+  `export const SCHEMA = ${JSON.stringify(generateSchemas(), undefined, 2)}`
 );
 fs.writeFileSync("dist/schema.d.ts", `export const SCHEMA: any;`);

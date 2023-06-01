@@ -10,7 +10,7 @@ use {mdbook_aquascope::AquascopePreprocessor, toml::Value};
 
 mdbook_preprocessor_utils::asset_generator!("../js/packages/quiz-embed/dist/");
 
-const FRONTEND_ASSETS: [Asset; 2] = [make_asset!("lib.js"), make_asset!("lib.css")];
+const FRONTEND_ASSETS: [Asset; 2] = [make_asset!("quiz-embed.iife.js"), make_asset!("style.css")];
 
 #[cfg(feature = "rust-editor")]
 const RA_ASSETS: [Asset; 3] = [
@@ -28,7 +28,7 @@ const SOURCE_MAP_ASSETS: [Asset; 0] = [];
 
 const VALIDATOR_ASSET: Asset = Asset {
   name: "main.cjs",
-  contents: include_bytes!("../js/packages/quiz-validator/dist/main.cjs"),
+  contents: include_bytes!("../js/packages/quiz-validator/dist/quiz-validator.js"),
 };
 
 struct QuizConfig {
