@@ -1,16 +1,12 @@
 import * as rustEditor from "@wcrichto/rust-editor";
 import type { monaco } from "@wcrichto/rust-editor";
 //@ts-ignore
-import hljs from "highlight.js/lib/core";
-//@ts-ignore
-import rust from "highlight.js/lib/languages/rust";
+import hljs from "highlight.js";
 //@ts-ignore
 import lean from "highlightjs-lean";
 import React, { useContext, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
 
-// This reduces bundle size by not including a bunch of extra languages
-hljs.registerLanguage("rust", rust);
 hljs.registerLanguage("lean", lean);
 
 export let DefaultLanguageContext = React.createContext<string | undefined>(
