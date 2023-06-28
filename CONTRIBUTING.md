@@ -1,6 +1,6 @@
 # Contributing to mdbook-quiz
 
-Thanks for your interest in contributing to mdbook-quiz! To get started, you'll want to install [cargo-make](https://github.com/sagiegurari/cargo-make) and [pnpm](https://pnpm.io/installation). Then from the root of the repository, run:
+Thanks for your interest in contributing to mdbook-quiz! To get started, you'll want to install, [graco](https://github.com/willcrichton/graco), [cargo-watch](https://github.com/watchexec/cargo-watch.git),  [cargo-make](https://github.com/sagiegurari/cargo-make) and [pnpm](https://pnpm.io/installation). Then from the root of the repository, run:
 
 ```
 cargo make watch
