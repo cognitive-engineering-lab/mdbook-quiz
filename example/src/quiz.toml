@@ -1,6 +1,23 @@
 [[questions]]
 type = "MultipleChoice"
-prompt.prompt = "What does it mean if a variable `x` is immutable?"
+prompt.prompt = """
+What does it mean if a variable `x` is immutable?
+
+Rust:
+```rust
+let x = 0;
+```
+
+C++:
+```cpp
+const int x = 0;
+```
+
+Java:
+```java
+final int x = 0;
+```
+"""
 answer.answer = "`x` cannot be changed after being assigned to a value."
 prompt.distractors = [
   "`x` is stored in the immutable region of memory.",
@@ -34,4 +51,24 @@ answer.doesCompile = false
 answer.lineNumber = 4
 context = """
 This is a compiler error because line 4 tries to mutate `x` when `x` is not marked as `mut`.
+"""
+
+[[questions]]
+type = "Tracing"
+prompt.language="cpp"
+prompt.program = """
+
+#include <iostream>
+
+int main() {
+  const int x = 1;
+  std::cout << x << std::endl;
+  x += 1;
+  std::cout << x << std::endl;
+}
+"""
+answer.doesCompile = false
+answer.lineNumber = 6
+context = """
+This is a compiler error because line 6 tries to mutate `x` when `x` is marked as `const`.
 """
