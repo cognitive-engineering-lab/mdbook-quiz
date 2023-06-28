@@ -3,6 +3,8 @@ import { QuestionFields } from "./common";
 export interface TracingPrompt {
   /** The contents of the program to trace */
   program: string;
+
+  language?: string;
 }
 
 export interface TracingAnswer {

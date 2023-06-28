@@ -30,7 +30,11 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
         {/* If the program does not pass, indicate the last line number involved in the
         compiler error. */}
       </p>
-      <Snippet snippet={prompt.program} lineNumbers />
+      <Snippet
+        language={prompt.language}
+        snippet={prompt.program}
+        lineNumbers
+      />
     </>
   ),
 

@@ -21,6 +21,7 @@ For example, you can make a mutable variable `x` by writing: `let mut x = 1`.
 
 [[questions]]
 type = "Tracing"
+prompt.language="rust"
 prompt.program = """
 fn main() {
   let x = 1;
