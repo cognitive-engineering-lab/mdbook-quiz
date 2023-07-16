@@ -12,7 +12,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.59.9
       '@typescript-eslint/parser': ^5.59.9
       '@vitejs/plugin-react': ^4.0.0
-      '@wcrichto/rust-editor': file:/Users/will/Code/rust-editor
+      '@wcrichto/rust-editor': ^0.2.0
       eslint: ^8.42.0
       eslint-plugin-prettier: ^4.2.1
       eslint-plugin-react: ^7.32.2
@@ -23,7 +23,7 @@ importers:
       vite: ^4.3.9
       vitest: ^0.32.0
     dependencies:
-      '@wcrichto/rust-editor': file:../../rust-editor
+      '@wcrichto/rust-editor': 0.2.0
     devDependencies:
       '@trivago/prettier-plugin-sort-imports': 4.1.1_prettier@2.8.8
       '@types/node': 20.3.0
@@ -1106,6 +1106,14 @@ packages:
       loupe: 2.3.6
       pretty-format: 27.5.1
     dev: true
+
+  /@wcrichto/rust-editor/0.2.0:
+    resolution: {integrity: sha512-+GPO0S0se6dxypl5vX6hz6xzp7LzS+GmmEBXUbKkGtrzh0MJIJwKBiz/64KZGPK7AfMfESAOv19v98zBha9MXA==}
+    peerDependencies:
+      react: ^18.2.0
+    dependencies:
+      monaco-editor: 0.34.1
+    dev: false
 
   /abab/2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -4298,16 +4306,6 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
-
-  file:../../rust-editor:
-    resolution: {directory: ../../rust-editor, type: directory}
-    name: '@wcrichto/rust-editor'
-    version: 0.1.7
-    peerDependencies:
-      react: ^18.2.0
-    dependencies:
-      monaco-editor: 0.34.1
-    dev: false
 
   file:../../rust-editor_react@18.2.0:
     resolution: {directory: ../../rust-editor, type: directory}

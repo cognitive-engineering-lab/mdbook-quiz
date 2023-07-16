@@ -19,10 +19,13 @@ runs:
     # Note: we have to build before test so the build script is executed
     - name: Build Rust package
       run: cargo build
+      shell: bash
     - name: Test Rust package
       run: cargo test      
+      shell: bash
     - name: Lint Rust package
       run: cargo clippy -- -D warnings      
+      shell: bash
     - name: Test JS package
       run: depot test
       working-directory: js
