@@ -14,7 +14,7 @@
     }
   },
   "type": "module",
-  "graco": {
+  "depot": {
     "platform": "browser"
   },
   "typedoc": {
@@ -24,6 +24,7 @@
     "@types/lodash": "^4.14.182",
     "@types/node": "^18.0.0",
     "lodash": "^4.17.21",
-    "ts-json-schema-generator": "^1.0.0"
+    "ts-json-schema-generator": "^1.0.0",
+    "jsdom": "^22.1.0"
   }
 }

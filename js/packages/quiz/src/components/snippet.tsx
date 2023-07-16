@@ -46,10 +46,7 @@ export let snippetToNode = ({
   let code = document.createElement("code");
   code.className = `language-${language || "rust"}`;
   code.innerHTML = snippet;
-
-  // goddamn hack for esbuild-jest
-  let f = hljs.highlightBlock;
-  f(code);
+  hljs.highlightBlock(code);
 
   let pre = document.createElement("pre");
   pre.innerHTML = code.innerHTML;

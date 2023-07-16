@@ -4,7 +4,7 @@
   "bin": {
     "quiz-gen-ids": "dist/main.js"
   },
-  "graco": {
+  "depot": {
     "platform": "node"
   },
   "dependencies": {

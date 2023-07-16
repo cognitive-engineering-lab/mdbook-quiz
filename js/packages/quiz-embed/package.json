@@ -1,13 +1,13 @@
 {
   "name": "@wcrichto/quiz-embed",
   "version": "0.1.0",
-  "graco": {
+  "depot": {
     "platform": "browser"
   },
   "devDependencies": {
     "@wcrichto/quiz": "workspace:^",
     "@wcrichto/quiz-schema": "workspace:^",
-    "@wcrichto/rust-editor": "^0.1.7",
+    "@wcrichto/rust-editor": "^0.1.7",    
     "lodash": "^4.17.21",
     "mobx": "^6.9.0",
     "mobx-react": "^8.0.0",

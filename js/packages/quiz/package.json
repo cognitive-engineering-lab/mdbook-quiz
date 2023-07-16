@@ -14,13 +14,16 @@
     }
   },
   "type": "module",
-  "graco": {
+  "depot": {
     "platform": "browser"
   },
   "typedoc": {
     "entryPoint": "./src/lib.ts"
   },
   "devDependencies": {
+    "@testing-library/dom": "^9.3.1",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/object-hash": "^2.2.1",
     "@types/showdown": "^2.0.0",
     "@wcrichto/quiz-schema": "workspace:^0.1.0",

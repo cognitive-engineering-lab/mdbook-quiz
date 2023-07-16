@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 import react from "@vitejs/plugin-react";
-import { rustEditorVitePlugin } from "@wcrichto/rust-editor/dist/build-utils.cjs";
+import { rustEditorVitePlugin } from "@wcrichto/rust-editor/build-utils";
 import fs from "fs";
 import { resolve } from "path";
 import path from "path";
@@ -17,10 +17,15 @@ if (process.env.RUST_EDITOR !== undefined) {
 
   plugins.push(rustEditorVitePlugin({ serverUrl }));
 } else {
+  alias["@wcrichto/rust-editor/dist/lib.css"] = path.resolve(
+    __dirname,
+    "rust-editor-placeholder.css"
+  );
   alias["@wcrichto/rust-editor"] = path.resolve(
     __dirname,
     "rust-editor-placeholder.js"
   );
+  
 }
 
 export default defineConfig(({ mode }) => ({

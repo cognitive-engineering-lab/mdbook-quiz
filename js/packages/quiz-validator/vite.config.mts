@@ -2,16 +2,18 @@
 import fs from "fs";
 import { resolve } from "path";
 import { defineConfig } from "vite";
+import { builtinModules } from 'module';
 
 let manifest = JSON.parse(fs.readFileSync("package.json", "utf-8"));
 export default defineConfig({
   build: {
+    target: "node16",
     lib: {
       entry: resolve(__dirname, "src/main.ts"),
-      formats: ["cjs"],
+      formats: ["cjs"],      
     },
     rollupOptions: {
-      external: Object.keys(manifest.dependencies || {}),
+      external: Object.keys(manifest.dependencies || {}).concat(builtinModules),      
     },
     minify: false,
   },
