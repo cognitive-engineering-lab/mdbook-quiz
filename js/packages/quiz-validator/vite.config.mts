@@ -17,6 +17,9 @@ export default defineConfig({
     },
     minify: false,
   },
+  resolve: {
+    conditions: ["node"]
+  },
   test: {
     environment: "node",
     deps: {
