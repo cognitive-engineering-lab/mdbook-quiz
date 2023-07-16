@@ -10,7 +10,7 @@ runs:
     - uses: Swatinem/rust-cache@v1
     - name: Install spellchecker
       run: |
-        npm install -g spellchecker
+        npm install -g spellchecker node-gyp
         echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
       shell: bash
     # - name: Install Depot
