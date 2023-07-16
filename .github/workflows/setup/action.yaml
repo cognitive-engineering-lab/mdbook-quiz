@@ -13,8 +13,11 @@ runs:
         npm install -g spellchecker
         echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
       shell: bash
+    # - name: Install Depot
+    #   run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+    #   shell: bash
     - name: Install Depot
-      run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+      run: cargo install --git https://github.com/cognitive-engineering-lab/depot depot-js --locked --debug && depot setup      
       shell: bash
     # Note: we have to build before test so the build script is executed
     - name: Build Rust package
