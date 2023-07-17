@@ -41,12 +41,12 @@ And you can check your version by running `mdbook-quiz -V`. This repository uses
 
 ### From source
 
-You need Cargo and [npm](https://npmjs.org/) installed. Then run:
+You need Cargo and [Depot](https://github.com/cognitive-engineering-lab/depot) installed. Then run:
 
 ```
 git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
 cd mdbook-quiz
-npm install -g graco
+curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
 cargo install --path .
 ```
 
