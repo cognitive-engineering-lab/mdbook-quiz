@@ -1,16 +1,18 @@
 {
-    "name": "@wcrichto/quiz-gen-ids",
-    "version": "0.1.0",
-    "private": true,
-    "bin": {
-        "quiz-gen-ids": "dist/main.js"
-    },
-    "dependencies": {
-        "fs-extra": "^10.1.0",
-        "lodash": "^4.17.21",
-        "uuid": "^8.3.2"
-    },
-    "devDependencies": {
-        "@types/uuid": "^9.0.0"
-    }
+  "name": "@wcrichto/quiz-gen-ids",
+  "version": "0.1.0",
+  "bin": {
+    "quiz-gen-ids": "dist/main.js"
+  },
+  "depot": {
+    "platform": "node"
+  },
+  "dependencies": {
+    "fs-extra": "^10.1.0",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.0"
+  }
 }

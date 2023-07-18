@@ -1,6 +1,2 @@
-.pnpm-debug.log
 node_modules
 dist
-# Managed by Graco
-pnpm-workspace.yaml
-.prettierrc.cjs

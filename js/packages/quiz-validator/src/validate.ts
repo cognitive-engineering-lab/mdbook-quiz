@@ -1,6 +1,6 @@
 import toml from "@iarna/toml";
 import type { Question } from "@wcrichto/quiz-schema";
-import { SCHEMA } from "@wcrichto/quiz-schema/dist/schema";
+import { SCHEMA } from "@wcrichto/quiz-schema/schema";
 import Ajv, { AsyncSchema, AsyncValidateFunction } from "ajv";
 import betterAjvErrors from "better-ajv-errors";
 import _ from "lodash";

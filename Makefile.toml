@@ -7,7 +7,7 @@ skip_core_tasks = true
 script = "cargo fmt && cargo clippy"
 
 [tasks.precommit-js]
-script = "cd js && graco fmt && graco commit-check"
+script = "cd js && depot fmt"
 
 [tasks.precommit.run_task]
 name = ["precommit-js", "precommit-cargo"]

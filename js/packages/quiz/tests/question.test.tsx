@@ -1,10 +1,10 @@
-import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { ShortAnswer } from "@wcrichto/quiz-schema";
 import React from "react";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import { QuestionView } from "../dist/lib";
+import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("Question prompt for explanation", () => {

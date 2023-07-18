@@ -115,7 +115,8 @@ dependencies = [
 [[package]]
 name = "aquascope_workspace_utils"
 version = "0.2.0"
-source = "git+https://github.com/cognitive-engineering-lab/aquascope#b73e572139df571c0f0c38aa0a0b31262f085dc2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce1d679eec076e75aeefe5aac16222cd13afafd56126e01b64566d855e9c1e7c"
 dependencies = [
  "anyhow",
  "toml",
@@ -1088,7 +1089,8 @@ dependencies = [
 [[package]]
 name = "mdbook-aquascope"
 version = "0.2.0"
-source = "git+https://github.com/cognitive-engineering-lab/aquascope#b73e572139df571c0f0c38aa0a0b31262f085dc2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b82867b59d1b97d69827fdc27add0b30615ecab395a3bdbf12e6e1a592cc09ab"
 dependencies = [
  "anyhow",
  "aquascope_workspace_utils",
@@ -1110,9 +1112,9 @@ dependencies = [
 
 [[package]]
 name = "mdbook-preprocessor-utils"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b5b791b5d55a311bd3d4412b39065f430e4f1ddc1ab08bdce9764559c6a7669"
+checksum = "8ea76fc1dd2ccb9ab8bc393564c049a7e29ea0c92ed11d63d4e385bb70f8ec81"
 dependencies = [
  "anyhow",
  "clap 3.2.25",

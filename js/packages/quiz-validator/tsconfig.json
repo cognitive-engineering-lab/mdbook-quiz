@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": "./",
+    "paths": {
+      // See https://github.com/remarkjs/remark/issues/1039
+      "mdast-util-from-markdown/lib": [
+        "../../node_modules/.pnpm/mdast-util-from-markdown@1.3.0/node_modules/mdast-util-from-markdown/lib/index.d.ts"
+      ]
+    },
+  },
+}

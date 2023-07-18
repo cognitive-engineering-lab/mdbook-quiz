@@ -34,8 +34,9 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
-      - name: Install JS dependencies
-        run: npm install -g graco
+      - name: Install Depot
+        run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+        shell: bash
       - name: Build Rust package
         uses: actions-rs/cargo@v1
         with:

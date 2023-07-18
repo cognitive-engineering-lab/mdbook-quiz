@@ -1,10 +1,10 @@
-import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
 import { Quiz } from "@wcrichto/quiz-schema";
 import React from "react";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import { QuizView } from "../dist/lib";
+import { QuizView } from "../src/lib";
 import { startButton, submitButton } from "./utils";
 
 let quiz: Quiz = {

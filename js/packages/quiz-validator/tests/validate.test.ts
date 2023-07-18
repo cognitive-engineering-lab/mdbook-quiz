@@ -1,8 +1,8 @@
 import TOML from "@iarna/toml";
 import { Quiz } from "@wcrichto/quiz-schema";
+import { beforeAll, describe, expect, it } from "vitest";
 
-//@ts-ignore
-import { Validator } from "../dist/main";
+import { Validator } from "../src/main";
 
 describe("validateQuiz", () => {
   let validator: any;
