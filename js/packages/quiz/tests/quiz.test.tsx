@@ -99,8 +99,8 @@ describe("Quiz retry", () => {
   });
 
   it("allow for retrying after an incorrect answer", async () => {
-    let retryButton = screen.getByRole("button", { name: "retry the quiz" });
-    await user.click(retryButton);
+    let retryButton = screen.getAllByRole("button", { name: "retry the quiz" });
+    await user.click(retryButton[0]);
 
     // Skips first question, only shows question 2
     await waitFor(() => screen.getByText("Question 2"));

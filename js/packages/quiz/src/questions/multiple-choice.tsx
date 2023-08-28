@@ -31,7 +31,7 @@ export let MultipleChoiceMethods: QuestionMethods<
     let answers =
       answer.answer instanceof Array ? answer.answer : [answer.answer];
     if (prompt.answerIndex !== undefined) {
-      choices = [...prompt.distractors];      
+      choices = [...prompt.distractors];
       choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
       choices = [...answers, ...prompt.distractors];
