@@ -39,6 +39,12 @@ $error-color: #e16969;
     left: 0;
     width: 100vw;
     height: 100vh;
+    
+    /* This property ensures that the bottom bar on webkit-based mobile browsers
+     * doesn't overlap with the bottom of the quiz window. See:
+     * https://allthingssmitty.com/2020/05/11/css-fix-for-100vh-in-mobile-webkit/ */
+    min-height: -webkit-fill-available;
+
     z-index: 999;
     padding: 0 10rem;
     box-sizing: border-box;
