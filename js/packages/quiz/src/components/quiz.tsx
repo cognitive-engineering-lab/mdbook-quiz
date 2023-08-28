@@ -180,39 +180,43 @@ let AnswerReview = ({
   nCorrect: number;
   onRetry: () => void;
   onGiveUp: () => void;
-}) => (
-  <>
-    <h3>Answer Review</h3>
-    <p>
-      You answered{" "}
-      <strong>
-        {nCorrect}/{quiz.questions.length}
-      </strong>{" "}
-      questions correctly.
+}) => {
+  let confirm = !state.confirmedDone ? (
+    <p style={{ marginBottom: "1em" }}>
+      You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
+      <button onClick={onGiveUp}>see the correct answers</button>.
     </p>
-    {!state.confirmedDone ? (
-      <p style={{ marginBottom: "1em" }}>
-        You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
-        <button onClick={onGiveUp}>see the correct answers</button>.
+  ) : null;
+  return (
+    <>
+      <h3>Answer Review</h3>
+      <p>
+        You answered{" "}
+        <strong>
+          {nCorrect}/{quiz.questions.length}
+        </strong>{" "}
+        questions correctly.
       </p>
-    ) : null}
-    {quiz.questions.map((question, i) => {
-      let { answer, correct } = state.answers[i];
-      return (
-        <div className="answer-wrapper" key={i}>
-          <AnswerView
-            index={i + 1}
-            quizName={name}
-            question={question}
-            userAnswer={answer}
-            correct={correct}
-            showCorrect={state.confirmedDone}
-          />
-        </div>
-      );
-    })}
-  </>
-);
+      {confirm}
+      {quiz.questions.map((question, i) => {
+        let { answer, correct } = state.answers[i];
+        return (
+          <div className="answer-wrapper" key={i}>
+            <AnswerView
+              index={i + 1}
+              quizName={name}
+              question={question}
+              userAnswer={answer}
+              correct={correct}
+              showCorrect={state.confirmedDone}
+            />
+          </div>
+        );
+      })}
+      {confirm}
+    </>
+  );
+};
 
 export interface QuizViewProps {
   name: string;
