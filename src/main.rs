@@ -22,7 +22,9 @@ const RA_ASSETS: [Asset; 3] = [
 const RA_ASSETS: [Asset; 0] = [];
 
 #[cfg(feature = "source-map")]
-const SOURCE_MAP_ASSETS: [Asset; 1] = [make_asset!("quiz-embed.mjs.map"), /*make_asset!("style.css.map")*/];
+const SOURCE_MAP_ASSETS: [Asset; 1] = [
+  make_asset!("quiz-embed.mjs.map"), /*make_asset!("style.css.map")*/
+];
 #[cfg(not(feature = "source-map"))]
 const SOURCE_MAP_ASSETS: [Asset; 0] = [];
 
@@ -87,15 +89,22 @@ impl QuizPreprocessor {
     for question in questions.iter_mut() {
       let question = question.as_table_mut().unwrap();
       let prompt = question.get_mut("prompt").unwrap().as_table_mut().unwrap();
-      if let Some(text_val) = prompt.get_mut("prompt") {
-        let text = text_val.as_str().unwrap();
-        let replacements = self.aquascope.replacements(text)?;
-        let mut new_text = String::from(text);
-        for (range, html) in replacements.into_iter().rev() {
-          new_text.replace_range(range, &html);
+
+      let update_slot = |slot_opt: Option<&mut toml::Value>| -> Result<()> {
+        if let Some(slot) = slot_opt {
+          let text = slot.as_str().unwrap();
+          let replacements = self.aquascope.replacements(text)?;
+          let mut new_text = String::from(text);
+          for (range, html) in replacements.into_iter().rev() {
+            new_text.replace_range(range, &html);
+          }
+          *slot = Value::String(new_text);
         }
-        *text_val = Value::String(new_text);
-      }
+        Ok(())
+      };
+
+      update_slot(prompt.get_mut("prompt"))?;
+      update_slot(question.get_mut("context"))?;
     }
     Ok(())
   }
