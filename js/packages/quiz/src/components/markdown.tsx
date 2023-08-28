@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ShowdownExtension, Markdown as Showdown } from "react-showdown";
+import { Markdown as Showdown, ShowdownExtension } from "react-showdown";
 
 import { SnippetOptions, renderIde, snippetToNode } from "./snippet";
 

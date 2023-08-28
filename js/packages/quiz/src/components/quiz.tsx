@@ -4,7 +4,7 @@ import _ from "lodash";
 import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
-import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 
 import {
   AnswerView,
