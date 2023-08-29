@@ -38,10 +38,10 @@ jobs:
         run: |
           npm install -g spellchecker node-gyp
           echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
-        shell: bash
       - name: Install Depot
-        run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
-        shell: bash
+        run: |
+          curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
       - name: Build Rust package
         uses: actions-rs/cargo@v1
         with:
