@@ -34,6 +34,11 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
+      - name: Install spellchecker
+        run: |
+          npm install -g spellchecker node-gyp
+          echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
+        shell: bash
       - name: Install Depot
         run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
         shell: bash
