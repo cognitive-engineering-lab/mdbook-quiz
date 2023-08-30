@@ -38,13 +38,15 @@ $error-color: #e16969;
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
-    
-    /* This property ensures that the bottom bar on webkit-based mobile browsers
-     * doesn't overlap with the bottom of the quiz window. See:
-     * https://allthingssmitty.com/2020/05/11/css-fix-for-100vh-in-mobile-webkit/ */
-    min-height: -webkit-fill-available;
 
+    // Fallback if dvh isn't supported.
+    height: 100vh;
+
+    // 100dvh is so the overlay isn't clipped by the URL bar on mobile browsers.
+    // See: https://stackoverflow.com/questions/37112218/css3-100vh-not-constant-in-mobile-browser
+    // And: https://developer.mozilla.org/en-US/docs/Web/CSS/length#relative_length_units_based_on_viewport
+    height: 100dvh;
+    
     z-index: 999;
     padding: 0 10rem;
     box-sizing: border-box;
@@ -94,8 +96,10 @@ $error-color: #e16969;
     right: 0;
     height: 0;
     width: 50%;
-    font-size: 0.8em;
-    text-align: right;
+    font-size: 0.8em;    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 
     @include mobile {
       width: 100%;

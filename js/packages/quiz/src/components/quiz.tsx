@@ -4,7 +4,13 @@ import _ from "lodash";
 import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
-import React, { useLayoutEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   AnswerView,
@@ -61,8 +67,20 @@ class AnswerStorage {
   }
 }
 
-let ExitExplanation = () => {
+let ExitExplanation = ({
+  wrapperRef,
+}: {
+  wrapperRef: React.RefObject<HTMLDivElement>;
+}) => {
   let [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (expanded) {
+      wrapperRef.current!.scrollTo({
+        top: wrapperRef.current!.offsetHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [expanded]);
   return (
     <div className="exit-explanation">
       <div className="trigger" onClick={() => setExpanded(!expanded)}>
@@ -231,6 +249,11 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
   useLayoutEffect(() => {
     if (capture) {
       let captureKeyboard = (e: KeyboardEvent) => e.stopPropagation();
+      let captureTouchscreen = (e: TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      };
 
       // This gets added specifically to document.documentElement rather than document
       // so bubbling events will hit this listener before ones added via document.addEventListener(...).
@@ -246,12 +269,24 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
         false
       );
 
-      return () =>
+      // Same thing but for touch events, so the screen beneath isn't scrolled.
+      document.documentElement.addEventListener(
+        "touchmove",
+        captureTouchscreen,
+        false
+      );
+
+      return () => {
         document.documentElement.removeEventListener(
           "keydown",
           captureKeyboard,
           false
         );
+        document.documentElement.removeEventListener(
+          "touchmove",
+          captureTouchscreen
+        );
+      };
     }
   }, [capture]);
 };
@@ -399,14 +434,15 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         ✕
       </div>
     );
+    let wrapperRef = useRef<HTMLDivElement | undefined>();
 
     return (
-      <div className={wrapperClass}>
+      <div ref={wrapperRef} className={wrapperClass}>
         <div className="mdbook-quiz">
           {showFullscreen ? (
             <>
               {exitButton}
-              <ExitExplanation />
+              <ExitExplanation wrapperRef={wrapperRef} />
             </>
           ) : null}
           <Header quiz={quiz} state={state} ended={ended} />
