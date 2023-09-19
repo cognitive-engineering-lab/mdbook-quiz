@@ -1,0 +1,16 @@
+[package]
+name = "mdbook-quiz-validate"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+mdbook-quiz-schema = { path = "../mdbook-quiz-schema", version = "0.1.0" }
+zspell = "0.3.3"
+markdown = "1.0.0-alpha.13"
+toml = { workspace = true }
+miette = { version = "5.10.0", features = ["fancy"] }
+thiserror = "1.0.48"
+anyhow = "1"
+toml-spanned-value = "0.1.0"
+tempfile = "3.8.0"
+textwrap = "0.16.0"

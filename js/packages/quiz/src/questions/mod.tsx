@@ -1,9 +1,9 @@
-import { Question } from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
 import React, { useId, useMemo, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
+import { Question } from "../bindings/Question";
 import { MarkdownView } from "../components/markdown";
 import { MoreInfo } from "../components/more-info";
 import { useCaptureMdbookShortcuts } from "../lib";

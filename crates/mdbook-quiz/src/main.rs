@@ -1,14 +1,20 @@
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 use mdbook_preprocessor_utils::{
   mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
 };
-use regex::Regex;
-use std::{collections::HashSet, env, fmt::Write, fs, path::Path, process::Command, sync::Mutex};
-use tempfile::{self, NamedTempFile};
-#[cfg(feature = "aquascope")]
-use {mdbook_aquascope::AquascopePreprocessor, toml::Value};
 
-mdbook_preprocessor_utils::asset_generator!("../js/packages/quiz-embed/dist/");
+use mdbook_quiz_validate::IdSet;
+use regex::Regex;
+use std::{
+  env,
+  fmt::Write,
+  fs,
+  path::{Path, PathBuf},
+  sync::OnceLock,
+};
+use uuid::Uuid;
+
+mdbook_preprocessor_utils::asset_generator!("../../../js/packages/quiz-embed/dist/");
 
 const FRONTEND_ASSETS: [Asset; 2] = [make_asset!("quiz-embed.mjs"), make_asset!("style.css")];
 
@@ -28,17 +34,7 @@ const SOURCE_MAP_ASSETS: [Asset; 1] = [
 #[cfg(not(feature = "source-map"))]
 const SOURCE_MAP_ASSETS: [Asset; 0] = [];
 
-const VALIDATOR_ASSET: Asset = Asset {
-  name: "main.cjs",
-  contents: include_bytes!("../js/packages/quiz-validator/dist/quiz-validator.js"),
-};
-
 struct QuizConfig {
-  /// If true, then mdbook-quiz will validate your quiz TOML files using
-  /// the validator.js script installed with mdbook-quiz. You must have NodeJS
-  /// installed on your machine and PATH for this to work.
-  validate: Option<bool>,
-
   /// If true, then a quiz will take up the web page's full screen during use.
   fullscreen: Option<bool>,
 
@@ -49,37 +45,24 @@ struct QuizConfig {
   /// Sets the default language for syntax highlighting.
   default_language: Option<String>,
 
+  /// Path to a .dic file containing words to include in the spellcheck dictionary.
+  more_words: Option<PathBuf>,
+
   dev_mode: bool,
 }
 
 struct QuizPreprocessor {
   config: QuizConfig,
-  validator_path: NamedTempFile,
-  regex: Regex,
-  question_ids: Mutex<HashSet<String>>,
+  question_ids: IdSet,
   #[cfg(feature = "aquascope")]
-  aquascope: AquascopePreprocessor,
+  aquascope: mdbook_aquascope::AquascopePreprocessor,
 }
 
 impl QuizPreprocessor {
-  fn validate_quiz(&self, path: impl AsRef<Path>) -> Result<()> {
-    let path = path.as_ref();
-    let status = Command::new("node")
-      .arg(self.validator_path.path())
-      .arg(path)
-      .status()
-      .context("Validator process failed")?;
-    if !status.success() {
-      bail!("Validation failed for quiz: {}", path.display());
-    } else {
-      Ok(())
-    }
-  }
-
   // TODO: this shouldn't be baked into mdbook-quiz.
   // Need to figure out an extension mechanism to add custom blocks w/ pre-rendering.
   #[cfg(feature = "aquascope")]
-  fn add_aquascope_blocks(&self, config: &mut Value) -> Result<()> {
+  fn add_aquascope_blocks(&self, config: &mut toml::Value) -> Result<()> {
     let config = config.as_table_mut().unwrap();
     let questions = config
       .get_mut("questions")
@@ -98,7 +81,7 @@ impl QuizPreprocessor {
           for (range, html) in replacements.into_iter().rev() {
             new_text.replace_range(range, &html);
           }
-          *slot = Value::String(new_text);
+          *slot = toml::Value::String(new_text);
         }
         Ok(())
       };
@@ -109,41 +92,46 @@ impl QuizPreprocessor {
     Ok(())
   }
 
+  fn auto_id(&self, path: &Path, contents: &str) -> Result<bool> {
+    use toml_edit::{Document, Formatted, Item, Value};
+    let mut doc = contents.parse::<Document>()?;
+    let qs = doc
+      .get_mut("questions")
+      .unwrap()
+      .as_array_of_tables_mut()
+      .unwrap();
+    let mut changed = false;
+    for q in qs.iter_mut() {
+      if !q.contains_key("id") {
+        changed = true;
+        let id = Uuid::new_v4().to_string();
+        q.insert("id", Item::Value(Value::String(Formatted::new(id))));
+      }
+    }
+    fs::write(path, doc.to_string())?;
+    Ok(changed)
+  }
+
   fn process_quiz(&self, chapter_dir: &Path, quiz_path: &str) -> Result<String> {
     let quiz_path_rel = Path::new(quiz_path);
     let quiz_path_abs = chapter_dir.join(quiz_path_rel);
 
-    if let Some(true) = self.config.validate {
-      self.validate_quiz(&quiz_path_abs)?;
-    }
-
-    let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
-
-    let content_toml = std::fs::read_to_string(&quiz_path_abs)
+    let mut content_toml = fs::read_to_string(&quiz_path_abs)
       .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
 
-    #[allow(unused_mut)]
-    let mut content = content_toml.parse::<toml::Value>()?;
+    mdbook_quiz_validate::validate(&quiz_path_abs, &content_toml, &self.question_ids)?;
 
-    let config = content.as_table().unwrap();
-    let questions = config
-      .get("questions")
-      .context("Must contain questions")?
-      .as_array()
-      .unwrap();
-    for question in questions.iter() {
-      if let Some(id) = question.get("id") {
-        let id = id.as_str().unwrap();
-        let new_id = self.question_ids.lock().unwrap().insert(id.to_string());
-        if !new_id {
-          bail!("Duplicate question ID: {id}");
-        }
-      }
+    let changed = self.auto_id(&quiz_path_abs, &content_toml)?;
+    if changed {
+      content_toml = fs::read_to_string(&quiz_path_abs)?;
     }
+
+    let content = content_toml.parse::<toml::Value>()?;
 
     #[cfg(feature = "aquascope")]
     self.add_aquascope_blocks(&mut content)?;
 
+    let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
     let content_json = serde_json::to_string(&content)?;
 
     let mut html = String::from("<div class=\"quiz-placeholder\"");
@@ -188,26 +176,25 @@ impl SimplePreprocessor for QuizPreprocessor {
     let dev_mode = env::var("QUIZ_DEV_MODE").is_ok();
     let config = QuizConfig {
       fullscreen: parse_bool("fullscreen"),
-      validate: parse_bool("validate").map(|b| b && !dev_mode),
       cache_answers: parse_bool("cache-answers"),
       default_language: config_toml
         .get("default-language")
-        .map(|value| value.as_str().unwrap().to_string()),
+        .map(|value| value.as_str().unwrap().into()),
+      more_words: config_toml
+        .get("more-words")
+        .map(|value| value.as_str().unwrap().into()),
       dev_mode,
     };
 
-    let validator_path = tempfile::Builder::new().suffix(".cjs").tempfile()?;
-    fs::write(&validator_path, VALIDATOR_ASSET.contents)?;
-
-    let regex = Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap();
+    if let Some(more_words) = &config.more_words {
+      mdbook_quiz_validate::register_more_words(more_words)?;
+    }
 
     Ok(QuizPreprocessor {
       config,
-      validator_path,
-      regex,
-      question_ids: Mutex::default(),
+      question_ids: IdSet::default(),
       #[cfg(feature = "aquascope")]
-      aquascope: AquascopePreprocessor::new()?,
+      aquascope: mdbook_aquascope::AquascopePreprocessor::new()?,
     })
   }
 
@@ -216,8 +203,9 @@ impl SimplePreprocessor for QuizPreprocessor {
     chapter_dir: &Path,
     content: &str,
   ) -> Result<Vec<(std::ops::Range<usize>, String)>> {
-    self
-      .regex
+    static REGEX: OnceLock<Regex> = OnceLock::new();
+    let regex = REGEX.get_or_init(|| Regex::new(r"\{\{#quiz ([^}]+)\}\}").unwrap());
+    regex
       .captures_iter(content)
       .map(|captures| {
         let range = captures.get(0).unwrap().range();
@@ -251,6 +239,7 @@ mod test {
   use super::QuizPreprocessor;
   use anyhow::Result;
   use mdbook_preprocessor_utils::{mdbook::BookItem, testing::MdbookTestHarness};
+  use mdbook_quiz_schema::{Question, Quiz};
   use std::fs;
 
   #[test]
@@ -277,9 +266,7 @@ mod test {
     "#,
     )?;
 
-    let config = serde_json::json!({
-      "validate": true
-    });
+    let config = serde_json::json!({});
     let mut book = harness.compile::<QuizPreprocessor>(config)?;
 
     let contents = match book.sections.remove(0) {
@@ -288,6 +275,11 @@ mod test {
     };
     assert!(!contents.contains("{{#quiz"));
     assert!(contents.contains("<script"));
+
+    let quiz_contents = fs::read_to_string(quiz_path)?;
+    let quiz: Quiz = toml::from_str(&quiz_contents)?;
+    let Question::ShortAnswer(q) = &quiz.questions[0] else { panic!("Invalid quiz") };
+    assert!(q.0.id.is_some(), "ID not automatically inserted");
 
     Ok(())
   }

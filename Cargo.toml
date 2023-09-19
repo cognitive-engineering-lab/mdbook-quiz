@@ -1,28 +1,5 @@
-[package]
-name = "mdbook-quiz"
-authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
-description = "Interactive quizzes for your mdBook"
-license = "MIT"
-version = "0.2.15"
-edition = "2021"
-include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator/dist/"]
-repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
+[workspace]
+members = ["crates/*"]
 
-[features]
-rust-editor = []
-aquascope = ["mdbook-aquascope"]
-source-map = []
-
-[dependencies]
-serde_json = "1"
-anyhow = {version = "1", features = ["backtrace"]}
-regex = "1"
-html-escape = "0.2"
-toml = "0.5"
-tempfile = "3"
-mdbook = "= 0.4.25"
-mdbook-preprocessor-utils = "0.1"
-mdbook-aquascope = {version = "0.2", optional = true}
-
-[dev-dependencies]
-mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }
+[workspace.dependencies]
+toml = "0.5.4"

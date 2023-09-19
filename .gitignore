@@ -1,2 +1,3 @@
-target
+target/
+bindings/
 .pnpm-debug.log
