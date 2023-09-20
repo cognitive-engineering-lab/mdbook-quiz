@@ -13,8 +13,13 @@ jobs:
           # x86
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            kind: full
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            kind: bare
           - os: macos-latest
             target: x86_64-apple-darwin
+            kind: bare
           ## TODO: Windows needs specific configuration to find
           ## NPM globally installed binaries, and I couldn't figure 
           ## it out in ~30 minutes. Deal with this later.
@@ -23,8 +28,10 @@ jobs:
           # ARM
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
+            kind: bare
           - os: macos-latest
             target: aarch64-apple-darwin
+            kind: bare
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -45,14 +52,14 @@ jobs:
       - name: Initialize TS bindings
         run: cargo make init-bindings
       - name: Build Rust package
-        run: cargo build -p mdbook-quiz --release --locked
+        run: cargo build -p mdbook-quiz --release --locked ${{ matrix.kind == 'full' && '--features rust-editor --features aquascope' || '' }}
       - name: Package artifact
-        run: tar -czf mdbook-quiz-${{ matrix.target }}.tar.gz mdbook-quiz
+        run: tar -czf mdbook-quiz_${{ matrix.target }}_${{ matrix.kind }}.tar.gz mdbook-quiz
         working-directory: target/release
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.target }}
-          path: target/release/mdbook-quiz-${{ matrix.target }}.tar.gz
+          name: ${{ matrix.target }}_${{ matrix.kind }}
+          path: target/release/mdbook-quiz_${{ matrix.target }}_${{ matrix.kind }}.tar.gz
   
   publish-artifacts:
     needs: build-artifacts
@@ -62,10 +69,11 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           files: |
-            x86_64-unknown-linux-gnu/mdbook-quiz-x86_64-unknown-linux-gnu.tar.gz
-            x86_64-apple-darwin/mdbook-quiz-x86_64-apple-darwin.tar.gz
-            aarch64-unknown-linux-gnu/mdbook-quiz-aarch64-unknown-linux-gnu.tar.gz
-            aarch64-apple-darwin/mdbook-quiz-aarch64-apple-darwin.tar.gz      
+            x86_64-unknown-linux-gnu_full/mdbook-quiz_x86_64-unknown-linux-gnu_full.tar.gz
+            x86_64-unknown-linux-gnu_bare/mdbook-quiz_x86_64-unknown-linux-gnu_bare.tar.gz
+            x86_64-apple-darwin_bare/mdbook-quiz_x86_64-apple-darwin_bare.tar.gz
+            aarch64-unknown-linux-gnu_bare/mdbook-quiz_aarch64-unknown-linux-gnu_bare.tar.gz
+            aarch64-apple-darwin_bare/mdbook-quiz_aarch64-apple-darwin_bare.tar.gz      
     
   publish-crate:
     needs: publish-artifacts

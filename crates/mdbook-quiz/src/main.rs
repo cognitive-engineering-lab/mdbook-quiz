@@ -110,7 +110,7 @@ impl QuizPreprocessor {
     }
     if changed {
       fs::write(path, doc.to_string())?;
-    }    
+    }
     Ok(changed)
   }
 

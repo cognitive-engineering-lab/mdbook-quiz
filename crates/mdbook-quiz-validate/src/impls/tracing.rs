@@ -16,11 +16,11 @@ impl Validate for Tracing {
     } = &self.0;
     let mut inner = || -> anyhow::Result<()> {
       let dir = TempDir::new()?;
-      let path = dir.path().join("main.rs");
-      fs::write(&path, program)?;
+      let src_path = dir.path().join("main.rs");
+      fs::write(&src_path, program)?;
 
       let rustc_output = Command::new("rustc")
-        .arg(path)
+        .arg(src_path)
         .args(["-A", "warnings"])
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
@@ -45,7 +45,8 @@ impl Validate for Tracing {
           "program compiles but stdout is missing"
         );
 
-        let cmd_output = Command::new("./main")
+        let exe_path = dir.path().join("main");
+        let cmd_output = Command::new(exe_path)
           .stdout(Stdio::piped())
           .stderr(Stdio::piped())
           .current_dir(dir.path())
