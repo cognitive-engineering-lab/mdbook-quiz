@@ -34,3 +34,9 @@ cargo clean
 cd js && depot clean && cd ..
 rm -rf js/packages/quiz/src/bindings crates/mdbook-quiz-schema/bindings
 """
+
+[tasks.install]
+dependencies = ["init-bindings"]
+script = """
+cargo install --path crates/mdbook-quiz --features rust-editor --features aquascope --locked
+"""

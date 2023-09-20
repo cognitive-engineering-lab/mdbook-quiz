@@ -108,7 +108,9 @@ impl QuizPreprocessor {
         q.insert("id", Item::Value(Value::String(Formatted::new(id))));
       }
     }
-    fs::write(path, doc.to_string())?;
+    if changed {
+      fs::write(path, doc.to_string())?;
+    }    
     Ok(changed)
   }
 
