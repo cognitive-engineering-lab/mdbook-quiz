@@ -27368,7 +27368,11 @@ let MultipleChoiceMethods = {
       choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
       choices = [...answers, ...prompt.distractors];
-      choices = _.shuffle(choices);
+      if (prompt.sortAnswers) {
+        choices = _.sortBy(choices);
+      } else {
+        choices = _.shuffle(choices);
+      }
     }
     return { choices };
   },
@@ -33088,8 +33092,16 @@ class AnswerStorage {
     }
   }
 }
-let ExitExplanation = () => {
+let ExitExplanation = ({ wrapperRef }) => {
   let [expanded, setExpanded] = reactExports.useState(false);
+  reactExports.useEffect(() => {
+    if (expanded) {
+      wrapperRef.current.scrollTo({
+        top: wrapperRef.current.offsetHeight,
+        behavior: "smooth"
+      });
+    }
+  }, [expanded]);
   return React.createElement(
     "div",
     { className: "exit-explanation" },
@@ -33188,8 +33200,17 @@ let useCaptureMdbookShortcuts = (capture) => {
   reactExports.useLayoutEffect(() => {
     if (capture) {
       let captureKeyboard = (e2) => e2.stopPropagation();
+      let captureTouchscreen = (e2) => {
+        e2.preventDefault();
+        e2.stopPropagation();
+        return false;
+      };
       document.documentElement.addEventListener("keydown", captureKeyboard, false);
-      return () => document.documentElement.removeEventListener("keydown", captureKeyboard, false);
+      document.documentElement.addEventListener("touchmove", captureTouchscreen, false);
+      return () => {
+        document.documentElement.removeEventListener("keydown", captureKeyboard, false);
+        document.documentElement.removeEventListener("touchmove", captureTouchscreen);
+      };
     }
   }, [capture]);
 };
@@ -33269,9 +33290,10 @@ let QuizView = observer(({ quiz, name, fullscreen, cacheAnswers, allowRetry, onF
     state.answers = [];
   });
   let exitButton = React.createElement("div", { className: "exit", onClick: onExit }, "✕");
+  let wrapperRef = reactExports.useRef();
   return React.createElement(
     "div",
-    { className: wrapperClass },
+    { ref: wrapperRef, className: wrapperClass },
     React.createElement(
       "div",
       { className: "mdbook-quiz" },
@@ -33279,7 +33301,7 @@ let QuizView = observer(({ quiz, name, fullscreen, cacheAnswers, allowRetry, onF
         React.Fragment,
         null,
         exitButton,
-        React.createElement(ExitExplanation, null)
+        React.createElement(ExitExplanation, { wrapperRef })
       ) : null,
       React.createElement(Header, { quiz, state, ended }),
       body
