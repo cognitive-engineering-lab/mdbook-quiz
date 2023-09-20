@@ -15,7 +15,7 @@ name = ["precommit-js", "precommit-cargo"]
 
 [tasks.init-bindings]
 script = """
-cargo test -p mdbook-quiz-schema export_bindings
+cargo test -p mdbook-quiz-schema --locked export_bindings
 mkdir -p js/packages/quiz/src/bindings
 cp crates/mdbook-quiz-schema/bindings/* js/packages/quiz/src/bindings
 """

@@ -45,7 +45,7 @@ jobs:
       - name: Initialize TS bindings
         run: cargo make init-bindings
       - name: Build Rust package
-        run: cargo build -p mdbook-quiz --release
+        run: cargo build -p mdbook-quiz --release --locked
       - name: Package artifact
         run: tar -czf mdbook-quiz-${{ matrix.target }}.tar.gz mdbook-quiz
         working-directory: target/release

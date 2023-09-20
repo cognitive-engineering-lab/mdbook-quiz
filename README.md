@@ -28,13 +28,13 @@ Table of contents:
 ### From crates.io
 
 ```
-cargo install mdbook-quiz
+cargo install mdbook-quiz --locked
 ```
 
 Note: this tool is under active development. I recommend pinning to a specific version to avoid breakage, e.g. by running
 
 ```
-cargo install mdbook-quiz --version <YOUR_VERSION>
+cargo install mdbook-quiz --locked --version <YOUR_VERSION>
 ```
 
 And you can check your version by running `mdbook-quiz -V`. This repository uses semantic versioning for the quiz data format, so your quizzes should not break if you update to a more recent patch.
@@ -46,8 +46,7 @@ You need Cargo and [Depot](https://github.com/cognitive-engineering-lab/depot) i
 ```
 git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
 cd mdbook-quiz
-curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
-cargo install --path .
+cargo install --path crates/mdbook-quiz
 ```
 
 ## Usage
@@ -245,6 +244,6 @@ export type Tracing = QuestionFields<"Tracing", TracingPrompt, TracingAnswer>;
 
 You can configure mdbook-quiz by adding options to the `[preprocessor.quiz]` section of `book.toml`. The options are:
 
-* `validate` (boolean): If true, then mdbook-quiz will validate your quiz TOML files using the validator.js script installed with mdbook-quiz. You must have NodeJS installed on your machine and PATH for this to work. You must also install the [spellchecker](https://www.npmjs.com/package/spellchecker) package on your NODE_PATH, e.g. via `npm i -g spellchecker`.
 * `fullscreen` (boolean): If true, then a quiz will take up the web page's full screen during use.
 * `cache-answers` (boolean): If true, then the user's answers will be saved in their browser's `localStorage`. Then the quiz will show the user's answers even after they reload the page.
+* `more-words` (path): An optional path to a `.dic` file that adds valid words to the spellchecker.

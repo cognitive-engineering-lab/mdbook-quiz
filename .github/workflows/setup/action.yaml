@@ -20,10 +20,10 @@ runs:
       run: cargo make init-bindings
       shell: bash
     - name: Test Rust package
-      run: cargo test
+      run: cargo test --locked
       shell: bash
     - name: Lint Rust package
-      run: cargo clippy -- -D warnings
+      run: cargo clippy --locked -- -D warnings
       shell: bash
     - name: Test JS package
       run: depot test
