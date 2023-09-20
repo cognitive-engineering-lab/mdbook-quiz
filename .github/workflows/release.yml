@@ -78,9 +78,8 @@ jobs:
         uses: baptiste0928/cargo-install@v2
         with:
           crate: cargo-workspaces
-      - name: Cargo release
-        # --allow-dirty needed for js/dist files
-        run: cargo workspace publish --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
+      - name: Cargo release        
+        run: cargo workspaces publish --from-git --yes --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}

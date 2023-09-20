@@ -1151,7 +1151,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz"
-version = "0.2.15"
+version = "0.2.16"
 dependencies = [
  "anyhow",
  "html-escape",
@@ -1169,7 +1169,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz-schema"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "toml",
@@ -1178,7 +1178,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz-validate"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "markdown",

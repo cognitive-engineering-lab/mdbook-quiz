@@ -126,7 +126,8 @@ impl QuizPreprocessor {
       content_toml = fs::read_to_string(&quiz_path_abs)?;
     }
 
-    let content = content_toml.parse::<toml::Value>()?;
+    #[allow(unused_mut)]
+    let mut content = content_toml.parse::<toml::Value>()?;
 
     #[cfg(feature = "aquascope")]
     self.add_aquascope_blocks(&mut content)?;
