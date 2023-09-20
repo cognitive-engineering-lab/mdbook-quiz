@@ -18,6 +18,7 @@ runs:
     # Note: we have to build before test so the build script is executed
     - name: Initialize TS bindings
       run: cargo make init-bindings
+      shell: bash
     - name: Test Rust package
       run: cargo test
       shell: bash
