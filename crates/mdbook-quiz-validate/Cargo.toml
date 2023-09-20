@@ -1,7 +1,10 @@
 [package]
 name = "mdbook-quiz-validate"
 version = "0.1.0"
+authors = ["Will Crichton <crichton.will@gmail.com>"]
+license = "MIT OR Apache-2.0"
 edition = "2021"
+repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [dependencies]
 mdbook-quiz-schema = { path = "../mdbook-quiz-schema", version = "0.1.0" }
@@ -10,7 +13,7 @@ markdown = "1.0.0-alpha.13"
 toml = { workspace = true }
 miette = { version = "5.10.0", features = ["fancy"] }
 thiserror = "1.0.48"
-anyhow = "1"
+anyhow = { workspace = true }
 toml-spanned-value = "0.1.0"
 tempfile = "3.8.0"
 textwrap = "0.16.0"

@@ -8,17 +8,16 @@ runs:
         toolchain: stable
         components: clippy
     - uses: Swatinem/rust-cache@v1
-    - name: Install spellchecker
-      run: |
-        npm install -g spellchecker node-gyp
-        echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
-      shell: bash
+    - name: Install cargo-make
+      uses: baptiste0928/cargo-install@v2
+      with:
+        crate: cargo-make
     - name: Install Depot
       run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
       shell: bash
     # Note: we have to build before test so the build script is executed
     - name: Build Rust package
-      run: cargo build
+      run: cargo build -p mdbook-quiz
       shell: bash
     - name: Test Rust package
       run: cargo test      

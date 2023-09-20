@@ -3,3 +3,4 @@ members = ["crates/*"]
 
 [workspace.dependencies]
 toml = "0.5.4"
+anyhow = "1.0.75"

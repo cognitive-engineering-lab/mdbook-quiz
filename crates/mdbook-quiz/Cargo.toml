@@ -1,11 +1,11 @@
 [package]
 name = "mdbook-quiz"
-authors = ["Will Crichton <wcrichto@cs.stanford.edu>"]
+authors = ["Will Crichton <crichton.will@gmail.com>"]
 description = "Interactive quizzes for your mdBook"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 version = "0.2.15"
 edition = "2021"
-include = ["/src", "/js/packages/quiz-embed/dist/", "/js/packages/quiz-validator/dist/"]
+include = ["/src", "/js"]
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [features]
@@ -15,19 +15,20 @@ source-map = []
 
 [dependencies]
 serde_json = "1"
-anyhow = {version = "1", features = ["backtrace"]}
+anyhow = { workspace = true, features = ["backtrace"] }
 regex = "1"
 html-escape = "0.2"
 toml = { workspace = true }
-tempfile = "3"
 mdbook = "= 0.4.25"
 mdbook-preprocessor-utils = "0.1"
 mdbook-aquascope = {version = "0.2", optional = true}
 mdbook-quiz-schema = {path = "../mdbook-quiz-schema", version = "0.1.0"}
 mdbook-quiz-validate = {path = "../mdbook-quiz-validate", version = "0.1.0"}
-textwrap = "0.16.0"
 toml_edit = "0.20.0"
 uuid = {version = "1.4.1", features = ["v4"]}
 
 [dev-dependencies]
 mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }
+
+[build-dependencies]
+anyhow = "1"

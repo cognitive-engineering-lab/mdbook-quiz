@@ -1162,8 +1162,6 @@ dependencies = [
  "mdbook-quiz-validate",
  "regex",
  "serde_json",
- "tempfile",
- "textwrap 0.16.0",
  "toml",
  "toml_edit",
  "uuid",

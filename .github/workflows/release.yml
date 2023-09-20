@@ -34,19 +34,12 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
-      - name: Install spellchecker
-        run: |
-          npm install -g spellchecker node-gyp
-          echo "NODE_PATH=$(npm config get prefix)/lib/node_modules" >> $GITHUB_ENV
       - name: Install Depot
         run: |
           curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
       - name: Build Rust package
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
+        run: cargo build -p mdbook-quiz --release
       - name: Package artifact
         run: tar -czf mdbook-quiz-${{ matrix.target }}.tar.gz mdbook-quiz
         working-directory: target/release
@@ -75,11 +68,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup
         uses: ./.github/workflows/setup
-      - uses: actions-rs/cargo@v1
-        with:          
-          command: publish
-          # --allow-dirty needed for js/dist files
-          args: --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
+      - name: Install cargo-workspaces
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-workspaces
+      - name: Cargo release
+        # --allow-dirty needed for js/dist files
+        run: cargo workspace publish --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
@@ -90,7 +85,7 @@ jobs:
           curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
           echo "$(pwd)/bin" >> ${GITHUB_PATH}
       - name: Install mdbook-quiz
-        run: cargo install --path . --debug --locked
+        run: cargo install --path crates/mdbook-quiz --debug --locked
       - name: Build example mdbook
         run: mdbook build
         working-directory: example

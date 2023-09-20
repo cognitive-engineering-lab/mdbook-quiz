@@ -14,7 +14,7 @@ use std::{
 };
 use uuid::Uuid;
 
-mdbook_preprocessor_utils::asset_generator!("../../../js/packages/quiz-embed/dist/");
+mdbook_preprocessor_utils::asset_generator!("../js/");
 
 const FRONTEND_ASSETS: [Asset; 2] = [make_asset!("quiz-embed.mjs"), make_asset!("style.css")];
 
