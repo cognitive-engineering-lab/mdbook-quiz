@@ -197,7 +197,8 @@ impl SimplePreprocessor for QuizPreprocessor {
       config,
       question_ids: IdSet::default(),
       #[cfg(feature = "aquascope")]
-      aquascope: mdbook_aquascope::AquascopePreprocessor::new()?,
+      aquascope: mdbook_aquascope::AquascopePreprocessor::new()
+        .context("Aquascope failed to initialize")?,
     })
   }
 
