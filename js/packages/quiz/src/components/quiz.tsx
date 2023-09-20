@@ -375,7 +375,10 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     });
 
     let nCorrect = state.answers.filter(a => a.correct).length;
-    state.confirmedDone; // HACK: need this component to observe confirmedDone on first render...
+
+    // HACK: need this component to observe confirmedDone
+    // on first render...
+    state.confirmedDone; 
 
     let body = (
       <section>
