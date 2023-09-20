@@ -16,14 +16,13 @@ runs:
       run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
       shell: bash
     # Note: we have to build before test so the build script is executed
-    - name: Build Rust package
-      run: cargo build -p mdbook-quiz
-      shell: bash
+    - name: Initialize TS bindings
+      run: cargo make init-bindings
     - name: Test Rust package
-      run: cargo test      
+      run: cargo test
       shell: bash
     - name: Lint Rust package
-      run: cargo clippy -- -D warnings      
+      run: cargo clippy -- -D warnings
       shell: bash
     - name: Test JS package
       run: depot test

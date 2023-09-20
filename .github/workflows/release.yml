@@ -34,10 +34,16 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
+      - name: Install cargo-make
+        uses: baptiste0928/cargo-install@v2
+        with:
+          crate: cargo-make
       - name: Install Depot
         run: |
           curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+      - name: Initialize TS bindings
+        run: cargo make init-bindings
       - name: Build Rust package
         run: cargo build -p mdbook-quiz --release
       - name: Package artifact
