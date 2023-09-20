@@ -6,7 +6,6 @@
   },
   "entryPointStrategy": "packages",
   "entryPoints": [
-    "packages/quiz-schema",
     "packages/quiz"
   ]
 }

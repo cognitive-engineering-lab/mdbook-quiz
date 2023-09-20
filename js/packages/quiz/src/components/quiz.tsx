@@ -1,4 +1,3 @@
-import { Quiz } from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
 import { action, toJS } from "mobx";
@@ -12,6 +11,7 @@ import React, {
   useState,
 } from "react";
 
+import { Quiz } from "../bindings/Quiz";
 import {
   AnswerView,
   QuestionView,

@@ -1,6 +1,7 @@
-import { ShortAnswerAnswer, ShortAnswerPrompt } from "@wcrichto/quiz-schema";
 import React from "react";
 
+import { ShortAnswerAnswer } from "../bindings/ShortAnswerAnswer";
+import { ShortAnswerPrompt } from "../bindings/ShortAnswerPrompt";
 import { MarkdownView } from "../components/markdown";
 import { QuestionMethods } from "./types";
 

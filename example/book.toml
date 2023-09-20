@@ -6,3 +6,4 @@ src = "src"
 title = "example"
 
 [preprocessor.quiz]
+fullscreen = true

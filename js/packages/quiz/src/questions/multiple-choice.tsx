@@ -1,12 +1,10 @@
-import {
-  Markdown,
-  MultipleChoiceAnswer,
-  MultipleChoicePrompt,
-} from "@wcrichto/quiz-schema";
 import classNames from "classnames";
 import _ from "lodash";
 import React, { useId } from "react";
 
+import { Markdown } from "../bindings/Markdown";
+import { MultipleChoiceAnswer } from "../bindings/MultipleChoiceAnswer";
+import { MultipleChoicePrompt } from "../bindings/MultipleChoicePrompt";
 import { MarkdownView } from "../components/markdown";
 import { QuestionMethods } from "./types";
 
@@ -35,7 +33,11 @@ export let MultipleChoiceMethods: QuestionMethods<
       choices.splice(prompt.answerIndex, 0, ...answers);
     } else {
       choices = [...answers, ...prompt.distractors];
-      choices = _.shuffle(choices);
+      if (prompt.sortAnswers) {
+        choices = _.sortBy(choices);
+      } else {
+        choices = _.shuffle(choices);
+      }
     }
     return { choices };
   },

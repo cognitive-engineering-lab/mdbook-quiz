@@ -6,7 +6,6 @@
   },
   "devDependencies": {
     "@wcrichto/quiz": "workspace:^",
-    "@wcrichto/quiz-schema": "workspace:^",
     "@wcrichto/rust-editor": "^0.2.0",
     "lodash": "^4.17.21",
     "mobx": "^6.9.0",

@@ -1,5 +1,4 @@
-import { QuizView, renderIde } from "@wcrichto/quiz";
-import type { Quiz } from "@wcrichto/quiz-schema";
+import { Quiz, QuizView, renderIde } from "@wcrichto/quiz";
 import * as rustEditor from "@wcrichto/rust-editor";
 import React from "react";
 import * as ReactDOM from "react-dom/client";
