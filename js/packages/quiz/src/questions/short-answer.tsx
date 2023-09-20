@@ -1,7 +1,7 @@
 import React from "react";
 
-import { ShortAnswerAnswer } from "../bindings/ShortAnswerAnswer";
-import { ShortAnswerPrompt } from "../bindings/ShortAnswerPrompt";
+import type { ShortAnswerAnswer } from "../bindings/ShortAnswerAnswer";
+import type { ShortAnswerPrompt } from "../bindings/ShortAnswerPrompt";
 import { MarkdownView } from "../components/markdown";
 import { QuestionMethods } from "./types";
 

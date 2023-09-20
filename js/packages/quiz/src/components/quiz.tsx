@@ -11,7 +11,7 @@ import React, {
   useState,
 } from "react";
 
-import { Quiz } from "../bindings/Quiz";
+import type { Quiz } from "../bindings/Quiz";
 import {
   AnswerView,
   QuestionView,
@@ -147,42 +147,47 @@ let loadState = ({
   }
 };
 
-let Header = observer(
-  ({
-    quiz,
-    state,
-    ended,
-  }: {
-    quiz: Quiz;
-    state: QuizState;
-    ended: boolean;
-  }) => (
-    <header>
-      <h3>Quiz</h3>
-      <div className="counter">
-        {state.started ? (
-          !ended ? (
-            <>
-              Question{" "}
-              {(state.attempt == 0
-                ? state.index
-                : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
-              /{" "}
-              {state.attempt == 0
-                ? quiz.questions.length
-                : state.wrongAnswers!.length}
-            </>
-          ) : null
-        ) : (
+interface HeaderProps {
+  quiz: Quiz;
+  state: QuizState;
+  ended: boolean;
+}
+
+let Header = observer(({ quiz, state, ended }: HeaderProps) => (
+  <header>
+    <h3>Quiz</h3>
+    <div className="counter">
+      {state.started ? (
+        !ended ? (
           <>
-            {quiz.questions.length} question
-            {quiz.questions.length > 1 ? "s" : null}
+            Question{" "}
+            {(state.attempt == 0
+              ? state.index
+              : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
+            /{" "}
+            {state.attempt == 0
+              ? quiz.questions.length
+              : state.wrongAnswers!.length}
           </>
-        )}
-      </div>
-    </header>
-  )
-);
+        ) : null
+      ) : (
+        <>
+          {quiz.questions.length} question
+          {quiz.questions.length > 1 ? "s" : null}
+        </>
+      )}
+    </div>
+  </header>
+));
+
+interface AnswerReviewProps {
+  quiz: Quiz;
+  state: QuizState;
+  name: string;
+  nCorrect: number;
+  onRetry: () => void;
+  onGiveUp: () => void;
+}
 
 let AnswerReview = ({
   quiz,
@@ -191,14 +196,7 @@ let AnswerReview = ({
   nCorrect,
   onRetry,
   onGiveUp,
-}: {
-  quiz: Quiz;
-  state: QuizState;
-  name: string;
-  nCorrect: number;
-  onRetry: () => void;
-  onGiveUp: () => void;
-}) => {
+}: AnswerReviewProps) => {
   let confirm = !state.confirmedDone ? (
     <p style={{ marginBottom: "1em" }}>
       You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
@@ -235,15 +233,6 @@ let AnswerReview = ({
     </>
   );
 };
-
-export interface QuizViewProps {
-  name: string;
-  quiz: Quiz;
-  fullscreen?: boolean;
-  cacheAnswers?: boolean;
-  allowRetry?: boolean;
-  onFinish?: (answers: TaggedAnswer[]) => void;
-}
 
 export let useCaptureMdbookShortcuts = (capture: boolean) => {
   useLayoutEffect(() => {
@@ -290,6 +279,15 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
     }
   }, [capture]);
 };
+
+export interface QuizViewProps {
+  name: string;
+  quiz: Quiz;
+  fullscreen?: boolean;
+  cacheAnswers?: boolean;
+  allowRetry?: boolean;
+  onFinish?: (answers: TaggedAnswer[]) => void;
+}
 
 export let QuizView: React.FC<QuizViewProps> = observer(
   ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {

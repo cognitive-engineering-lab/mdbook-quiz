@@ -5,6 +5,9 @@ use zspell::{DictBuilder, Dictionary};
 static DICTIONARY: OnceLock<Dictionary> = OnceLock::new();
 static MORE_WORDS: OnceLock<String> = OnceLock::new();
 
+/// Register a `.dic` file into the dictionary for spellchecking.
+///
+/// Will return an error if called more than once.
 pub fn register_more_words(path: &Path) -> anyhow::Result<()> {
   let contents =
     fs::read_to_string(path).with_context(|| format!("Failed to read path: {}", path.display()))?;

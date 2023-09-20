@@ -31,7 +31,17 @@ impl Validate for Markdown {
 
     let nodes = collect_nodes(&root);
     let dict = crate::spellcheck::dictionary();
-    let base = value.start() + 1; // +1 for opening quotation
+    let open_quote = &cx.contents()[value.start()..];
+    let quote_size = if let Some(next) = open_quote.strip_prefix(r#"""""#) {
+      if next.starts_with('\n') {
+        4
+      } else {
+        3
+      }
+    } else {
+      1
+    };
+    let base = value.start() + quote_size;
     for node in nodes {
       if let (Node::Text(text), Some(pos)) = (node, node.position()) {
         let errors = dict
@@ -48,7 +58,7 @@ impl Validate for Markdown {
             word: substr.to_string(),
             span: span.into(),
           };
-          cx.error(error);
+          cx.warning(error);
         }
       }
     }
@@ -76,5 +86,6 @@ prompt.prompt = "Hello **wrold**"
 answer.answer = ""
 prompt.distractors = [""]
 "#;
-  assert!(crate::harness(contents).is_err());
+  // TODO: right now this test is just verified looking at stderr
+  assert!(crate::harness(contents).is_ok());
 }

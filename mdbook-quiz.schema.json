@@ -1,0 +1,470 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Quiz",
+  "description": "A quiz is the top-level data structure in mdbook-quiz. It represents a sequence of questions.",
+  "type": "object",
+  "required": [
+    "questions"
+  ],
+  "properties": {
+    "multipart": {
+      "description": "Context for multipart questions.\n\nMaps from a string key to a description of the question context.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "$ref": "#/definitions/Markdown"
+      }
+    },
+    "questions": {
+      "description": "The questions of the quiz.",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Question"
+      }
+    }
+  },
+  "definitions": {
+    "Markdown": {
+      "description": "A [Markdown](https://commonmark.org/help/) string.",
+      "type": "string"
+    },
+    "MultipleChoiceAnswer": {
+      "description": "An answer for a [`MultipleChoice`] question.",
+      "type": "object",
+      "required": [
+        "answer"
+      ],
+      "properties": {
+        "answer": {
+          "description": "The text of the correct answer.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/MultipleChoiceAnswerFormat"
+            }
+          ]
+        }
+      }
+    },
+    "MultipleChoiceAnswerFormat": {
+      "description": "The type of response for a [`MultipleChoice`] question.",
+      "anyOf": [
+        {
+          "description": "There is one correct answer.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            }
+          ]
+        },
+        {
+          "description": "There are multiple correct answers, and the user must select each.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Markdown"
+          }
+        }
+      ]
+    },
+    "MultipleChoicePrompt": {
+      "description": "A prompt for a [`MultipleChoice`] question.",
+      "type": "object",
+      "required": [
+        "distractors",
+        "prompt"
+      ],
+      "properties": {
+        "answerIndex": {
+          "description": "If defined, don't randomize distractors and put answer at this index.",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "distractors": {
+          "description": "An array of incorrect answers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Markdown"
+          }
+        },
+        "prompt": {
+          "description": "The text of the prompt.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            }
+          ]
+        },
+        "sortAnswers": {
+          "description": "If defined, don't randomize distractors and sort answers by content.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "Question": {
+      "description": "An individual question. One of several fixed types.",
+      "oneOf": [
+        {
+          "description": "A [`ShortAnswer`] question.",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/QuestionFields_for_ShortAnswerPrompt_and_ShortAnswerAnswer"
+            }
+          ],
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ShortAnswer"
+              ]
+            }
+          }
+        },
+        {
+          "description": "A [`Tracing`] question.",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/QuestionFields_for_TracingPrompt_and_TracingAnswer"
+            }
+          ],
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Tracing"
+              ]
+            }
+          }
+        },
+        {
+          "description": "A [`MultipleChoice`] question.",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/QuestionFields_for_MultipleChoicePrompt_and_MultipleChoiceAnswer"
+            }
+          ],
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "MultipleChoice"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "QuestionFields_for_MultipleChoicePrompt_and_MultipleChoiceAnswer": {
+      "description": "Fields common to all question types.",
+      "type": "object",
+      "required": [
+        "answer",
+        "prompt"
+      ],
+      "properties": {
+        "answer": {
+          "description": "The contents of the answer. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/MultipleChoiceAnswer"
+            }
+          ]
+        },
+        "context": {
+          "description": "Additional context that explains the correct answer.\n\nOnly shown after the user has answered correctly or given up.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "A unique identifier for a given question.\n\nUsed primarily for telemetry, as a stable identifer for questions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "multipart": {
+          "description": "If this key exists, then this question is part of a multipart group. The key must be contained in the [`Quiz::multipart`] map.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "description": "The contents of the prompt. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/MultipleChoicePrompt"
+            }
+          ]
+        },
+        "promptExplanation": {
+          "description": "If true, asks all users for a brief prose justification of their answer.\n\nUseful for getting a qualitative sense of why users respond a particular way.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "QuestionFields_for_ShortAnswerPrompt_and_ShortAnswerAnswer": {
+      "description": "Fields common to all question types.",
+      "type": "object",
+      "required": [
+        "answer",
+        "prompt"
+      ],
+      "properties": {
+        "answer": {
+          "description": "The contents of the answer. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ShortAnswerAnswer"
+            }
+          ]
+        },
+        "context": {
+          "description": "Additional context that explains the correct answer.\n\nOnly shown after the user has answered correctly or given up.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "A unique identifier for a given question.\n\nUsed primarily for telemetry, as a stable identifer for questions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "multipart": {
+          "description": "If this key exists, then this question is part of a multipart group. The key must be contained in the [`Quiz::multipart`] map.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "description": "The contents of the prompt. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/ShortAnswerPrompt"
+            }
+          ]
+        },
+        "promptExplanation": {
+          "description": "If true, asks all users for a brief prose justification of their answer.\n\nUseful for getting a qualitative sense of why users respond a particular way.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "QuestionFields_for_TracingPrompt_and_TracingAnswer": {
+      "description": "Fields common to all question types.",
+      "type": "object",
+      "required": [
+        "answer",
+        "prompt"
+      ],
+      "properties": {
+        "answer": {
+          "description": "The contents of the answer. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/TracingAnswer"
+            }
+          ]
+        },
+        "context": {
+          "description": "Additional context that explains the correct answer.\n\nOnly shown after the user has answered correctly or given up.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "description": "A unique identifier for a given question.\n\nUsed primarily for telemetry, as a stable identifer for questions.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "multipart": {
+          "description": "If this key exists, then this question is part of a multipart group. The key must be contained in the [`Quiz::multipart`] map.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "prompt": {
+          "description": "The contents of the prompt. Depends on the question type.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/TracingPrompt"
+            }
+          ]
+        },
+        "promptExplanation": {
+          "description": "If true, asks all users for a brief prose justification of their answer.\n\nUseful for getting a qualitative sense of why users respond a particular way.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "ShortAnswerAnswer": {
+      "description": "An answer for a [`ShortAnswer`] question.",
+      "type": "object",
+      "required": [
+        "answer"
+      ],
+      "properties": {
+        "alternatives": {
+          "description": "Other acceptable strings answers.",
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "answer": {
+          "description": "The exact string that answers the question.",
+          "type": "string"
+        }
+      }
+    },
+    "ShortAnswerPrompt": {
+      "description": "A prompt for a [`ShortAnswer`] question.",
+      "type": "object",
+      "required": [
+        "prompt"
+      ],
+      "properties": {
+        "prompt": {
+          "description": "The text of the prompt.",
+          "allOf": [
+            {
+              "$ref": "#/definitions/Markdown"
+            }
+          ]
+        },
+        "response": {
+          "description": "Format of the response.",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ShortAnswerResponseFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ShortAnswerResponseFormat": {
+      "description": "The kind of response format (and subsequent input method) that accompanies a given short answer questions.",
+      "oneOf": [
+        {
+          "description": "A one-sentence response, given an `<input>`",
+          "type": "string",
+          "enum": [
+            "short"
+          ]
+        },
+        {
+          "description": "A long-form response, given a `<textarea>`",
+          "type": "string",
+          "enum": [
+            "long"
+          ]
+        },
+        {
+          "description": "A code response, given a code editor",
+          "type": "string",
+          "enum": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "TracingAnswer": {
+      "description": "An answer for a [`Tracing`] question.",
+      "type": "object",
+      "required": [
+        "doesCompile"
+      ],
+      "properties": {
+        "doesCompile": {
+          "description": "True if the program should pass the compiler",
+          "type": "boolean"
+        },
+        "lineNumber": {
+          "description": "If doesCompile=false, then the line number of the code causing the error",
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "stdout": {
+          "description": "If doesCompile=true, then the contents of stdout after running the program",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "TracingPrompt": {
+      "description": "A prompt for a [`Tracing`] question.",
+      "type": "object",
+      "required": [
+        "program"
+      ],
+      "properties": {
+        "program": {
+          "description": "The contents of the program to trace.",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

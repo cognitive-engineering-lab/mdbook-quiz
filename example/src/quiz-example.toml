@@ -1,0 +1,29 @@
+[multipart]
+ex = """
+Alright fam. `Let's go.`
+"""
+
+[[questions]]
+type = "MultipleChoice"
+multipart = "ex"
+prompt.prompt = "Hmm"
+prompt.distractors = [
+  "A",
+  "B"  
+]
+answer.answer = "C"
+context = "sup"
+id = "81b6552e-0250-4bb2-82ee-95a1d5858d03"
+
+
+[[questions]]
+type = "MultipleChoice"
+multipart = "ex"
+prompt.prompt = "Alright?"
+prompt.distractors = [
+  "D",
+  "E"  
+]
+answer.answer = "F"
+context = "no"
+id = "81708e95-41b7-45b9-bca4-5dab003a67aa"

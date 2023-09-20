@@ -2,9 +2,9 @@ import classNames from "classnames";
 import _ from "lodash";
 import React, { useId } from "react";
 
-import { Markdown } from "../bindings/Markdown";
-import { MultipleChoiceAnswer } from "../bindings/MultipleChoiceAnswer";
-import { MultipleChoicePrompt } from "../bindings/MultipleChoicePrompt";
+import type { Markdown } from "../bindings/Markdown";
+import type { MultipleChoiceAnswer } from "../bindings/MultipleChoiceAnswer";
+import type { MultipleChoicePrompt } from "../bindings/MultipleChoicePrompt";
 import { MarkdownView } from "../components/markdown";
 import { QuestionMethods } from "./types";
 

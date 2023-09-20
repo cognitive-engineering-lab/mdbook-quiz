@@ -3,7 +3,6 @@ skip_core_tasks = true
 default_to_workspace = false
 
 
-# Precommit
 [tasks.precommit-cargo]
 script = "cargo fmt && cargo clippy"
 
@@ -13,26 +12,24 @@ script = "cd js && depot fmt"
 [tasks.precommit.run_task]
 name = ["precommit-js", "precommit-cargo"]
 
-[tasks.init-bindings]
-script = """
-cargo test -p mdbook-quiz-schema --locked export_bindings
-mkdir -p js/packages/quiz/src/bindings
-cp crates/mdbook-quiz-schema/bindings/* js/packages/quiz/src/bindings
-"""
 
-# Watch
 [tasks.watch]
-script = "cargo watch -x 'install --path crates/mdbook-quiz --debug --offline --features rust-editor --features source-map' -w src -w js/packages/quiz-embed/dist --ignore-nothing"
+script = "cargo watch -x 'install --path crates/mdbook-quiz --debug --offline --features rust-editor --features source-map' -w crates -w js/packages/quiz-embed/dist --ignore-nothing"
 
-[tasks.watch.run_task]
-name = ["watch-cargo"]
-parallel = true
 
 [tasks.clean]
 script = """
 cargo clean
 cd js && depot clean && cd ..
 rm -rf js/packages/quiz/src/bindings crates/mdbook-quiz-schema/bindings
+"""
+
+
+[tasks.init-bindings]
+script = """
+cargo test -p mdbook-quiz-schema --locked export_bindings
+mkdir -p js/packages/quiz/src/bindings
+cp crates/mdbook-quiz-schema/bindings/* js/packages/quiz/src/bindings
 """
 
 [tasks.install]

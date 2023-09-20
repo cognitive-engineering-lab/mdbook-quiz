@@ -1,49 +1,115 @@
+//! The schema for questions used in `mdbook-quiz`. Intended to be deserialized from a TOML file.
+//! See [`Quiz`] as the top-level type. Here is an example of a quiz:
+//!
+//! ```toml
+//! [[questions]]
+//! id = "b230bed3-d6ba-4048-8b06-aa655d837b04"
+//! type = "MultipleChoice"
+//! prompt.prompt = "What is 1 + 1?"
+//! prompt.distractors = ["1", "3", "**infinity**"]
+//! answer.answer = ["2"]
+//! context = """
+//! Consult your local mathematician for details.
+//! """"
+//! ```
+//!
+//! Note that all Rust identifiers with multiple words (e.g. `does_compile`) use camelCase keys,
+//! so should be written as `doesCompile` in the TOML.
+
+#![warn(missing_docs)]
+
+use std::collections::HashMap;
+
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A quiz is the top-level data structure in mdbook-quiz.
+/// It represents a sequence of questions.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct Quiz {
+  /// The questions of the quiz.
   pub questions: Vec<Question>,
+
+  /// Context for multipart questions.
+  ///
+  /// Maps from a string key to a description of the question context.
+  #[ts(optional)]
+  pub multipart: Option<HashMap<String, Markdown>>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A [Markdown](https://commonmark.org/help/) string.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct Markdown(pub String);
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// An individual question. One of several fixed types.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(tag = "type")]
 pub enum Question {
+  /// A [`ShortAnswer`] question.
   ShortAnswer(ShortAnswer),
+  /// A [`Tracing`] question.
   Tracing(Tracing),
+  /// A [`MultipleChoice`] question.
   MultipleChoice(MultipleChoice),
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// Fields common to all question types.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct QuestionFields<Prompt, Answer> {
+  /// A unique identifier for a given question.
+  ///
+  /// Used primarily for telemetry, as a stable identifer for questions.
   #[ts(optional)]
   pub id: Option<String>,
+
+  /// If this key exists, then this question is part of a multipart group.
+  /// The key must be contained in the [`Quiz::multipart`] map.
+  #[ts(optional)]
+  pub multipart: Option<String>,
+
+  /// The contents of the prompt. Depends on the question type.
   pub prompt: Prompt,
+
+  /// The contents of the answer. Depends on the question type.
   pub answer: Answer,
+
+  /// Additional context that explains the correct answer.
+  ///
+  /// Only shown after the user has answered correctly or given up.
   #[ts(optional)]
   pub context: Option<Markdown>,
+
+  /// If true, asks all users for a brief prose justification of their answer.
+  ///
+  /// Useful for getting a qualitative sense of why users respond a particular way.
   #[ts(optional)]
   pub prompt_explanation: Option<bool>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// The kind of response format (and subsequent input method) that accompanies
+/// a given short answer questions.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(rename_all = "lowercase")]
 pub enum ShortAnswerResponseFormat {
+  /// A one-sentence response, given an `<input>`
   Short,
+
+  /// A long-form response, given a `<textarea>`
   Long,
+
+  /// A code response, given a code editor
   Code,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A prompt for a [`ShortAnswer`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct ShortAnswerPrompt {
   /// The text of the prompt.
@@ -54,7 +120,8 @@ pub struct ShortAnswerPrompt {
   pub response: Option<ShortAnswerResponseFormat>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// An answer for a [`ShortAnswer`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct ShortAnswerAnswer {
   /// The exact string that answers the question.
@@ -65,18 +132,21 @@ pub struct ShortAnswerAnswer {
   pub alternatives: Option<Vec<String>>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A question where users type in a response.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct ShortAnswer(pub QuestionFields<ShortAnswerPrompt, ShortAnswerAnswer>);
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A prompt for a [`Tracing`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct TracingPrompt {
   /// The contents of the program to trace.
   pub program: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// An answer for a [`Tracing`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct TracingAnswer {
@@ -92,11 +162,13 @@ pub struct TracingAnswer {
   pub line_number: Option<usize>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A question where users guess the output of a program.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct Tracing(pub QuestionFields<TracingPrompt, TracingAnswer>);
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A prompt for a [`MultipleChoice`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(rename_all = "camelCase")]
 pub struct MultipleChoicePrompt {
@@ -115,22 +187,28 @@ pub struct MultipleChoicePrompt {
   pub sort_answers: Option<bool>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// The type of response for a [`MultipleChoice`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 #[serde(untagged)]
 pub enum MultipleChoiceAnswerFormat {
+  /// There is one correct answer.
   Single(Markdown),
+
+  /// There are multiple correct answers, and the user must select each.
   Multi(Vec<Markdown>),
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// An answer for a [`MultipleChoice`] question.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct MultipleChoiceAnswer {
   /// The text of the correct answer.
   pub answer: MultipleChoiceAnswerFormat,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
+/// A question where users select among several possible answers.
+#[derive(Debug, Serialize, Deserialize, TS, JsonSchema)]
 #[ts(export)]
 pub struct MultipleChoice(pub QuestionFields<MultipleChoicePrompt, MultipleChoiceAnswer>);
 
