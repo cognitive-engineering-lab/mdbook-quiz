@@ -12,6 +12,8 @@ on:
 
 env:
   AQUASCOPE_VERSION: 0.3.1
+  AQUASCOPE_TOOLCHAIN: nightly-2023-08-25
+
 
 jobs:
   tests:
@@ -22,6 +24,11 @@ jobs:
         uses: ./.github/workflows/setup
       - name: Install Aquascope
         run: |
+          rustup toolchain install ${AQUASCOPE_TOOLCHAIN} -c rust-src rustc-dev llvm-tools-preview miri
+          cargo +${AQUASCOPE_TOOLCHAIN} miri setup
+          echo "LD_LIBRARY_PATH=$($(rustup which --toolchain ${AQUASCOPE_TOOLCHAIN} rustc) --print target-libdir)" >> ${GITHUB_ENV}
+          
+          mkdir bin
           curl -sSL https://github.com/cognitive-engineering-lab/aquascope/releases/download/v${AQUASCOPE_VERSION}/aquascope-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
           echo "$(pwd)/bin" >> ${GITHUB_PATH}
       - name: Test Rust package
