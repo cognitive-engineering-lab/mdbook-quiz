@@ -56,7 +56,7 @@ jobs:
       - name: Setup
         uses: ./.github/workflows/setup  
       - name: Build schema
-        run: cargo run --bin gen-json-schema > mdbook-quiz.schema.json
+        run: cargo run --bin gen-json-schema --features json-schema > mdbook-quiz.schema.json
       - uses: actions/upload-artifact@v2
         with:
           name: schema
