@@ -1,10 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
-import { Quiz } from "@wcrichto/quiz-schema";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { QuizView } from "../src/lib";
+import { Question } from "../src/bindings/Question";
+import { Quiz } from "../src/bindings/Quiz";
+import { QuizView, generateQuestionTitles } from "../src/lib";
 import { startButton, submitButton } from "./utils";
 
 let quiz: Quiz = {
@@ -114,5 +115,29 @@ describe("Quiz retry", () => {
     expect(() =>
       screen.getByRole("button", { name: "retry the quiz" })
     ).toThrow();
+  });
+});
+
+describe("generateQuestionTitles", () => {
+  it("handles multi-part questions", () => {
+    let template: Question = {
+      type: "ShortAnswer",
+      prompt: { prompt: "" },
+      answer: { answer: "" },
+    };
+    let questions: Question[] = [
+      { ...template, multipart: "a" },
+      { ...template, multipart: "a" },
+      { ...template, multipart: "b" },
+      { ...template },
+      { ...template, multipart: "c" },
+    ];
+    expect(generateQuestionTitles({ questions })).toStrictEqual([
+      "1a",
+      "1b",
+      "2a",
+      "3",
+      "4a",
+    ]);
   });
 });

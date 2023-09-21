@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
-import { ShortAnswer } from "@wcrichto/quiz-schema";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { Question } from "../src/bindings/Question";
 import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("Question prompt for explanation", () => {
-  let question: ShortAnswer = {
+  let question: Question = {
     type: "ShortAnswer",
     prompt: { prompt: "Hello world" },
     answer: { answer: "Yes" },
@@ -22,7 +22,9 @@ describe("Question prompt for explanation", () => {
       <QuestionView
         quizName={"Foobar"}
         question={question}
+        multipart={{}}
         index={1}
+        title="1"
         attempt={0}
         onSubmit={answer => {
           submitted = answer;
