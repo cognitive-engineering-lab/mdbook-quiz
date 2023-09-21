@@ -2,7 +2,6 @@
 type = "MultipleChoice"
 prompt.prompt = """
 What does it mean if a variable `x` is immutable?
-
 ```
 example
   intro h

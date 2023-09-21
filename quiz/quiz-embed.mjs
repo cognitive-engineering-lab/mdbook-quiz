@@ -27584,7 +27584,7 @@ Normally, we only observe *whether* readers get a question correct or incorrect.
 This explanation helps us understand *why* a reader answers a particular way, so 
 we can better improve the surrounding text.
 `.trim();
-let QuestionView = ({ quizName, question, index: index2, attempt, questionState, onSubmit }) => {
+let QuestionView = ({ quizName, multipart, question, index: index2, title, attempt, questionState, onSubmit }) => {
   let start = reactExports.useMemo(now, [quizName, question, index2]);
   let ref = reactExports.useRef(null);
   let [showExplanation, setShowExplanation] = reactExports.useState(false);
@@ -27620,6 +27620,28 @@ let QuestionView = ({ quizName, question, index: index2, attempt, questionState,
   });
   let shouldPrompt = question.promptExplanation && attempt == 0;
   let explanationId = reactExports.useId();
+  let titleNumber = title.substring(0, 1);
+  let promptContext = question.multipart ? React.createElement(
+    "div",
+    { className: "multipart-context" },
+    React.createElement(
+      "p",
+      null,
+      React.createElement(
+        "strong",
+        null,
+        "Question ",
+        titleNumber,
+        " has multiple parts."
+      ),
+      " The box below contains the shared context for each part."
+    ),
+    React.createElement(
+      "div",
+      { className: "multipart-context-content" },
+      React.createElement(MarkdownView, { markdown: multipart[question.multipart] })
+    )
+  ) : null;
   return React.createElement(
     "div",
     { className: classNames("question", questionClass) },
@@ -27630,8 +27652,9 @@ let QuestionView = ({ quizName, question, index: index2, attempt, questionState,
         "h4",
         null,
         "Question ",
-        index2
+        title
       ),
+      promptContext,
       React.createElement(methods.PromptView, { prompt: question.prompt }),
       window.telemetry ? React.createElement(BugReporter, { quizName, question: index2 }) : null
     ),
@@ -27664,7 +27687,7 @@ let QuestionView = ({ quizName, question, index: index2, attempt, questionState,
     )
   );
 };
-let AnswerView = ({ quizName, question, index: index2, userAnswer, correct, showCorrect }) => {
+let AnswerView = ({ quizName, question, index: index2, title, userAnswer, correct, showCorrect }) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
   return React.createElement(
@@ -27677,7 +27700,7 @@ let AnswerView = ({ quizName, question, index: index2, userAnswer, correct, show
         "h4",
         null,
         "Question ",
-        index2
+        title
       ),
       React.createElement(methods.PromptView, { prompt: question.prompt }),
       window.telemetry ? React.createElement(BugReporter, { quizName, question: index2 }) : null
@@ -33165,6 +33188,7 @@ let AnswerReview = ({ quiz, state, name, nCorrect, onRetry, onGiveUp }) => {
     React.createElement("button", { onClick: onGiveUp }, "see the correct answers"),
     "."
   ) : null;
+  let questionTitles = generateQuestionTitles(quiz);
   return React.createElement(
     React.Fragment,
     null,
@@ -33190,7 +33214,7 @@ let AnswerReview = ({ quiz, state, name, nCorrect, onRetry, onGiveUp }) => {
       return React.createElement(
         "div",
         { className: "answer-wrapper", key: i },
-        React.createElement(AnswerView, { index: i + 1, quizName: name, question, userAnswer: answer, correct, showCorrect: state.confirmedDone })
+        React.createElement(AnswerView, { index: i + 1, title: questionTitles[i], quizName: name, question, userAnswer: answer, correct, showCorrect: state.confirmedDone })
       );
     }),
     confirm
@@ -33213,6 +33237,32 @@ let useCaptureMdbookShortcuts = (capture) => {
       };
     }
   }, [capture]);
+};
+let aCode = "a".charCodeAt(0);
+let generateQuestionTitles = (quiz) => {
+  let groups = [];
+  let group = void 0;
+  let part2 = void 0;
+  quiz.questions.forEach((q2) => {
+    if (q2.multipart) {
+      if (q2.multipart === part2) {
+        group.push(q2);
+      } else {
+        group = [q2];
+        groups.push(group);
+      }
+      part2 = q2.multipart;
+    } else {
+      group = [q2];
+      groups.push(group);
+    }
+  });
+  return groups.flatMap((g, i) => g.map((q2, j) => {
+    let title = (i + 1).toString();
+    if (q2.multipart)
+      title += String.fromCharCode(aCode + j);
+    return title;
+  }));
 };
 let QuizView = observer(({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
   let [quizHash] = reactExports.useState(() => hash.MD5(quiz));
@@ -33272,13 +33322,14 @@ let QuizView = observer(({ quiz, name, fullscreen, cacheAnswers, allowRetry, onF
   });
   let nCorrect = state.answers.filter((a) => a.correct).length;
   state.confirmedDone;
+  let questionTitles = generateQuestionTitles(quiz);
   let body = React.createElement("section", null, state.started ? ended ? React.createElement(AnswerReview, { quiz, name, state, nCorrect, onRetry: action(() => {
     state.index = state.wrongAnswers[0];
     state.attempt += 1;
   }), onGiveUp: action(() => {
     state.confirmedDone = true;
     saveToCache();
-  }) }) : React.createElement(QuestionView, { key: state.index, quizName: name, index: state.index + 1, attempt: state.attempt, question: quiz.questions[state.index], questionState: questionStates[state.index], onSubmit }) : React.createElement("button", { className: "start", onClick: action(() => {
+  }) }) : React.createElement(QuestionView, { key: state.index, quizName: name, multipart: quiz.multipart, index: state.index, title: questionTitles[state.index], attempt: state.attempt, question: quiz.questions[state.index], questionState: questionStates[state.index], onSubmit }) : React.createElement("button", { className: "start", onClick: action(() => {
     state.started = true;
   }) }, "Start"));
   let wrapperClass = classNames("mdbook-quiz-wrapper", {
