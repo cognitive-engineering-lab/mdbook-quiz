@@ -10,6 +10,9 @@ on:
     branches:
       - "**"
 
+env:
+  AQUASCOPE_VERSION: 0.3.1
+
 jobs:
   tests:
     runs-on: ubuntu-latest
@@ -18,11 +21,9 @@ jobs:
       - name: Setup
         uses: ./.github/workflows/setup
       - name: Install Aquascope
-        # tag should match mdbook-aquascope version
-        run: |          
-          git clone -b v0.3.0 https://github.com/cognitive-engineering-lab/aquascope
-          cd aquascope
-          cargo make install-mdbook
+        run: |
+          curl -sSL https://github.com/cognitive-engineering-lab/aquascope/releases/download/v${AQUASCOPE_VERSION}/aquascope-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
+          echo "$(pwd)/bin" >> ${GITHUB_PATH}
       - name: Test Rust package
         run: cargo test --all-features --locked
       - name: Lint Rust package

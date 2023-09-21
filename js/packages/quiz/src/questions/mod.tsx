@@ -118,6 +118,28 @@ interface QuestionViewProps {
   onSubmit: (answer: TaggedAnswer) => void;
 }
 
+interface MultipartContextProps {
+  title: string;
+  multipart: Quiz["multipart"];
+  question: Question;
+}
+
+let MultipartContext = ({
+  title,
+  multipart,
+  question,
+}: MultipartContextProps) => (
+  <div className="multipart-context">
+    <p>
+      <strong>Question {title.substring(0, 1)} has multiple parts.</strong> The
+      box below contains the shared context for each part.
+    </p>
+    <div className="multipart-context-content">
+      <MarkdownView markdown={multipart[question.multipart]} />
+    </div>
+  </div>
+);
+
 export let QuestionView: React.FC<QuestionViewProps> = ({
   quizName,
   multipart,
@@ -170,24 +192,17 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
 
   let explanationId = useId();
 
-  let titleNumber = title.substring(0, 1);
-  let promptContext = question.multipart ? (
-    <div className="multipart-context">
-      <p>
-        <strong>Question {titleNumber} has multiple parts.</strong> The box
-        below contains the shared context for each part.
-      </p>
-      <div className="multipart-context-content">
-        <MarkdownView markdown={multipart[question.multipart]} />
-      </div>
-    </div>
-  ) : null;
-
   return (
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
         <h4>Question {title}</h4>
-        {promptContext}
+        {question.multipart ? (
+          <MultipartContext
+            question={question}
+            multipart={multipart}
+            title={title}
+          />
+        ) : null}
         <methods.PromptView prompt={question.prompt} />
         {window.telemetry ? (
           <BugReporter quizName={quizName} question={index} />
@@ -234,6 +249,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
 
 interface AnswerViewProps {
   quizName: string;
+  multipart: Quiz["multipart"];
   question: Question;
   index: number;
   title: string;
@@ -244,6 +260,7 @@ interface AnswerViewProps {
 
 export let AnswerView: React.FC<AnswerViewProps> = ({
   quizName,
+  multipart,
   question,
   index,
   title,
@@ -254,10 +271,35 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
+  let multipartView = null;
+  if (question.multipart) {
+    let anchorId = `${quizName}-${question.multipart}`;
+    if (title.substring(1, 2) === "a")
+      multipartView = (
+        <div>
+          <a id={anchorId} />
+          <MultipartContext
+            question={question}
+            multipart={multipart}
+            title={title}
+          />
+        </div>
+      );
+    else
+      multipartView = (
+        <div className="multipart-context">
+          <a href={"#" + anchorId}>
+            Return to question context <span className="rotate-arrow">↳</span>
+          </a>
+        </div>
+      );
+  }
+
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
         <h4>Question {title}</h4>
+        {multipartView}
         <methods.PromptView prompt={question.prompt} />
         {window.telemetry ? (
           <BugReporter quizName={quizName} question={index} />

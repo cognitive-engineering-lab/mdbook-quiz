@@ -467,4 +467,9 @@ $error-color: #e16969;
       margin-bottom: 1em;      
     }
   }
+
+  .rotate-arrow {
+    transform: rotate(-90deg);
+    display: inline-block;
+  }
 }

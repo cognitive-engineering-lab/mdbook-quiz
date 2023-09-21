@@ -223,6 +223,7 @@ let AnswerReview = ({
             <AnswerView
               index={i + 1}
               title={questionTitles[i]}
+              multipart={quiz.multipart}
               quizName={name}
               question={question}
               userAnswer={answer}
