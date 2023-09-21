@@ -7,9 +7,14 @@ license = "MIT OR Apache-2.0"
 edition = "2021"
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
+[features]
+json-schema = ["dep:schemars", "dep:serde_json"]
+
 [dependencies]
 serde = {version = "1.0.188", features = ["derive"]}
 ts-rs = "7.0.0"
+schemars = {version = "0.8.15", optional = true}
+serde_json = {version = "1.0.107", optional = true}
 
 [dev-dependencies]
 toml = { workspace = true }

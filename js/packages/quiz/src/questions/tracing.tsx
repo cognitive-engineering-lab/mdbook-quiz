@@ -2,8 +2,8 @@ import classNames from "classnames";
 import _ from "lodash";
 import React, { useId, useState } from "react";
 
-import { TracingAnswer } from "../bindings/TracingAnswer";
-import { TracingPrompt } from "../bindings/TracingPrompt";
+import type { TracingAnswer } from "../bindings/TracingAnswer";
+import type { TracingPrompt } from "../bindings/TracingPrompt";
 // import { MoreInfo } from "../components/more-info";
 import { Snippet } from "../components/snippet";
 import { QuestionMethods } from "./types";

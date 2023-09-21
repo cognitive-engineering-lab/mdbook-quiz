@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
-import { Tracing } from "@wcrichto/quiz-schema";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { Tracing } from "../src/bindings/Tracing";
 import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("Tracing", () => {
-  let question: Tracing = {
+  let question: Tracing & { type: "Tracing" } = {
     type: "Tracing",
     prompt: { program: "fn main(){}" },
     answer: { doesCompile: true, stdout: "Yes" },
@@ -21,7 +21,9 @@ describe("Tracing", () => {
       <QuestionView
         quizName={"Foobar"}
         question={question}
+        multipart={{}}
         index={1}
+        title="1"
         attempt={0}
         onSubmit={answer => {
           submitted = answer;

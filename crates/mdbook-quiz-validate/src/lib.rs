@@ -1,3 +1,7 @@
+//! Validation logic for types in [`mdbook_quiz_schema`].
+
+#![warn(missing_docs)]
+
 use std::{
   cell::RefCell,
   collections::HashSet,
@@ -18,10 +22,16 @@ pub use toml_spanned_value::SpannedValue;
 mod impls;
 mod spellcheck;
 
+/// A thread-safe mutable set of question identifiers.
 pub type IdSet = Arc<Mutex<HashSet<String>>>;
 
+struct QuizDiagnostic {
+  error: miette::Error,
+  fatal: bool,
+}
+
 pub(crate) struct ValidationContext {
-  errors: RefCell<Vec<miette::Error>>,
+  diagnostics: RefCell<Vec<QuizDiagnostic>>,
   path: PathBuf,
   contents: String,
   ids: IdSet,
@@ -30,47 +40,61 @@ pub(crate) struct ValidationContext {
 impl ValidationContext {
   pub fn new(path: &Path, contents: &str, ids: IdSet) -> Self {
     ValidationContext {
-      errors: Default::default(),
+      diagnostics: Default::default(),
       path: path.to_owned(),
       contents: contents.to_owned(),
       ids,
     }
   }
 
-  pub fn error(&mut self, err: impl Diagnostic + Send + Sync + 'static) {
-    self.errors.borrow_mut().push(miette::Error::new(err));
+  pub fn add_diagnostic(&mut self, err: impl Into<miette::Error>, fatal: bool) {
+    self.diagnostics.borrow_mut().push(QuizDiagnostic {
+      error: err.into(),
+      fatal,
+    });
+  }
+
+  pub fn error(&mut self, err: impl Into<miette::Error>) {
+    self.add_diagnostic(err, true);
+  }
+
+  pub fn warning(&mut self, err: impl Into<miette::Error>) {
+    self.add_diagnostic(err, false);
   }
 
   pub fn check(&mut self, f: impl FnOnce() -> Result<()>) {
     if let Err(res) = f() {
-      self.errors.borrow_mut().push(res);
+      self.error(res);
     }
   }
 
   pub fn check_id(&mut self, id: &str, value: &SpannedValue) {
     let new_id = self.ids.lock().unwrap().insert(id.to_string());
     if !new_id {
-      self.errors.borrow_mut().push(miette!(
+      self.error(miette!(
         labels = vec![value.labeled_span()],
         "Duplicate ID: {id}"
       ));
     }
+  }
+
+  pub fn contents(&self) -> &str {
+    &self.contents
   }
 }
 
 impl fmt::Debug for ValidationContext {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     let handler = MietteHandler::default();
-    for error in self.errors.borrow_mut().drain(..) {
+    for diagnostic in self.diagnostics.borrow_mut().drain(..) {
       let src = NamedSource::new(self.path.to_string_lossy(), self.contents.clone());
-      let report = error.with_source_code(src);
+      let report = diagnostic.error.with_source_code(src);
       handler.debug(report.as_ref(), f)?;
     }
     Ok(())
   }
 }
 
-#[macro_export]
 macro_rules! cxensure {
   ($cx:expr, $($rest:tt)*) => {{
     $cx.check(|| {
@@ -80,11 +104,6 @@ macro_rules! cxensure {
   }};
 }
 
-pub(crate) trait Validate {
-  fn validate(&self, cx: &mut ValidationContext, value: &SpannedValue);
-}
-
-#[macro_export]
 macro_rules! tomlcast {
   ($e:ident) => { $e };
   ($e:ident .table $($rest:tt)*) => {{
@@ -99,6 +118,12 @@ macro_rules! tomlcast {
     let _t = $e.get($s).unwrap();
     tomlcast!(_t $($rest)*)
   }}
+}
+
+pub(crate) use {cxensure, tomlcast};
+
+pub(crate) trait Validate {
+  fn validate(&self, cx: &mut ValidationContext, value: &SpannedValue);
 }
 
 pub(crate) trait SpannedValueExt {
@@ -121,6 +146,7 @@ struct ParseError {
   span: Option<SourceSpan>,
 }
 
+/// Runs validation on a quiz with TOML-format `contents` at `path` under the ID set `ids`.
 pub fn validate(path: &Path, contents: &str, ids: &IdSet) -> anyhow::Result<()> {
   let mut cx = ValidationContext::new(path, contents, Arc::clone(ids));
 
@@ -139,12 +165,16 @@ pub fn validate(path: &Path, contents: &str, ids: &IdSet) -> anyhow::Result<()> 
     }
   }
 
-  if !cx.errors.borrow().is_empty() {
+  let has_diagnostic = cx.diagnostics.borrow().len() > 0;
+  let is_fatal = cx.diagnostics.borrow().iter().any(|d| d.fatal);
+
+  if has_diagnostic {
     eprintln!("{cx:?}");
-    anyhow::bail!("Quiz failed to validate: {}", path.display())
-  } else {
-    Ok(())
   }
+
+  anyhow::ensure!(!is_fatal, "Quiz failed to validate: {}", path.display());
+
+  Ok(())
 }
 
 #[cfg(test)]

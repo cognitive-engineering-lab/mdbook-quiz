@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import user from "@testing-library/user-event";
-import { MultipleChoice } from "@wcrichto/quiz-schema";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { MultipleChoice } from "../src/bindings/MultipleChoice";
 import { MultipleChoiceMethods, QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("MultipleChoice", () => {
-  let question: MultipleChoice = {
+  let question: MultipleChoice & { type: "MultipleChoice" } = {
     type: "MultipleChoice",
     prompt: { prompt: "Hello world", distractors: ["B", "C"] },
     answer: { answer: "A" },
@@ -25,6 +25,8 @@ describe("MultipleChoice", () => {
       <QuestionView
         quizName={"Foobar"}
         question={question}
+        multipart={{}}
+        title={"1"}
         index={1}
         attempt={0}
         questionState={state}
@@ -55,7 +57,7 @@ describe("MultipleChoice", () => {
 });
 
 describe("MultipleChoice multi-answer", () => {
-  let question: MultipleChoice = {
+  let question: MultipleChoice & { type: "MultipleChoice" } = {
     type: "MultipleChoice",
     prompt: { prompt: "Hello world", distractors: ["C", "D"] },
     answer: { answer: ["A", "B"] },
@@ -72,7 +74,9 @@ describe("MultipleChoice multi-answer", () => {
       <QuestionView
         quizName={"Foobar"}
         question={question}
+        multipart={{}}
         index={1}
+        title="1"
         attempt={0}
         questionState={state}
         onSubmit={answer => {

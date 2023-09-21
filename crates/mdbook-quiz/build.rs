@@ -24,6 +24,7 @@ fn main() -> Result<()> {
     }
   }
 
+  println!("cargo:rerun-if-changed={JS_DIST_DIR}");
   let entries = fs::read_dir(js_dist_dir)?;
   let local_js_dist_dir = Path::new(LOCAL_JS_DIST_DIR);
   fs::create_dir_all(local_js_dist_dir)?;

@@ -18,3 +18,4 @@ anyhow = { workspace = true }
 toml-spanned-value = "0.1.0"
 tempfile = "3.8.0"
 textwrap = "0.16.0"
+fluid-let = "1.0.0"

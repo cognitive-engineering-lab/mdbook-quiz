@@ -11,7 +11,8 @@ import React, {
   useState,
 } from "react";
 
-import { Quiz } from "../bindings/Quiz";
+import type { Question } from "../bindings/Question";
+import type { Quiz } from "../bindings/Quiz";
 import {
   AnswerView,
   QuestionView,
@@ -147,42 +148,47 @@ let loadState = ({
   }
 };
 
-let Header = observer(
-  ({
-    quiz,
-    state,
-    ended,
-  }: {
-    quiz: Quiz;
-    state: QuizState;
-    ended: boolean;
-  }) => (
-    <header>
-      <h3>Quiz</h3>
-      <div className="counter">
-        {state.started ? (
-          !ended ? (
-            <>
-              Question{" "}
-              {(state.attempt == 0
-                ? state.index
-                : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
-              /{" "}
-              {state.attempt == 0
-                ? quiz.questions.length
-                : state.wrongAnswers!.length}
-            </>
-          ) : null
-        ) : (
+interface HeaderProps {
+  quiz: Quiz;
+  state: QuizState;
+  ended: boolean;
+}
+
+let Header = observer(({ quiz, state, ended }: HeaderProps) => (
+  <header>
+    <h3>Quiz</h3>
+    <div className="counter">
+      {state.started ? (
+        !ended ? (
           <>
-            {quiz.questions.length} question
-            {quiz.questions.length > 1 ? "s" : null}
+            Question{" "}
+            {(state.attempt == 0
+              ? state.index
+              : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
+            /{" "}
+            {state.attempt == 0
+              ? quiz.questions.length
+              : state.wrongAnswers!.length}
           </>
-        )}
-      </div>
-    </header>
-  )
-);
+        ) : null
+      ) : (
+        <>
+          {quiz.questions.length} question
+          {quiz.questions.length > 1 ? "s" : null}
+        </>
+      )}
+    </div>
+  </header>
+));
+
+interface AnswerReviewProps {
+  quiz: Quiz;
+  state: QuizState;
+  name: string;
+  nCorrect: number;
+  onRetry: () => void;
+  onGiveUp: () => void;
+}
 
 let AnswerReview = ({
   quiz,
@@ -191,20 +197,14 @@ let AnswerReview = ({
   nCorrect,
   onRetry,
   onGiveUp,
-}: {
-  quiz: Quiz;
-  state: QuizState;
-  name: string;
-  nCorrect: number;
-  onRetry: () => void;
-  onGiveUp: () => void;
-}) => {
+}: AnswerReviewProps) => {
   let confirm = !state.confirmedDone ? (
     <p style={{ marginBottom: "1em" }}>
       You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
       <button onClick={onGiveUp}>see the correct answers</button>.
     </p>
   ) : null;
+  let questionTitles = generateQuestionTitles(quiz);
   return (
     <>
       <h3>Answer Review</h3>
@@ -222,6 +222,7 @@ let AnswerReview = ({
           <div className="answer-wrapper" key={i}>
             <AnswerView
               index={i + 1}
+              title={questionTitles[i]}
               quizName={name}
               question={question}
               userAnswer={answer}
@@ -235,15 +236,6 @@ let AnswerReview = ({
     </>
   );
 };
-
-export interface QuizViewProps {
-  name: string;
-  quiz: Quiz;
-  fullscreen?: boolean;
-  cacheAnswers?: boolean;
-  allowRetry?: boolean;
-  onFinish?: (answers: TaggedAnswer[]) => void;
-}
 
 export let useCaptureMdbookShortcuts = (capture: boolean) => {
   useLayoutEffect(() => {
@@ -289,6 +281,44 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
       };
     }
   }, [capture]);
+};
+
+export interface QuizViewProps {
+  name: string;
+  quiz: Quiz;
+  fullscreen?: boolean;
+  cacheAnswers?: boolean;
+  allowRetry?: boolean;
+  onFinish?: (answers: TaggedAnswer[]) => void;
+}
+
+let aCode = "a".charCodeAt(0);
+export let generateQuestionTitles = (quiz: Quiz): string[] => {
+  let groups: Question[][] = [];
+  let group = undefined;
+  let part = undefined;
+  quiz.questions.forEach(q => {
+    if (q.multipart) {
+      if (q.multipart === part) {
+        group.push(q);
+      } else {
+        group = [q];
+        groups.push(group);
+      }
+      part = q.multipart;
+    } else {
+      group = [q];
+      groups.push(group);
+    }
+  });
+
+  return groups.flatMap((g, i) =>
+    g.map((q, j) => {
+      let title = (i + 1).toString();
+      if (q.multipart) title += String.fromCharCode(aCode + j);
+      return title;
+    })
+  );
 };
 
 export let QuizView: React.FC<QuizViewProps> = observer(
@@ -377,7 +407,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     });
 
     let nCorrect = state.answers.filter(a => a.correct).length;
-    state.confirmedDone; // HACK: need this component to observe confirmedDone on first render...
+
+    // HACK: need this component to observe confirmedDone
+    // on first render...
+    state.confirmedDone;
+
+    let questionTitles = generateQuestionTitles(quiz);
 
     let body = (
       <section>
@@ -401,7 +436,9 @@ export let QuizView: React.FC<QuizViewProps> = observer(
             <QuestionView
               key={state.index}
               quizName={name}
-              index={state.index + 1}
+              multipart={quiz.multipart}
+              index={state.index}
+              title={questionTitles[state.index]}
               attempt={state.attempt}
               question={quiz.questions[state.index]}
               questionState={questionStates[state.index]}

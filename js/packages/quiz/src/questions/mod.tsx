@@ -3,7 +3,8 @@ import _ from "lodash";
 import React, { useId, useMemo, useRef, useState } from "react";
 import { RegisterOptions, useForm } from "react-hook-form";
 
-import { Question } from "../bindings/Question";
+import type { Question } from "../bindings/Question";
+import type { Quiz } from "../bindings/Quiz";
 import { MarkdownView } from "../components/markdown";
 import { MoreInfo } from "../components/more-info";
 import { useCaptureMdbookShortcuts } from "../lib";
@@ -106,14 +107,27 @@ This explanation helps us understand *why* a reader answers a particular way, so
 we can better improve the surrounding text.
 `.trim();
 
-export let QuestionView: React.FC<{
+interface QuestionViewProps {
   quizName: string;
+  multipart: Quiz["multipart"];
   question: Question;
   index: number;
+  title: string;
   attempt: number;
   questionState?: any;
   onSubmit: (answer: TaggedAnswer) => void;
-}> = ({ quizName, question, index, attempt, questionState, onSubmit }) => {
+}
+
+export let QuestionView: React.FC<QuestionViewProps> = ({
+  quizName,
+  multipart,
+  question,
+  index,
+  title,
+  attempt,
+  questionState,
+  onSubmit,
+}) => {
   let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
   let [showExplanation, setShowExplanation] = useState(false);
@@ -156,10 +170,24 @@ export let QuestionView: React.FC<{
 
   let explanationId = useId();
 
+  let titleNumber = title.substring(0, 1);
+  let promptContext = question.multipart ? (
+    <div className="multipart-context">
+      <p>
+        <strong>Question {titleNumber} has multiple parts.</strong> The box
+        below contains the shared context for each part.
+      </p>
+      <div className="multipart-context-content">
+        <MarkdownView markdown={multipart[question.multipart]} />
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
-        <h4>Question {index}</h4>
+        <h4>Question {title}</h4>
+        {promptContext}
         <methods.PromptView prompt={question.prompt} />
         {window.telemetry ? (
           <BugReporter quizName={quizName} question={index} />
@@ -204,21 +232,32 @@ export let QuestionView: React.FC<{
   );
 };
 
-export let AnswerView: React.FC<{
+interface AnswerViewProps {
   quizName: string;
   question: Question;
   index: number;
+  title: string;
   userAnswer: Question["answer"];
   correct: boolean;
   showCorrect: boolean;
-}> = ({ quizName, question, index, userAnswer, correct, showCorrect }) => {
+}
+
+export let AnswerView: React.FC<AnswerViewProps> = ({
+  quizName,
+  question,
+  index,
+  title,
+  userAnswer,
+  correct,
+  showCorrect,
+}) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
-        <h4>Question {index}</h4>
+        <h4>Question {title}</h4>
         <methods.PromptView prompt={question.prompt} />
         {window.telemetry ? (
           <BugReporter quizName={quizName} question={index} />

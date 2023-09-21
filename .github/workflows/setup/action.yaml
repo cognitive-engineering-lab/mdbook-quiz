@@ -1,4 +1,9 @@
 name: Setup
+
+inputs:
+  target:
+    default: x86_64-unknown-linux-gnu
+
 runs:
   using: composite
   steps:
@@ -7,6 +12,8 @@ runs:
         profile: minimal
         toolchain: stable
         components: clippy
+        target: ${{ inputs.target }}
+        override: true
     - uses: Swatinem/rust-cache@v1
     - name: Install cargo-make
       uses: baptiste0928/cargo-install@v2
@@ -15,17 +22,6 @@ runs:
     - name: Install Depot
       run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
       shell: bash
-    # Note: we have to build before test so the build script is executed
     - name: Initialize TS bindings
       run: cargo make init-bindings
-      shell: bash
-    - name: Test Rust package
-      run: cargo test --locked
-      shell: bash
-    - name: Lint Rust package
-      run: cargo clippy --locked -- -D warnings
-      shell: bash
-    - name: Test JS package
-      run: depot test
-      working-directory: js
       shell: bash

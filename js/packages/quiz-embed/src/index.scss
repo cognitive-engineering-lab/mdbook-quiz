@@ -458,5 +458,13 @@ $error-color: #e16969;
     }
   }
 
-
+  .multipart-context {
+    padding-left: 1em;
+    .multipart-context-content {
+      border: 1px solid $light-border-color;
+      padding: 0.5em;
+      background-color: var(--theme-popup-bg);      
+      margin-bottom: 1em;      
+    }
+  }
 }
