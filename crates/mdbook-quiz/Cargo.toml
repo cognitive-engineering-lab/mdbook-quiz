@@ -7,6 +7,7 @@ version = "0.3.2"
 edition = "2021"
 include = ["/src", "/js"]
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
+readme = "../../README.md"
 
 [features]
 rust-editor = []
