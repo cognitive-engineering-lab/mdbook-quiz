@@ -12,12 +12,6 @@ impl Validate for MultipleChoicePrompt {
     self.prompt.validate(cx, tomlcast!(value.table["prompt"]));
 
     let distractors = tomlcast!(value.table["distractors"]);
-    cxensure!(
-      cx,
-      !self.distractors.is_empty(),
-      labels = vec![distractors.labeled_span()],
-      "Must be at least one distractor",
-    );
     for (d, dv) in self.distractors.iter().zip(tomlcast!(distractors.array)) {
       d.validate(cx, dv);
     }
@@ -92,18 +86,6 @@ answer.answer = ""
 prompt.distractors = [""]
 prompt.answerIndex = 0
 prompt.sortAnswers = true
-"#;
-  assert!(crate::harness(contents).is_err());
-}
-
-#[test]
-fn validate_mcq_empty_distractors() {
-  let contents = r#"
-[[questions]]
-type = "MultipleChoice"
-prompt.prompt = ""
-answer.answer = ""
-prompt.distractors = [] # no distractors
 "#;
   assert!(crate::harness(contents).is_err());
 }

@@ -88,6 +88,10 @@ jobs:
         uses: baptiste0928/cargo-install@v2
         with:
           crate: cargo-workspaces
+      # This ensures that the `crates/mdbook-quiz/js/` directory is 
+      # populated before running publish      
+      - name: Cargo build
+        run: cargo build
       - name: Cargo release        
         run: cargo workspaces publish --from-git --yes --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
       - uses: JS-DevTools/npm-publish@v1

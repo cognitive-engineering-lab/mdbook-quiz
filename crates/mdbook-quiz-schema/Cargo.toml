@@ -1,6 +1,6 @@
 [package]
 name = "mdbook-quiz-schema"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Will Crichton <crichton.will@gmail.com>"]
 description = "Schema for quizzes used in mdbook-quiz"
 license = "MIT OR Apache-2.0"
@@ -8,11 +8,15 @@ edition = "2021"
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [features]
+# for generating a JSON schema, used in conjunction with `cargo run --bin gen-json-schema`
 json-schema = ["dep:schemars", "dep:serde_json"]
+
+# for generating Typescript bindings, used in conjunction with `cargo test export_bindings`
+ts = ["dep:ts-rs"]
 
 [dependencies]
 serde = {version = "1.0.188", features = ["derive"]}
-ts-rs = "7.0.0"
+ts-rs = {version = "7.0.0", optional = true}
 schemars = {version = "0.8.15", optional = true}
 serde_json = {version = "1.0.107", optional = true}
 

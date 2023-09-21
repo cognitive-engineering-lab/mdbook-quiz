@@ -20,7 +20,9 @@ runs:
       with:
         crate: cargo-make
     - name: Install Depot
-      run: curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+      run: |
+        curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
+        echo "$HOME/.local/bin" >> ${GITHUB_PATH}
       shell: bash
     - name: Initialize TS bindings
       run: cargo make init-bindings

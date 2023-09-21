@@ -27,7 +27,7 @@ rm -rf js/packages/quiz/src/bindings crates/mdbook-quiz-schema/bindings
 
 [tasks.init-bindings]
 script = """
-cargo test -p mdbook-quiz-schema --locked export_bindings
+cargo test -p mdbook-quiz-schema --locked export_bindings --features ts
 mkdir -p js/packages/quiz/src/bindings
 cp crates/mdbook-quiz-schema/bindings/* js/packages/quiz/src/bindings
 """
