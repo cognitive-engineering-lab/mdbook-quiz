@@ -27584,6 +27584,27 @@ Normally, we only observe *whether* readers get a question correct or incorrect.
 This explanation helps us understand *why* a reader answers a particular way, so 
 we can better improve the surrounding text.
 `.trim();
+let MultipartContext = ({ title, multipart, question }) => React.createElement(
+  "div",
+  { className: "multipart-context" },
+  React.createElement(
+    "p",
+    null,
+    React.createElement(
+      "strong",
+      null,
+      "Question ",
+      title.substring(0, 1),
+      " has multiple parts."
+    ),
+    " The box below contains the shared context for each part."
+  ),
+  React.createElement(
+    "div",
+    { className: "multipart-context-content" },
+    React.createElement(MarkdownView, { markdown: multipart[question.multipart] })
+  )
+);
 let QuestionView = ({ quizName, multipart, question, index: index2, title, attempt, questionState, onSubmit }) => {
   let start = reactExports.useMemo(now, [quizName, question, index2]);
   let ref = reactExports.useRef(null);
@@ -27620,28 +27641,6 @@ let QuestionView = ({ quizName, multipart, question, index: index2, title, attem
   });
   let shouldPrompt = question.promptExplanation && attempt == 0;
   let explanationId = reactExports.useId();
-  let titleNumber = title.substring(0, 1);
-  let promptContext = question.multipart ? React.createElement(
-    "div",
-    { className: "multipart-context" },
-    React.createElement(
-      "p",
-      null,
-      React.createElement(
-        "strong",
-        null,
-        "Question ",
-        titleNumber,
-        " has multiple parts."
-      ),
-      " The box below contains the shared context for each part."
-    ),
-    React.createElement(
-      "div",
-      { className: "multipart-context-content" },
-      React.createElement(MarkdownView, { markdown: multipart[question.multipart] })
-    )
-  ) : null;
   return React.createElement(
     "div",
     { className: classNames("question", questionClass) },
@@ -27654,7 +27653,7 @@ let QuestionView = ({ quizName, multipart, question, index: index2, title, attem
         "Question ",
         title
       ),
-      promptContext,
+      question.multipart ? React.createElement(MultipartContext, { question, multipart, title }) : null,
       React.createElement(methods.PromptView, { prompt: question.prompt }),
       window.telemetry ? React.createElement(BugReporter, { quizName, question: index2 }) : null
     ),
@@ -27687,9 +27686,31 @@ let QuestionView = ({ quizName, multipart, question, index: index2, title, attem
     )
   );
 };
-let AnswerView = ({ quizName, question, index: index2, title, userAnswer, correct, showCorrect }) => {
+let AnswerView = ({ quizName, multipart, question, index: index2, title, userAnswer, correct, showCorrect }) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
+  let multipartView = null;
+  if (question.multipart) {
+    let anchorId = `${quizName}-${question.multipart}`;
+    if (title.substring(1, 2) === "a")
+      multipartView = React.createElement(
+        "div",
+        null,
+        React.createElement("a", { id: anchorId }),
+        React.createElement(MultipartContext, { question, multipart, title })
+      );
+    else
+      multipartView = React.createElement(
+        "div",
+        { className: "multipart-context" },
+        React.createElement(
+          "a",
+          { href: "#" + anchorId },
+          "Return to question context ",
+          React.createElement("span", { className: "rotate-arrow" }, "↳")
+        )
+      );
+  }
   return React.createElement(
     "div",
     { className: classNames("answer", questionClass) },
@@ -27702,6 +27723,7 @@ let AnswerView = ({ quizName, question, index: index2, title, userAnswer, correc
         "Question ",
         title
       ),
+      multipartView,
       React.createElement(methods.PromptView, { prompt: question.prompt }),
       window.telemetry ? React.createElement(BugReporter, { quizName, question: index2 }) : null
     ),
@@ -33214,7 +33236,7 @@ let AnswerReview = ({ quiz, state, name, nCorrect, onRetry, onGiveUp }) => {
       return React.createElement(
         "div",
         { className: "answer-wrapper", key: i },
-        React.createElement(AnswerView, { index: i + 1, title: questionTitles[i], quizName: name, question, userAnswer: answer, correct, showCorrect: state.confirmedDone })
+        React.createElement(AnswerView, { index: i + 1, title: questionTitles[i], multipart: quiz.multipart, quizName: name, question, userAnswer: answer, correct, showCorrect: state.confirmedDone })
       );
     }),
     confirm
