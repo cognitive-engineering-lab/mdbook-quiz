@@ -27,6 +27,7 @@ mdbook-quiz-schema = {path = "../mdbook-quiz-schema", version = "0.2.0"}
 mdbook-quiz-validate = {path = "../mdbook-quiz-validate", version = "0.2.0"}
 toml_edit = "0.20.0"
 uuid = {version = "1.4.1", features = ["v4"]}
+log = "0.4.20"
 
 [dev-dependencies]
 mdbook-preprocessor-utils = { version = "0.1", features = ["testing"] }

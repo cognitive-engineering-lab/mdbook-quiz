@@ -183,6 +183,8 @@ impl SimplePreprocessor for QuizPreprocessor {
   }
 
   fn build(ctx: &PreprocessorContext) -> Result<Self> {
+    log::info!("Running the mdbook-quiz preprocessor");
+
     let config_toml = ctx.config.get_preprocessor(Self::name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
 
