@@ -35,15 +35,17 @@ pub(crate) struct ValidationContext {
   path: PathBuf,
   contents: String,
   ids: IdSet,
+  spellcheck: bool,
 }
 
 impl ValidationContext {
-  pub fn new(path: &Path, contents: &str, ids: IdSet) -> Self {
+  pub fn new(path: &Path, contents: &str, ids: IdSet, spellcheck: bool) -> Self {
     ValidationContext {
       diagnostics: Default::default(),
       path: path.to_owned(),
       contents: contents.to_owned(),
       ids,
+      spellcheck,
     }
   }
 
@@ -147,8 +149,8 @@ struct ParseError {
 }
 
 /// Runs validation on a quiz with TOML-format `contents` at `path` under the ID set `ids`.
-pub fn validate(path: &Path, contents: &str, ids: &IdSet) -> anyhow::Result<()> {
-  let mut cx = ValidationContext::new(path, contents, Arc::clone(ids));
+pub fn validate(path: &Path, contents: &str, ids: &IdSet, spellcheck: bool) -> anyhow::Result<()> {
+  let mut cx = ValidationContext::new(path, contents, Arc::clone(ids), spellcheck);
 
   let parse_result = toml::from_str::<Quiz>(contents);
   match parse_result {
@@ -179,7 +181,7 @@ pub fn validate(path: &Path, contents: &str, ids: &IdSet) -> anyhow::Result<()> 
 
 #[cfg(test)]
 pub(crate) fn harness(contents: &str) -> anyhow::Result<()> {
-  validate(Path::new("dummy.rs"), contents, &IdSet::default())
+  validate(Path::new("dummy.rs"), contents, &IdSet::default(), true)
 }
 
 #[cfg(test)]

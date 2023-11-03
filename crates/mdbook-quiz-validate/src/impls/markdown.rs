@@ -29,36 +29,38 @@ impl Validate for Markdown {
       nodes
     }
 
-    let nodes = collect_nodes(&root);
-    let dict = crate::spellcheck::dictionary();
-    let open_quote = &cx.contents()[value.start()..];
-    let quote_size = if let Some(next) = open_quote.strip_prefix(r#"""""#) {
-      if next.starts_with('\n') {
-        4
+    if cx.spellcheck {
+      let nodes = collect_nodes(&root);
+      let dict = crate::spellcheck::dictionary();
+      let open_quote = &cx.contents()[value.start()..];
+      let quote_size = if let Some(next) = open_quote.strip_prefix(r#"""""#) {
+        if next.starts_with('\n') {
+          4
+        } else {
+          3
+        }
       } else {
-        3
-      }
-    } else {
-      1
-    };
-    let base = value.start() + quote_size;
-    for node in nodes {
-      if let (Node::Text(text), Some(pos)) = (node, node.position()) {
-        let errors = dict
-          .check_indices(&text.value)
-          .filter(|(_, s)| *s != "-")
-          .filter(|(_, s)| s.parse::<isize>().is_err())
-          .filter(|(_, s)| s.parse::<f32>().is_err());
-        for (idx, substr) in errors {
-          // base: location of string literal in TOML file
-          // pos.start.offset: location of markdown text node in the string
-          // idx: location of error in text node
-          let span = (base + pos.start.offset + idx, substr.len());
-          let error = SpellingError {
-            word: substr.to_string(),
-            span: span.into(),
-          };
-          cx.warning(error);
+        1
+      };
+      let base = value.start() + quote_size;
+      for node in nodes {
+        if let (Node::Text(text), Some(pos)) = (node, node.position()) {
+          let errors = dict
+            .check_indices(&text.value)
+            .filter(|(_, s)| *s != "-")
+            .filter(|(_, s)| s.parse::<isize>().is_err())
+            .filter(|(_, s)| s.parse::<f32>().is_err());
+          for (idx, substr) in errors {
+            // base: location of string literal in TOML file
+            // pos.start.offset: location of markdown text node in the string
+            // idx: location of error in text node
+            let span = (base + pos.start.offset + idx, substr.len());
+            let error = SpellingError {
+              word: substr.to_string(),
+              span: span.into(),
+            };
+            cx.warning(error);
+          }
         }
       }
     }

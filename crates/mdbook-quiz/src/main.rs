@@ -45,6 +45,11 @@ struct QuizConfig {
   /// Sets the default language for syntax highlighting.
   default_language: Option<String>,
 
+  /// If true, then run a spellchecker on all Markdown strings.
+  ///
+  /// You can add a custom dictionary via the `more-words` key.
+  spellcheck: Option<bool>,
+
   /// Path to a .dic file containing words to include in the spellcheck dictionary.
   more_words: Option<PathBuf>,
 
@@ -121,7 +126,12 @@ impl QuizPreprocessor {
     let mut content_toml = fs::read_to_string(&quiz_path_abs)
       .with_context(|| format!("Failed to read quiz file: {}", quiz_path_abs.display()))?;
 
-    mdbook_quiz_validate::validate(&quiz_path_abs, &content_toml, &self.question_ids)?;
+    mdbook_quiz_validate::validate(
+      &quiz_path_abs,
+      &content_toml,
+      &self.question_ids,
+      self.config.spellcheck.unwrap_or(false),
+    )?;
 
     let changed = self.auto_id(&quiz_path_abs, &content_toml)?;
     if changed {
@@ -186,6 +196,7 @@ impl SimplePreprocessor for QuizPreprocessor {
       more_words: config_toml
         .get("more-words")
         .map(|value| value.as_str().unwrap().into()),
+      spellcheck: parse_bool("spellcheck"),
       dev_mode,
     };
 

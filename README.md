@@ -247,4 +247,5 @@ You can configure mdbook-quiz by adding options to the `[preprocessor.quiz]` sec
 
 * `fullscreen` (boolean): If true, then a quiz will take up the web page's full screen during use.
 * `cache-answers` (boolean): If true, then the user's answers will be saved in their browser's `localStorage`. Then the quiz will show the user's answers even after they reload the page.
-* `more-words` (path): An optional path to a `.dic` file that adds valid words to the spellchecker.
+* `spellcheck` (boolean): If true, then run a spellchecker on all Markdown strings.
+* `more-words` (path): An optional path to a `.dic` file that adds valid words to the spellchecker. You can find a base dictionary for each language in [wooorm/dictionaries](https://github.com/wooorm/dictionaries/tree/main/dictionaries). You can find documentation about how to write a `.dic` file in [this blog post](https://typethinker.blogspot.com/2008/02/fun-with-aspell-word-lists.html).
