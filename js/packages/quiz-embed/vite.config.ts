@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => ({
     lib: {
       entry: resolve(__dirname, "src/main.tsx"),
       name: "Quiz",
-      formats: ["es"],
+      formats: ["iife"],
     },
     rollupOptions: {
       external: Object.keys(manifest.dependencies || {}),
