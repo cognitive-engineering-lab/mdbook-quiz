@@ -134,6 +134,7 @@
   filter: grayscale(100%);
   border: 0;
   background: none;
+  color: var(--fg);
 }
 .mdbook-quiz .prompt .bug-report .reporter {
   background: var(--bg);
