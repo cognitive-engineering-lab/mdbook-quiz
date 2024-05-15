@@ -1,0 +1,38 @@
+{
+  "name": "standalone",
+  "version": "0.1.0",
+  "type": "module",
+  "depot": {
+    "platform": "browser",
+    "target": "site"
+  },
+  "pnpm": {
+    "overrides": {
+      "rollup": "npm:@rollup/wasm-node"
+    }
+  },
+  "devDependencies": {
+    "@iarna/toml": "^2.2.5",
+    "@trivago/prettier-plugin-sort-imports": "^4.1",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "@wcrichto/quiz": "^0.2.16",
+    "eslint": "^8.57.0",
+    "eslint-plugin-prettier": "^4",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "jsdom": "^24.0.0",
+    "normalize.css": "^8.0.1",
+    "prettier": "^2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sass": "^1.77.1",
+    "typedoc": "^0.25.13",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}

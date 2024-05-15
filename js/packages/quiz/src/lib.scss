@@ -1,0 +1,479 @@
+@import "@wcrichto/rust-editor/dist/lib.css";
+
+$mobile-cutoff: 800px;
+
+@mixin mobile {
+  @media (max-width: ($mobile-cutoff - 1)) {
+    @content;
+  }
+}
+
+:root {
+  --mdbook-fg: black;
+  --mdbook-bg: white;
+  --mdbook-light-border-color: #ccc;
+  --mdbook-heavy-border-color: #aaa;
+  
+  --mdbook-button-bg: #fafafa;
+  --mdbook-button-fg: black;
+  --mdbook-button-border-color: #888;
+
+  --mdbook-prompt-bg: #f1f6f9;
+
+  --mdbook-error-color: #e16969;
+  --mdbook-highlight: #ffffc1;
+
+  --mdbook-correct: green;
+  --mdbook-incorrect: red;
+
+  --mdbook-icon-color: #747474;
+  
+  --mdbook-multipart-bg: #fafafa;
+}
+
+.mdbook-quiz {
+  border: 2px solid var(--mdbook-heavy-border-color);
+  border-radius: 4px;
+  padding: 1em;
+  margin-top: 2.5em;
+  position: relative;
+
+  @include mobile {
+    padding: 0.5em;
+  }
+
+  .exit {
+    position: absolute;
+    right: -4rem;
+    top: 0;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 1rem;
+
+    @include mobile {
+      right: 0;
+      top: -45px;
+    }
+  }
+
+  .exit-explanation {
+    position: absolute;
+    bottom: -2rem;
+    right: 0;
+    height: 0;
+    width: 50%;
+    font-size: 0.8em;    
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    @include mobile {
+      width: 100%;
+    }
+
+    .trigger {
+      font-style: italic;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  h3 {
+    margin: 0 0 1em;
+  }
+
+  h4 {
+    margin: 0 0 0.5em;
+  }
+
+  button, input[type="submit"] {
+    font-size: 1.1em;
+    cursor: pointer;
+    background-color: var(--mdbook-button-bg);
+    color: var(--mdbook-button-fg);
+    border: 1px solid var(--mdbook-button-border-color);
+    border-radius: 4px;
+    padding: 3px 5px;
+  }
+
+  form {
+    input.error,
+    textarea.error {
+      outline-color: var(--mdbook-error-color);
+    }
+
+    :not(input, textarea).error {
+      border: 1px solid var(--mdbook-error-color);
+    }
+  }
+
+  textarea,
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  select,
+  textarea,
+  input[type="text"] {
+    padding: 3px 6px;
+  }
+
+  textarea {
+    min-height: 5em;
+  }
+
+  // Add automatic line-numbers to code snippets
+  // https://stackoverflow.com/a/64917958
+  pre {
+    &.line-numbers {
+      counter-reset: line;
+
+      display: grid;
+      grid-template-columns: min-content 1fr;
+      grid-auto-rows: auto 1em;
+      gap: 0.2em;  
+    }
+    
+    @include mobile {
+      overflow-x: auto;
+      overflow-y: hidden; 
+      line-height: 1em;
+    }
+
+    .line-number {
+      text-align: right;
+
+      &::before {
+        counter-increment: line;
+        content: counter(line);
+        user-select: none;
+        padding-right: 1em;
+        color: var(--mdbook-heavy-border-color);
+        font-size: 0.8em;
+      }
+    }
+
+    code {
+      padding: 0;
+    }
+
+    mark {
+      background: var(--mdbook-highlight);
+    }
+  }
+  
+  .editor {
+    .monaco-editor, .monaco-editor-background, .monaco-editor .margin {
+      background: none!important;
+    }
+
+    .monaco-hover hr {
+      // Fix tooltips having weird spacing between type and description
+      margin-bottom: 4px;
+    }
+
+    .highlight {
+      background: var(--mdbook-highlight);
+    }
+  }
+  
+  p,
+  pre {
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  input[type="submit"] {
+    margin-top: 1em;
+  }
+
+  .prompt,
+  .response {
+    position: relative;
+    padding: 1em;
+
+    @include mobile {
+      padding: 0.75em;
+    }
+  }
+
+  .prompt {
+    background: var(--mdbook-prompt-bg);
+    margin-bottom: 1em;
+    
+    pre {
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .bug-report {
+      position: absolute;
+      max-width: 70%;
+      right: 0.5em;
+      top: 0.5em;
+      text-align: right;
+
+      button {
+        filter: grayscale(100%);
+        border: 0;
+        background: none;
+        color: var(--mdbook-fg);
+      }
+
+      .reporter {
+        background: var(--mdbook-bg);
+        border: 2px solid var(--mdbook-light-border-color);
+        padding: 0.5em;
+        text-align: left;
+        border-radius: 4px;
+        box-shadow: 1px 1px 4px var(--mdbook-light-border-color);
+        position: relative;
+        z-index: 1000;
+
+        .close {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+        }
+      }
+    }
+  }
+  
+  .response {
+    fieldset {
+      border: none;
+      margin: 0 0 1em;
+      padding: 0;
+
+      .choice {
+        max-width: 100%;
+        
+        label {
+          display: block;
+          flex-grow: 1;
+
+          // this hack is needed to get monaco to have the right width, idk why
+          width: 0; 
+        }
+
+        pre, .editor {
+          border: 1px solid var(--mdbook-light-border-color);
+          border-radius: 4px;
+          padding: 2px 4px;
+        }
+
+        pre {
+          width: max-content;
+        }
+      }      
+    }
+
+    .response-block {
+      margin-bottom: 0.5em;
+
+      @include mobile {
+        line-height: 2em;
+      }
+    }
+  }
+
+  .option {
+    border: 2px solid var(--mdbook-light-border-color);
+    border-radius: 4px;
+    padding: 0.25em;
+    margin: 0 0.25em;
+    display: inline-block;
+  }
+
+  .option-separator {
+    margin: 0 0.5em;
+  }
+
+  .answer-wrapper {
+    &:not(:last-child) {
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid var(--mdbook-light-border-color);
+    }
+  }
+
+  .answer {
+    .answer-header {
+      margin-bottom: 1em;
+    }
+
+    .answer-row {
+      display: flex;
+      gap: 1rem;
+
+      @include mobile {
+        flex-wrap: wrap;
+      }
+
+      ul {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        padding-left: 1em;
+
+        li {
+          margin-block-end: 0.5em;
+        }
+      }
+
+      > div {
+        border: 2px solid var(--mdbook-light-border-color);
+        padding: 1rem;
+        width: 50%;
+        overflow: auto;
+
+        @include mobile {
+          width: 100%;
+        }
+
+        .answer-header {
+          font-weight: bold;
+        }
+
+        .correct::before {
+          color: var(--mdbook-correct);
+          margin-right: 1rem;
+          content: "✓ Correct";
+          font-size: 1.5rem;
+        }
+
+        .incorrect::before {
+          color: var(--mdbook-incorrect);
+          margin-right: 1rem;
+          content: "✗ Incorrect";
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .context {
+      margin-top: 1em;
+    }
+  }
+
+  .info-wrapper {
+    display: inline-block;
+    position: relative;
+  }
+
+  .info-popout {
+    position: absolute;
+    background: var(--mdbook-bg);
+    left: calc(100% + 10px);
+    border: 1px solid var(--mdbook-light-border-color);
+    padding: 0.5em;
+    text-align: left;
+    border-radius: 4px;
+    max-width: 400px;
+    width: max-content;
+    box-shadow: 1px 1px 4px var(--mdbook-light-border-color);
+  }
+
+  .info {
+    display: inline-block;
+    color: var(--mdbook-icon-color);
+    border: 1px solid var(--mdbook-icon-color);
+    border-radius: 50%;
+    vertical-align: middle;
+    font-size: 12px;
+    width: 17px;
+    height: 17px;
+    font-weight: bold;
+    line-height: 1em;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--mdbook-fg);
+      border-color: var(--mdbook-fg);
+    }
+
+    &::before {
+      content: "?";
+      vertical-align: middle;
+    }
+  }
+
+  .multiple-choice {
+    .response fieldset .choice {
+      display: flex;
+      gap: 10px;
+
+      &:not(:last-child) {
+        margin-bottom: 1em;
+      }
+    }
+
+    input[type="radio"] {
+      margin: 0;
+
+      &.error {
+        outline: 1px solid var(--mdbook-error-color);
+      }
+    }
+  }
+
+  .multipart-context {
+    padding-left: 1em;
+
+    .multipart-context-content {
+      border: 1px solid var(--mdbook-light-border-color);
+      padding: 0.5em;
+      background-color: var(--mdbook-multipart-bg);
+      margin-bottom: 1em;      
+    }
+  }
+
+  .rotate-arrow {
+    transform: rotate(-90deg);
+    display: inline-block;
+  }
+}
+
+.mdbook-quiz-wrapper {
+  &.expanded {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+
+    // Fallback if dvh isn't supported.
+    height: 100vh;
+
+    // 100dvh is so the overlay isn't clipped by the URL bar on mobile browsers.
+    // See: https://stackoverflow.com/questions/37112218/css3-100vh-not-constant-in-mobile-browser
+    // And: https://developer.mozilla.org/en-US/docs/Web/CSS/length#relative_length_units_based_on_viewport
+    height: 100dvh;
+    
+    z-index: 999;
+    padding: 0 10rem;
+    box-sizing: border-box;
+    overflow-y: auto;
+    background: var(--mdbook-bg);
+
+    @include mobile {
+      padding: 0 1rem;
+    }
+
+    .mdbook-quiz {
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+}

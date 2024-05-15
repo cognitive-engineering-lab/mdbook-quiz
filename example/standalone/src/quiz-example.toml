@@ -1,0 +1,41 @@
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+What does it mean if a variable `x` is immutable?
+"""
+prompt.distractors = [
+  "`x` is stored in the immutable region of memory.",
+  "After being defined, `x` can be changed at most once.",
+  "You cannot create a reference to `x`."
+]
+answer.answer = "`x` cannot be changed after being assigned to a value."
+context = """
+Immutable means "not mutable", or not changeable.
+"""
+id = "18ea4c61-c7c3-433f-add5-d3d3156e3e71"
+
+[[questions]]
+type = "ShortAnswer"
+prompt.prompt = "What is the keyword used after `let` to indicate that a variable can be mutated?"
+answer.answer = "mut"
+context = """
+For example, you can make a mutable variable `x` by writing: `let mut x = 1`.
+"""
+id = "dbbaea6a-f469-464f-9d60-99ae98456b6a"
+
+[[questions]]
+type = "Tracing"
+prompt.program = """
+fn main() {
+  let x = 1;
+  println!("{x}");
+  x += 1;
+  println!("{x}");
+}
+"""
+answer.doesCompile = false
+answer.lineNumber = 4
+context = """
+This is a compiler error because line 4 tries to mutate `x` when `x` is not marked as `mut`.
+"""
+id = "bba6a299-b20f-4685-934a-792a591df3c0"

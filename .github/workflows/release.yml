@@ -107,11 +107,14 @@ jobs:
         run: cargo install --path crates/mdbook-quiz --debug --locked
       - name: Build example mdbook
         run: mdbook build
-        working-directory: example
+        working-directory: example/mdbook
+      - name: Build example standalone
+        run: depot build
+        working-directory: example/standalone
       - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./example/book
+          publish_dir: ./example/mdbook/book
       
     

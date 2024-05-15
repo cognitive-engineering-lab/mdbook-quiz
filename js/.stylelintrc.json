@@ -1,0 +1,11 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "rules": {
+    "declaration-empty-line-before": null,
+    "custom-property-empty-line-before": null,
+    "declaration-block-no-redundant-longhand-properties": null,
+
+    "no-unknown-custom-properties": true,
+    "declaration-property-value-no-unknown": true
+  }
+}

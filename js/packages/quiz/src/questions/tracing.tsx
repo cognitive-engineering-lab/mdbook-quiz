@@ -76,16 +76,14 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
           </span>
         </div>
 
-        {doesCompile !== undefined ? (
-          doesCompile ? (
-            <div>
-              <p>The output of this program will be:</p>
-              <textarea
-                {...required("stdout")}
-                placeholder="Write the program's stdout here..."
-              ></textarea>
-            </div>
-          ) : /*<div>
+        {doesCompile !== undefined && doesCompile && (
+          <div>
+            <p>The output of this program will be:</p>
+            <textarea
+              {...required("stdout")}
+              placeholder="Write the program's stdout here..."
+            ></textarea>
+          </div> /*<div>
           <p>
             The error occurs on the line number:{" "}
             <select {...required("lineNumber")}>
@@ -99,8 +97,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             &nbsp;&nbsp;
             <MoreInfo markdown={HELP_TEXT} />
           </p>
-        </div>*/ null
-        ) : null}
+        </div>*/
+        )}
       </>
     );
   },
