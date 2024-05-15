@@ -1,12 +1,12 @@
 {
   "name": "@wcrichto/quiz-embed",
-  "version": "0.1.0",
+  "version": "0.3.5",
   "depot": {
     "platform": "browser"
   },
   "devDependencies": {
     "@wcrichto/quiz": "workspace:^",
-    "@wcrichto/rust-editor": "^0.2.0",
+    "@wcrichto/rust-editor": "^0.3.5",
     "lodash": "^4.17.21",
     "mobx": "^6.9.0",
     "mobx-react": "^8.0.0",

@@ -108,9 +108,6 @@ jobs:
       - name: Build example mdbook
         run: mdbook build
         working-directory: example/mdbook
-      - name: Build example standalone
-        run: depot build
-        working-directory: example/standalone
       - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

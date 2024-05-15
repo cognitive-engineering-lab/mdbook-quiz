@@ -38,3 +38,9 @@ jobs:
       - name: Test JS package
         run: depot test
         working-directory: js
+      - name: Build example mdbook
+        run: mdbook build
+        working-directory: example/mdbook
+      - name: Build example standalone
+        run: depot build
+        working-directory: example/standalone
