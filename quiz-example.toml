@@ -2,11 +2,6 @@
 type = "MultipleChoice"
 prompt.prompt = """
 What does it mean if a variable `x` is immutable?
-```
-example
-  intro h
-  apply
-```
 """
 prompt.distractors = [
   "`x` is stored in the immutable region of memory.",
