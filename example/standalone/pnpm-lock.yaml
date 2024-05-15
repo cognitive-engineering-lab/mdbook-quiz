@@ -6,6 +6,7 @@ settings:
 
 overrides:
   rollup: npm:@rollup/wasm-node
+  '@wcrichto/quiz': file:../../js/packages/quiz
 
 importers:
 
@@ -36,8 +37,8 @@ importers:
         specifier: ^4.2.1
         version: 4.2.1(vite@5.2.11(@types/node@20.12.12)(sass@1.77.1))
       '@wcrichto/quiz':
-        specifier: ^0.2.16
-        version: 0.2.16(mobx-react@8.0.0(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: file:../../js/packages/quiz
+        version: file:../../js/packages/quiz(mobx-react@8.0.0(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -53,6 +54,12 @@ importers:
       jsdom:
         specifier: ^24.0.0
         version: 24.0.0
+      mobx:
+        specifier: ^6.12.3
+        version: 6.12.3
+      mobx-react:
+        specifier: '8'
+        version: 8.0.0(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       normalize.css:
         specifier: ^8.0.1
         version: 8.0.1
@@ -507,8 +514,8 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0
 
-  '@wcrichto/quiz@0.2.16':
-    resolution: {integrity: sha512-FdyR4aC6uR2H/E5aSZgVBxqMD3yj4mBSqCyL4/fRtk+zGh2QjztJD7EzBEH9rjv1QHMqdVrrR8N3et2R4RajfA==}
+  '@wcrichto/quiz@file:../../js/packages/quiz':
+    resolution: {directory: ../../js/packages/quiz, type: directory}
     peerDependencies:
       mobx: ^6.9.0
       mobx-react: ^8.0.0
@@ -2364,7 +2371,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@wcrichto/quiz@0.2.16(mobx-react@8.0.0(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@wcrichto/quiz@file:../../js/packages/quiz(mobx-react@8.0.0(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(mobx@6.12.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@wcrichto/rust-editor': 0.2.0(react@18.3.1)
       axios: 0.27.2

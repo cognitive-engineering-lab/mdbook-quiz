@@ -27,6 +27,8 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "jsdom": "^24.0.0",
+    "mobx": "^6.12.3",
+    "mobx-react": "8",
     "normalize.css": "^8.0.1",
     "prettier": "^2",
     "react": "^18.3.1",
