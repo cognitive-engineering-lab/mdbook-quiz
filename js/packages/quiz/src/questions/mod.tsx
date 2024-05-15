@@ -71,7 +71,7 @@ let BugReporter = ({
       >
         🐞
       </button>
-      {show ? (
+      {show && (
         <div className="reporter">
           <button className="close" onClick={() => setShow(false)}>
             ✕
@@ -86,7 +86,7 @@ let BugReporter = ({
             <input type="submit" aria-label="Submit bug feedback" />
           </form>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
@@ -196,17 +196,17 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
         <h4>Question {title}</h4>
-        {question.multipart ? (
+        {question.multipart && (
           <MultipartContext
             question={question}
             multipart={multipart}
             title={title}
           />
-        ) : null}
+        )}
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry ? (
+        {window.telemetry && (
           <BugReporter quizName={quizName} question={index} />
-        ) : null}
+        )}
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
         <h4>Response</h4>
@@ -220,7 +220,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
             formValidators={{ ...formValidators, required }}
           />
         </fieldset>
-        {showExplanation ? (
+        {showExplanation && (
           <>
             <p>
               <br />
@@ -236,7 +236,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
               {...required("explanation")}
             ></textarea>
           </>
-        ) : null}
+        )}
         {shouldPrompt && !showExplanation ? (
           <button onClick={() => setShowExplanation(true)}>Submit</button>
         ) : (
@@ -301,9 +301,9 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
         <h4>Question {title}</h4>
         {multipartView}
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry ? (
+        {window.telemetry && (
           <BugReporter quizName={quizName} question={index} />
-        ) : null}
+        )}
       </div>
       <div className="answer-row">
         <div>
@@ -316,7 +316,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
             />
           </div>
         </div>
-        {showCorrect && !correct ? (
+        {showCorrect && !correct && (
           <div>
             <div className="answer-header">The correct answer is:</div>
             <div>
@@ -327,13 +327,13 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
               />
             </div>
           </div>
-        ) : null}
+        )}
       </div>
-      {showCorrect && question.context ? (
+      {showCorrect && question.context && (
         <div className="context">
           <MarkdownView markdown={`**Context**:\n` + question.context} />
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

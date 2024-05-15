@@ -159,7 +159,7 @@ let Header = observer(({ quiz, state, ended }: HeaderProps) => (
     <h3>Quiz</h3>
     <div className="counter">
       {state.started ? (
-        !ended ? (
+        !ended && (
           <>
             Question{" "}
             {(state.attempt == 0
@@ -170,11 +170,11 @@ let Header = observer(({ quiz, state, ended }: HeaderProps) => (
               ? quiz.questions.length
               : state.wrongAnswers!.length}
           </>
-        ) : null
+        )
       ) : (
         <>
           {quiz.questions.length} question
-          {quiz.questions.length > 1 ? "s" : null}
+          {quiz.questions.length > 1 && "s"}
         </>
       )}
     </div>
@@ -198,12 +198,12 @@ let AnswerReview = ({
   onRetry,
   onGiveUp,
 }: AnswerReviewProps) => {
-  let confirm = !state.confirmedDone ? (
+  let confirm = !state.confirmedDone && (
     <p style={{ marginBottom: "1em" }}>
       You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
       <button onClick={onGiveUp}>see the correct answers</button>.
     </p>
-  ) : null;
+  );
   let questionTitles = generateQuestionTitles(quiz);
   return (
     <>
@@ -477,12 +477,12 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     return (
       <div ref={wrapperRef} className={wrapperClass}>
         <div className="mdbook-quiz">
-          {showFullscreen ? (
+          {showFullscreen && (
             <>
               {exitButton}
               <ExitExplanation wrapperRef={wrapperRef} />
             </>
-          ) : null}
+          )}
           <Header quiz={quiz} state={state} ended={ended} />
           {body}
         </div>

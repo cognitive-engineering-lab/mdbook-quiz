@@ -26,9 +26,7 @@ jobs:
         run: |
           rustup toolchain install ${AQUASCOPE_TOOLCHAIN} -c rust-src rustc-dev llvm-tools-preview miri
           cargo +${AQUASCOPE_TOOLCHAIN} miri setup
-          echo "LD_LIBRARY_PATH=$($(rustup which --toolchain ${AQUASCOPE_TOOLCHAIN} rustc) --print target-libdir)" >> ${GITHUB_ENV}
-          
-          mkdir bin
+          echo "LD_LIBRARY_PATH=$($(rustup which --toolchain ${AQUASCOPE_TOOLCHAIN} rustc) --print target-libdir)" >> ${GITHUB_ENV}          
           curl -sSL https://github.com/cognitive-engineering-lab/aquascope/releases/download/v${AQUASCOPE_VERSION}/aquascope-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
           echo "$(pwd)/bin" >> ${GITHUB_PATH}
       - name: Test Rust package
@@ -38,3 +36,11 @@ jobs:
       - name: Test JS package
         run: depot test
         working-directory: js
+      - name: Install mdbook-quiz
+        run: cargo install --path crates/mdbook-quiz --debug --locked
+      - name: Build example mdbook
+        run: mdbook build
+        working-directory: example/mdbook
+      - name: Build example standalone
+        run: depot build
+        working-directory: example/standalone

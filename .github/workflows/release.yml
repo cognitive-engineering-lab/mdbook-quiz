@@ -91,27 +91,22 @@ jobs:
       # This ensures that the `crates/mdbook-quiz/js/` directory is 
       # populated before running publish      
       - name: Cargo build
-        run: cargo build
+        run: cargo build      
+      - name: Install mdbook-quiz
+        run: cargo install --path crates/mdbook-quiz --debug --locked
+      - name: Build example mdbook
+        run: mdbook build
+        working-directory: example/mdbook
       - name: Cargo release        
         run: cargo workspaces publish --from-git --yes --allow-dirty --token ${{ secrets.CARGO_TOKEN }}
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
           package: ./js/packages/quiz/package.json
-      - name: Install mdbook
-        run: |
-          mkdir bin
-          curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
-          echo "$(pwd)/bin" >> ${GITHUB_PATH}
-      - name: Install mdbook-quiz
-        run: cargo install --path crates/mdbook-quiz --debug --locked
-      - name: Build example mdbook
-        run: mdbook build
-        working-directory: example
       - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./example/book
+          publish_dir: ./example/mdbook/book
       
     
