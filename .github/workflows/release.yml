@@ -34,7 +34,7 @@ jobs:
             kind: bare
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/workflows/setup
         with:
@@ -44,7 +44,7 @@ jobs:
       - name: Package artifact
         run: tar -czf mdbook-quiz_${{ matrix.target }}_${{ matrix.kind }}.tar.gz mdbook-quiz
         working-directory: target/release
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}_${{ matrix.kind }}
           path: target/release/mdbook-quiz_${{ matrix.target }}_${{ matrix.kind }}.tar.gz
@@ -52,12 +52,12 @@ jobs:
   build-schema:
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/workflows/setup  
       - name: Build schema
         run: cargo run --bin gen-json-schema --features json-schema > mdbook-quiz.schema.json
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: schema
           path: mdbook-quiz.schema.json
@@ -66,7 +66,7 @@ jobs:
     needs: [build-artifacts, build-schema]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
       - uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -81,7 +81,7 @@ jobs:
     needs: publish-artifacts
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/workflows/setup
       - name: Install cargo-workspaces
