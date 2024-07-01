@@ -8,7 +8,7 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from "react";
 
 import type { Question } from "../bindings/Question";
@@ -16,8 +16,8 @@ import type { Quiz } from "../bindings/Quiz";
 import {
   AnswerView,
   QuestionView,
-  TaggedAnswer,
-  getQuestionMethods,
+  type TaggedAnswer,
+  getQuestionMethods
 } from "../questions/mod";
 
 interface StoredAnswers {
@@ -37,7 +37,10 @@ declare global {
 }
 
 class AnswerStorage {
-  constructor(readonly quizName: string, readonly quizHash: string) {}
+  constructor(
+    readonly quizName: string,
+    readonly quizHash: string
+  ) {}
 
   storageKey = () => `mdbook-quiz:${this.quizName}`;
 
@@ -52,7 +55,7 @@ class AnswerStorage {
       confirmedDone,
       attempt,
       quizHash: this.quizHash,
-      wrongAnswers,
+      wrongAnswers
     };
     localStorage.setItem(this.storageKey(), JSON.stringify(storedAnswers));
   }
@@ -61,7 +64,7 @@ class AnswerStorage {
     let storedAnswersJson = localStorage.getItem(this.storageKey());
     if (storedAnswersJson) {
       let storedAnswers: StoredAnswers = JSON.parse(storedAnswersJson);
-      if (storedAnswers.quizHash == this.quizHash) {
+      if (storedAnswers.quizHash === this.quizHash) {
         return storedAnswers;
       }
     }
@@ -69,7 +72,7 @@ class AnswerStorage {
 }
 
 let ExitExplanation = ({
-  wrapperRef,
+  wrapperRef
 }: {
   wrapperRef: React.RefObject<HTMLDivElement>;
 }) => {
@@ -78,7 +81,7 @@ let ExitExplanation = ({
     if (expanded) {
       wrapperRef.current!.scrollTo({
         top: wrapperRef.current!.offsetHeight,
-        behavior: "smooth",
+        behavior: "smooth"
       });
     }
   }, [expanded]);
@@ -108,7 +111,7 @@ interface QuizState {
 let loadState = ({
   quiz,
   answerStorage,
-  cacheAnswers,
+  cacheAnswers
 }: {
   quiz: Quiz;
   answerStorage: AnswerStorage;
@@ -135,7 +138,7 @@ let loadState = ({
       attempt: stored.attempt || 0,
       wrongAnswers:
         stored.wrongAnswers ||
-        (stored.attempt > 0 ? _.range(quiz.questions.length) : undefined),
+        (stored.attempt > 0 ? _.range(quiz.questions.length) : undefined)
     };
   } else {
     return {
@@ -143,7 +146,7 @@ let loadState = ({
       index: 0,
       attempt: 0,
       confirmedDone: false,
-      answers: [],
+      answers: []
     };
   }
 };
@@ -162,11 +165,11 @@ let Header = observer(({ quiz, state, ended }: HeaderProps) => (
         !ended && (
           <>
             Question{" "}
-            {(state.attempt == 0
+            {(state.attempt === 0
               ? state.index
               : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
             /{" "}
-            {state.attempt == 0
+            {state.attempt === 0
               ? quiz.questions.length
               : state.wrongAnswers!.length}
           </>
@@ -196,12 +199,19 @@ let AnswerReview = ({
   name,
   nCorrect,
   onRetry,
-  onGiveUp,
+  onGiveUp
 }: AnswerReviewProps) => {
   let confirm = !state.confirmedDone && (
     <p style={{ marginBottom: "1em" }}>
-      You can either <button onClick={onRetry}>retry the quiz</button> or{" "}
-      <button onClick={onGiveUp}>see the correct answers</button>.
+      You can either{" "}
+      <button type="button" onClick={onRetry}>
+        retry the quiz
+      </button>{" "}
+      or{" "}
+      <button type="button" onClick={onGiveUp}>
+        see the correct answers
+      </button>
+      .
     </p>
   );
   let questionTitles = generateQuestionTitles(quiz);
@@ -330,9 +340,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       () =>
         quiz.questions.map(q => {
           let methods = getQuestionMethods(q.type);
-          return (
-            methods.questionState && methods.questionState(q.prompt, q.answer)
-          );
+          return methods.questionState?.(q.prompt, q.answer);
         }),
       [quiz]
     );
@@ -352,7 +360,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
     // Don't allow any keyboard inputs to reach external listeners
     // while the quiz is active (e.g. to avoid using the search box).
-    let ended = state.index == quiz.questions.length;
+    let ended = state.index === quiz.questions.length;
     let inProgress = state.started && !ended;
     useCaptureMdbookShortcuts(inProgress);
 
@@ -371,16 +379,16 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let onSubmit = action((answer: TaggedAnswer) => {
       answer = _.cloneDeep(answer);
 
-      if (state.attempt == 0) {
+      if (state.attempt === 0) {
         state.answers.push(answer);
         state.index += 1;
       } else {
         state.answers[state.index] = answer;
 
         let wrongAnswerIdx = state.wrongAnswers!.findIndex(
-          n => n == state.index
+          n => n === state.index
         );
-        if (wrongAnswerIdx == state.wrongAnswers!.length - 1)
+        if (wrongAnswerIdx === state.wrongAnswers!.length - 1)
           state.index = quiz.questions.length;
         else state.index = state.wrongAnswers![wrongAnswerIdx + 1];
       }
@@ -389,21 +397,21 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         quizName: name,
         quizHash,
         answers: state.answers,
-        attempt: state.attempt,
+        attempt: state.attempt
       });
 
-      if (state.index == quiz.questions.length) {
+      if (state.index === quiz.questions.length) {
         let wrongAnswers = state.answers
           .map((a, i) => ({ a, i }))
           .filter(({ a }) => !a.correct);
-        if (wrongAnswers.length == 0 || !allowRetry) {
+        if (wrongAnswers.length === 0 || !allowRetry) {
           state.confirmedDone = true;
         } else {
           state.wrongAnswers = wrongAnswers.map(({ i }) => i);
         }
 
         saveToCache();
-        onFinish && onFinish(toJS(state.answers));
+        onFinish?.(toJS(state.answers));
       }
     });
 
@@ -448,6 +456,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           )
         ) : (
           <button
+            type="button"
             className="start"
             onClick={action(() => {
               state.started = true;
@@ -460,7 +469,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     );
 
     let wrapperClass = classNames("mdbook-quiz-wrapper", {
-      expanded: showFullscreen,
+      expanded: showFullscreen
     });
     let onExit = action(() => {
       state.started = false;

@@ -3,7 +3,7 @@ import user from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { MultipleChoice } from "../src/bindings/MultipleChoice";
+import type { MultipleChoice } from "../src/bindings/MultipleChoice";
 import { MultipleChoiceMethods, QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
@@ -11,7 +11,7 @@ describe("MultipleChoice", () => {
   let question: MultipleChoice & { type: "MultipleChoice" } = {
     type: "MultipleChoice",
     prompt: { prompt: "Hello world", distractors: ["B", "C"] },
-    answer: { answer: "A" },
+    answer: { answer: "A" }
   };
 
   let submitted: any | null = null;
@@ -51,7 +51,7 @@ describe("MultipleChoice", () => {
     await user.click(submitButton());
     expect(submitted).toMatchObject({
       answer: { answer: "A" },
-      correct: true,
+      correct: true
     });
   });
 });
@@ -60,7 +60,7 @@ describe("MultipleChoice multi-answer", () => {
   let question: MultipleChoice & { type: "MultipleChoice" } = {
     type: "MultipleChoice",
     prompt: { prompt: "Hello world", distractors: ["C", "D"] },
-    answer: { answer: ["A", "B"] },
+    answer: { answer: ["A", "B"] }
   };
 
   let submitted: any | null = null;
@@ -103,7 +103,7 @@ describe("MultipleChoice multi-answer", () => {
     await user.click(submitButton());
     expect(submitted).toMatchObject({
       answer: { answer: ["A", "B"] },
-      correct: true,
+      correct: true
     });
   });
 });

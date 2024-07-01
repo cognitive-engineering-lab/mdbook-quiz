@@ -1,4 +1,4 @@
-import { Quiz, QuizView, renderIde } from "@wcrichto/quiz";
+import { type Quiz, QuizView, renderIde } from "@wcrichto/quiz";
 import * as rustEditor from "@wcrichto/rust-editor";
 import React from "react";
 import * as ReactDOM from "react-dom/client";
@@ -10,7 +10,7 @@ let onError = ({ error }: { error: Error }) => {
   document.body.style.overflowY = "auto";
 
   window.telemetry?.log("runtime_error", {
-    error: error.stack || error.message,
+    error: error.stack || error.message
   });
 
   return (

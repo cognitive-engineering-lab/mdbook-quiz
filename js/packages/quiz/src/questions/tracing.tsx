@@ -1,12 +1,11 @@
 import classNames from "classnames";
-import _ from "lodash";
 import React, { useId, useState } from "react";
 
 import type { TracingAnswer } from "../bindings/TracingAnswer";
 import type { TracingPrompt } from "../bindings/TracingPrompt";
 // import { MoreInfo } from "../components/more-info";
 import { Snippet } from "../components/snippet";
-import { QuestionMethods } from "./types";
+import type { QuestionMethods } from "./types";
 
 // let HELP_TEXT = `Errors may involve multiple line numbers. For example:
 
@@ -39,8 +38,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     // prompt,
     formValidators: {
       required,
-      formState: { errors },
-    },
+      formState: { errors }
+    }
   }) => {
     let [doesCompile, setDoesCompile] = useState<boolean | undefined>(
       undefined
@@ -82,7 +81,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <textarea
               {...required("stdout")}
               placeholder="Write the program's stdout here..."
-            ></textarea>
+            />
           </div> /*<div>
           <p>
             The error occurs on the line number:{" "}
@@ -115,7 +114,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
 
   AnswerView: ({ answer, baseline }) => {
     let correctnessClass = (key: keyof TracingAnswer) =>
-      answer[key] == baseline[key] ? "correct" : "incorrect";
+      answer[key] === baseline[key] ? "correct" : "incorrect";
     return (
       <div>
         <p className={correctnessClass("doesCompile")}>
@@ -127,7 +126,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
             <p
               className={
                 baseline.stdout &&
-                answer.stdout!.trim() == baseline.stdout!.trim()
+                answer.stdout!.trim() === baseline.stdout!.trim()
                   ? "correct"
                   : "incorrect"
               }
@@ -151,11 +150,11 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
   ): boolean {
     let clean = (s: string) => s.trim();
     return (
-      providedAnswer.doesCompile == userAnswer.doesCompile &&
+      providedAnswer.doesCompile === userAnswer.doesCompile &&
       (providedAnswer.doesCompile
-        ? clean(userAnswer.stdout!) == clean(providedAnswer.stdout!)
+        ? clean(userAnswer.stdout!) === clean(providedAnswer.stdout!)
         : true)
       // : userAnswer.lineNumber! == providedAnswer.lineNumber!)
     );
-  },
+  }
 };

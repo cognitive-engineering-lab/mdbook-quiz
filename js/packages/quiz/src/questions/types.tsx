@@ -1,9 +1,8 @@
-import _ from "lodash";
 import React from "react";
-import {
+import type {
   RegisterOptions,
   UseFormRegisterReturn,
-  UseFormReturn,
+  UseFormReturn
 } from "react-hook-form";
 
 export interface QuestionMethods<Prompt, Answer, State = any> {

@@ -3,7 +3,7 @@ import user from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { ShortAnswer } from "../src/bindings/ShortAnswer";
+import type { ShortAnswer } from "../src/bindings/ShortAnswer";
 import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
@@ -11,7 +11,7 @@ describe("ShortAnswer", () => {
   let question: ShortAnswer & { type: "ShortAnswer" } = {
     type: "ShortAnswer",
     prompt: { prompt: "Hello world" },
-    answer: { answer: "Yes", alternatives: ["Ok"] },
+    answer: { answer: "Yes", alternatives: ["Ok"] }
   };
 
   let submitted: any | null = null;
@@ -47,7 +47,7 @@ describe("ShortAnswer", () => {
     // answers should be case-insensitive and trim whitespace
     expect(submitted).toMatchObject({
       answer: { answer: "yEs " },
-      correct: true,
+      correct: true
     });
   });
 
@@ -57,7 +57,7 @@ describe("ShortAnswer", () => {
     await user.click(submitButton());
     expect(submitted).toMatchObject({
       answer: { answer: "Ok" },
-      correct: true,
+      correct: true
     });
   });
 });

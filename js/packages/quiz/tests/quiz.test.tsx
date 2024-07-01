@@ -3,8 +3,8 @@ import user from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { Question } from "../src/bindings/Question";
-import { Quiz } from "../src/bindings/Quiz";
+import type { Question } from "../src/bindings/Question";
+import type { Quiz } from "../src/bindings/Quiz";
 import { QuizView, generateQuestionTitles } from "../src/lib";
 import { startButton, submitButton } from "./utils";
 
@@ -13,9 +13,9 @@ let quiz: Quiz = {
     {
       type: "ShortAnswer",
       prompt: { prompt: "Hey" },
-      answer: { answer: "Yes" },
-    },
-  ],
+      answer: { answer: "Yes" }
+    }
+  ]
 };
 
 describe("Quiz", () => {
@@ -74,14 +74,14 @@ describe("Quiz retry", () => {
       {
         type: "ShortAnswer",
         prompt: { prompt: "Hey" },
-        answer: { answer: "Yes" },
+        answer: { answer: "Yes" }
       },
       {
         type: "ShortAnswer",
         prompt: { prompt: "Hello" },
-        answer: { answer: "No" },
-      },
-    ],
+        answer: { answer: "No" }
+      }
+    ]
   };
 
   beforeEach(async () => {
@@ -123,21 +123,21 @@ describe("generateQuestionTitles", () => {
     let template: Question = {
       type: "ShortAnswer",
       prompt: { prompt: "" },
-      answer: { answer: "" },
+      answer: { answer: "" }
     };
     let questions: Question[] = [
       { ...template, multipart: "a" },
       { ...template, multipart: "a" },
       { ...template, multipart: "b" },
       { ...template },
-      { ...template, multipart: "c" },
+      { ...template, multipart: "c" }
     ];
     expect(generateQuestionTitles({ questions })).toStrictEqual([
       "1a",
       "1b",
       "2a",
       "3",
-      "4a",
+      "4a"
     ]);
   });
 });
