@@ -19,7 +19,7 @@ export interface SnippetOptions {
 export let snippetToNode = ({
   snippet,
   language,
-  lineNumbers,
+  lineNumbers
 }: SnippetOptions): HTMLPreElement => {
   // allow quiz authors to have leading/trailing whitespace
   snippet = snippet.trim();
@@ -27,7 +27,7 @@ export let snippetToNode = ({
   // escape HTML entities
   snippet = snippet.replace(
     /[<>]/g,
-    t => ({ "<": "&lt;", ">": "&gt;" }[t] || t)
+    t => ({ "<": "&lt;", ">": "&gt;" })[t] || t
   );
 
   // use `[]` to delimit <mark> regions
@@ -63,10 +63,10 @@ let extractMarks = (inp: string): { s: string; marks: [number, number][] } => {
   let open: number | undefined;
   while (inpIndex < inp.length) {
     let cur = inp.slice(inpIndex, inpIndex + 2);
-    if (cur == "`[") {
+    if (cur === "`[") {
       open = outpIndex;
       inpIndex += 2;
-    } else if (cur == "]`") {
+    } else if (cur === "]`") {
       marks.push([open!, outpIndex]);
       open = undefined;
       inpIndex += 2;
@@ -96,14 +96,14 @@ export let renderIde = (
     let newEl = document.createElement("div");
     let root = ReactDOM.createRoot(newEl);
     let gutterConfig: Partial<monaco.editor.IStandaloneEditorConstructionOptions> =
-      options && options.lineNumbers
+      options?.lineNumbers
         ? {
-            lineNumbersMinChars: 2,
+            lineNumbersMinChars: 2
           }
         : {
             lineNumbers: "off",
             lineDecorationsWidth: 0,
-            lineNumbersMinChars: 0,
+            lineNumbersMinChars: 0
           };
     root.render(
       <rustEditor.Editor
@@ -119,7 +119,7 @@ export let renderIde = (
           overviewRulerBorder: false,
           hideCursorInOverviewRuler: true,
           overviewRulerLanes: 0,
-          ...gutterConfig,
+          ...gutterConfig
         }}
       />
     );

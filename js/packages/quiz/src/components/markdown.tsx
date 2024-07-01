@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import { Markdown as Showdown, ShowdownExtension } from "react-showdown";
+import { Markdown as Showdown, type ShowdownExtension } from "react-showdown";
 
-import { SnippetOptions, renderIde, snippetToNode } from "./snippet";
+import { type SnippetOptions, renderIde, snippetToNode } from "./snippet";
 
 let highlightExtension = (
   options?: Partial<SnippetOptions>
@@ -25,13 +25,13 @@ let highlightExtension = (
       let newNode = snippetToNode({
         ...(options || {}),
         snippet: node.textContent!,
-        language,
+        language
       });
       let pre = node.parentNode as HTMLPreElement;
       pre.replaceWith(newNode);
     });
     return document.body.innerHTML;
-  },
+  }
 });
 
 declare global {
@@ -45,7 +45,7 @@ export let MarkdownView: React.FC<{
   let ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     renderIde(ref.current!, snippetOptions);
-    window.initAquascopeBlocks && window.initAquascopeBlocks(ref.current!);
+    window.initAquascopeBlocks?.(ref.current!);
   }, [markdown]);
 
   return (

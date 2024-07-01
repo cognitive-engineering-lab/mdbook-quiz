@@ -3,7 +3,7 @@ import React from "react";
 import type { ShortAnswerAnswer } from "../bindings/ShortAnswerAnswer";
 import type { ShortAnswerPrompt } from "../bindings/ShortAnswerPrompt";
 import { MarkdownView } from "../components/markdown";
-import { QuestionMethods } from "./types";
+import type { QuestionMethods } from "./types";
 
 export let ShortAnswerMethods: QuestionMethods<
   ShortAnswerPrompt,
@@ -20,13 +20,13 @@ export let ShortAnswerMethods: QuestionMethods<
     let formFields = required("answer");
     return (
       <>
-        {!prompt.response || prompt.response == "short" ? (
+        {!prompt.response || prompt.response === "short" ? (
           <input
             {...formFields}
             type="text"
             placeholder="Write your answer here..."
             onKeyDown={e => {
-              if (e.key == "Enter") submit();
+              if (e.key === "Enter") submit();
             }}
           />
         ) : (
@@ -58,5 +58,5 @@ export let ShortAnswerMethods: QuestionMethods<
       .concat(providedAnswer.alternatives || [])
       .map(clean);
     return possibleAnswers.includes(clean(userAnswer.answer));
-  },
+  }
 };

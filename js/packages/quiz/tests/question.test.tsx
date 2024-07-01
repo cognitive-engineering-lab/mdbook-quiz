@@ -3,7 +3,7 @@ import user from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { Question } from "../src/bindings/Question";
+import type { Question } from "../src/bindings/Question";
 import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
@@ -12,7 +12,7 @@ describe("Question prompt for explanation", () => {
     type: "ShortAnswer",
     prompt: { prompt: "Hello world" },
     answer: { answer: "Yes" },
-    promptExplanation: true,
+    promptExplanation: true
   };
 
   let submitted: any | null = null;

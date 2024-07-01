@@ -3,7 +3,7 @@ import user from "@testing-library/user-event";
 import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { Tracing } from "../src/bindings/Tracing";
+import type { Tracing } from "../src/bindings/Tracing";
 import { QuestionView } from "../src/lib";
 import { submitButton } from "./utils";
 
@@ -11,7 +11,7 @@ describe("Tracing", () => {
   let question: Tracing & { type: "Tracing" } = {
     type: "Tracing",
     prompt: { program: "fn main(){}" },
-    answer: { doesCompile: true, stdout: "Yes" },
+    answer: { doesCompile: true, stdout: "Yes" }
   };
 
   let submitted: any | null = null;
@@ -37,7 +37,7 @@ describe("Tracing", () => {
 
   let getCheckbox = () =>
     screen.getByRole("radio", {
-      name: "DOES compile",
+      name: "DOES compile"
     });
 
   it("validates input", async () => {
@@ -60,13 +60,13 @@ describe("Tracing", () => {
 
     expect(submitted).toMatchObject({
       answer: { doesCompile: true, stdout: "Yes " },
-      correct: true,
+      correct: true
     });
   });
 
   it("rejects fully invalid input", async () => {
     let checkbox = screen.getByRole("radio", {
-      name: "does NOT compile",
+      name: "does NOT compile"
     });
 
     await user.click(checkbox);
@@ -77,7 +77,7 @@ describe("Tracing", () => {
 
     expect(submitted).toMatchObject({
       answer: { doesCompile: false /* lineNumber: 1 */ },
-      correct: false,
+      correct: false
     });
   });
 
@@ -91,7 +91,7 @@ describe("Tracing", () => {
 
     expect(submitted).toMatchObject({
       answer: { doesCompile: true, stdout: "No" },
-      correct: false,
+      correct: false
     });
   });
 });

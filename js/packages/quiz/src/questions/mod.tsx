@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import _ from "lodash";
 import React, { useId, useMemo, useRef, useState } from "react";
-import { RegisterOptions, useForm } from "react-hook-form";
+import { type RegisterOptions, useForm } from "react-hook-form";
 
 import type { Question } from "../bindings/Question";
 import type { Quiz } from "../bindings/Quiz";
@@ -11,7 +11,7 @@ import { useCaptureMdbookShortcuts } from "../lib";
 import { MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswerMethods } from "./short-answer";
 import { TracingMethods } from "./tracing";
-import { QuestionMethods } from "./types";
+import type { QuestionMethods } from "./types";
 
 export { MultipleChoiceMethods } from "./multiple-choice";
 export { ShortAnswerMethods } from "./short-answer";
@@ -20,7 +20,7 @@ export { TracingMethods } from "./tracing";
 let methodMapping = {
   ShortAnswer: ShortAnswerMethods,
   Tracing: TracingMethods,
-  MultipleChoice: MultipleChoiceMethods,
+  MultipleChoice: MultipleChoiceMethods
 };
 
 export let getQuestionMethods = (
@@ -41,7 +41,7 @@ let questionNameToCssClass = (name: string) => {
 
 let BugReporter = ({
   quizName,
-  question,
+  question
 }: {
   quizName: string;
   question: number;
@@ -58,7 +58,7 @@ let BugReporter = ({
     window.telemetry!.log("bug", {
       quizName,
       question,
-      feedback,
+      feedback
     });
     event.preventDefault();
     setShow(false);
@@ -66,6 +66,7 @@ let BugReporter = ({
   return (
     <div className="bug-report">
       <button
+        type="button"
         title="Report a bug in this question"
         onClick={() => setShow(!show)}
       >
@@ -73,7 +74,11 @@ let BugReporter = ({
       </button>
       {show && (
         <div className="reporter">
-          <button className="close" onClick={() => setShow(false)}>
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShow(false)}
+          >
             ✕
           </button>
           <h3>Report a bug</h3>
@@ -82,7 +87,7 @@ let BugReporter = ({
             answer), please describe the issue and report it:
           </p>
           <form onSubmit={onSubmit}>
-            <textarea name="feedback" aria-label="Bug feedback"></textarea>
+            <textarea name="feedback" aria-label="Bug feedback" />
             <input type="submit" aria-label="Submit bug feedback" />
           </form>
         </div>
@@ -127,7 +132,7 @@ interface MultipartContextProps {
 let MultipartContext = ({
   title,
   multipart,
-  question,
+  question
 }: MultipartContextProps) => (
   <div className="multipart-context">
     <p>
@@ -148,7 +153,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
   title,
   attempt,
   questionState,
-  onSubmit,
+  onSubmit
 }) => {
   let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
@@ -166,7 +171,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
   let required = (name: string, options?: RegisterOptions) => {
     let attrs = formValidators.register(name, { ...options, required: true });
     let className = classNames({
-      error: formValidators.formState.errors[name],
+      error: formValidators.formState.errors[name]
     });
     return { ...attrs, className };
   };
@@ -184,11 +189,11 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
       correct,
       start,
       end: now(),
-      explanation: data.explanation,
+      explanation: data.explanation
     });
   });
 
-  let shouldPrompt = question.promptExplanation && attempt == 0;
+  let shouldPrompt = question.promptExplanation && attempt === 0;
 
   let explanationId = useId();
 
@@ -234,11 +239,13 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
               id={explanationId}
               title="Explanation"
               {...required("explanation")}
-            ></textarea>
+            />
           </>
         )}
         {shouldPrompt && !showExplanation ? (
-          <button onClick={() => setShowExplanation(true)}>Submit</button>
+          <button type="button" onClick={() => setShowExplanation(true)}>
+            Submit
+          </button>
         ) : (
           <input type="submit" />
         )}
@@ -266,7 +273,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
   title,
   userAnswer,
   correct,
-  showCorrect,
+  showCorrect
 }) => {
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
@@ -277,6 +284,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
     if (title.substring(1, 2) === "a")
       multipartView = (
         <div>
+          {/* biome-ignore lint/a11y/useAnchorContent: TODO */}
           <a id={anchorId} />
           <MultipartContext
             question={question}
@@ -288,7 +296,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
     else
       multipartView = (
         <div className="multipart-context">
-          <a href={"#" + anchorId}>
+          <a href={`#${anchorId}`}>
             Return to question context <span className="rotate-arrow">↳</span>
           </a>
         </div>
@@ -331,7 +339,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
       </div>
       {showCorrect && question.context && (
         <div className="context">
-          <MarkdownView markdown={`**Context**:\n` + question.context} />
+          <MarkdownView markdown={`**Context**:\n${question.context}`} />
         </div>
       )}
     </div>

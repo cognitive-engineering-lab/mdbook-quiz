@@ -6,7 +6,7 @@ import type { Markdown } from "../bindings/Markdown";
 import type { MultipleChoiceAnswer } from "../bindings/MultipleChoiceAnswer";
 import type { MultipleChoicePrompt } from "../bindings/MultipleChoicePrompt";
 import { MarkdownView } from "../components/markdown";
-import { QuestionMethods } from "./types";
+import type { QuestionMethods } from "./types";
 
 interface MultipleChoiceState {
   choices: string[];
@@ -26,8 +26,9 @@ export let MultipleChoiceMethods: QuestionMethods<
 
   questionState(prompt, answer) {
     let choices: string[];
-    let answers =
-      answer.answer instanceof Array ? answer.answer : [answer.answer];
+    let answers = Array.isArray(answer.answer)
+      ? answer.answer
+      : [answer.answer];
     if (prompt.answerIndex !== undefined) {
       choices = [...prompt.distractors];
       choices.splice(prompt.answerIndex, 0, ...answers);
@@ -46,14 +47,14 @@ export let MultipleChoiceMethods: QuestionMethods<
     <>
       {state!.choices.map((choice, i) => {
         let id = useId();
-        let multiAnswer = answer.answer instanceof Array;
+        let multiAnswer = Array.isArray(answer.answer);
         return (
           <div className="choice" key={i}>
             <input
               type={multiAnswer ? "checkbox" : "radio"}
               {...(multiAnswer
                 ? register("answer", {
-                    validate: args => args.length > 0,
+                    validate: args => args.length > 0
                   })
                 : required("answer"))}
               value={choice}
@@ -69,13 +70,13 @@ export let MultipleChoiceMethods: QuestionMethods<
   ),
 
   getAnswerFromDOM(data) {
-    if (data.answer instanceof Array) data.answer.sort();
+    if (Array.isArray(data.answer)) data.answer.sort();
     return { answer: data.answer };
   },
 
   compareAnswers(provided, user) {
     let toList = (s: Markdown | Markdown[]) =>
-      _.sortBy(s instanceof Array ? s : [s]);
+      _.sortBy(Array.isArray(s) ? s : [s]);
     return _.isEqual(toList(provided.answer), toList(user.answer));
   },
 
@@ -88,7 +89,7 @@ export let MultipleChoiceMethods: QuestionMethods<
           : "incorrect"
       )}
     >
-      {answer.answer instanceof Array ? (
+      {Array.isArray(answer.answer) ? (
         <ul>
           {answer.answer.map((a, i) => (
             <li key={i}>
@@ -100,5 +101,5 @@ export let MultipleChoiceMethods: QuestionMethods<
         <MarkdownView markdown={answer.answer} />
       )}
     </div>
-  ),
+  )
 };
