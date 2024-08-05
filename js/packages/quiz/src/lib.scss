@@ -346,14 +346,14 @@ $mobile-cutoff: 800px;
         .correct::before {
           color: var(--mdbook-correct);
           margin-right: 1rem;
-          content: "✓ Correct";
+          content: "✓ Točno";
           font-size: 1.5rem;
         }
 
         .incorrect::before {
           color: var(--mdbook-incorrect);
           margin-right: 1rem;
-          content: "✗ Incorrect";
+          content: "✗ Netočno";
           font-size: 1.5rem;
         }
       }

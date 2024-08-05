@@ -51,7 +51,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     return (
       <>
         <div className="response-block">
-          This program:{" "}
+          Ovaj se program:{" "}
           <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
@@ -60,9 +60,9 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
               value="true"
               onClick={() => setDoesCompile(true)}
             />{" "}
-            <label htmlFor={doesCompileTrueId}>DOES compile</label>
+            <label htmlFor={doesCompileTrueId}><strong>pokreće bez greške</strong></label>
           </span>
-          <span className="option-separator">OR</span>
+          <span className="option-separator">ili</span>
           <span className={classNames("option", { error: errors.doesCompile })}>
             <input
               type="radio"
@@ -71,16 +71,16 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
               value="false"
               onClick={() => setDoesCompile(false)}
             />{" "}
-            <label htmlFor={doesCompileFalseId}>does NOT compile</label>
+            <label htmlFor={doesCompileFalseId}><strong>ne pokreće bez greške</strong></label>
           </span>
         </div>
 
         {doesCompile !== undefined && doesCompile && (
           <div>
-            <p>The output of this program will be:</p>
+            <p>Ovaj će program ispisati:</p>
             <textarea
               {...required("stdout")}
-              placeholder="Write the program's stdout here..."
+              placeholder="Napišite ovdje što će program ispisati..."
             />
           </div> /*<div>
           <p>
@@ -118,8 +118,8 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
     return (
       <div>
         <p className={correctnessClass("doesCompile")}>
-          This program{" "}
-          <strong>{answer.doesCompile ? "does" : "does not"}</strong> compile.
+          Ovaj se program{" "}
+          <strong>{answer.doesCompile ? "pokreće" : "ne pokreće"}</strong> bez greške.
         </p>
         {answer.doesCompile ? (
           <>
@@ -131,7 +131,7 @@ export let TracingMethods: QuestionMethods<TracingPrompt, TracingAnswer> = {
                   : "incorrect"
               }
             >
-              The output of this program will be:
+              Ovaj će program ispisati:
             </p>
             <pre>{answer.stdout}</pre>
           </>

@@ -136,8 +136,8 @@ let MultipartContext = ({
 }: MultipartContextProps) => (
   <div className="multipart-context">
     <p>
-      <strong>Question {title.substring(0, 1)} has multiple parts.</strong> The
-      box below contains the shared context for each part.
+      <strong>Pitanje {title.substring(0, 1)} ima nekoliko dijelova.</strong> Ovdje
+      se nalazi zajedničko objašnjenje za sve.
     </p>
     <div className="multipart-context-content">
       <MarkdownView markdown={multipart[question.multipart]} />
@@ -200,7 +200,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
   return (
     <div className={classNames("question", questionClass)}>
       <div className="prompt">
-        <h4>Question {title}</h4>
+        <h4>Pitanje {title}</h4>
         {question.multipart && (
           <MultipartContext
             question={question}
@@ -214,7 +214,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
         )}
       </div>
       <form className="response" ref={ref} onSubmit={submit}>
-        <h4>Response</h4>
+        <h4>Odgovor</h4>
         <fieldset disabled={showExplanation}>
           <methods.ResponseView
             key={`${quizName}-question${index}`}
@@ -247,7 +247,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
             Submit
           </button>
         ) : (
-          <input type="submit" />
+          <input type="submit" value="Pošalji" />
         )}
       </form>
     </div>
@@ -297,7 +297,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
       multipartView = (
         <div className="multipart-context">
           <a href={`#${anchorId}`}>
-            Return to question context <span className="rotate-arrow">↳</span>
+            Vrati se nazad <span className="rotate-arrow">↳</span>
           </a>
         </div>
       );
@@ -306,7 +306,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
   return (
     <div className={classNames("answer", questionClass)}>
       <div className="prompt">
-        <h4>Question {title}</h4>
+        <h4>Pitanje {title}</h4>
         {multipartView}
         <methods.PromptView prompt={question.prompt} />
         {window.telemetry && (
@@ -315,7 +315,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
       </div>
       <div className="answer-row">
         <div>
-          <div className="answer-header">You answered:</div>
+          <div className="answer-header">Odgovorili ste:</div>
           <div>
             <methods.AnswerView
               answer={userAnswer}
@@ -326,7 +326,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
         </div>
         {showCorrect && !correct && (
           <div>
-            <div className="answer-header">The correct answer is:</div>
+            <div className="answer-header">Točan je odgovor:</div>
             <div>
               <methods.AnswerView
                 answer={question.answer}
@@ -339,7 +339,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
       </div>
       {showCorrect && question.context && (
         <div className="context">
-          <MarkdownView markdown={`**Context**:\n${question.context}`} />
+          <MarkdownView markdown={`**Objašnjenje**:\n${question.context}`} />
         </div>
       )}
     </div>

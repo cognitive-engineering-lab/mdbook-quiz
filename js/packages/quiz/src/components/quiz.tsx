@@ -88,12 +88,11 @@ let ExitExplanation = ({
   return (
     <div className="exit-explanation">
       <div className="trigger" onClick={() => setExpanded(!expanded)}>
-        Why is this quiz fullscreen?
+        Zašto ovaj kviz zauzima cijeli ekran?
       </div>
       <div style={{ display: expanded ? "block" : "none" }}>
-        We want to know how much you are learning that can be recalled without
-        assistance. Please complete the quiz without re-reading the text, e.g.
-        by opening it in another tab.
+        Cilj je saznati koliko ste se možete sjetiti toga što ste naučili bez
+        pomoći. Molimo dovršite kviz bez čitanja udžbenika.
       </div>
     </div>
   );
@@ -159,12 +158,12 @@ interface HeaderProps {
 
 let Header = observer(({ quiz, state, ended }: HeaderProps) => (
   <header>
-    <h3>Quiz</h3>
+    <h3>Kviz</h3>
     <div className="counter">
       {state.started ? (
         !ended && (
           <>
-            Question{" "}
+            Pitanje{" "}
             {(state.attempt === 0
               ? state.index
               : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
@@ -176,7 +175,7 @@ let Header = observer(({ quiz, state, ended }: HeaderProps) => (
         )
       ) : (
         <>
-          {quiz.questions.length} question
+          {quiz.questions.length} pitanje
           {quiz.questions.length > 1 && "s"}
         </>
       )}
@@ -203,13 +202,13 @@ let AnswerReview = ({
 }: AnswerReviewProps) => {
   let confirm = !state.confirmedDone && (
     <p style={{ marginBottom: "1em" }}>
-      You can either{" "}
+      Možete{" "}
       <button type="button" onClick={onRetry}>
-        retry the quiz
+        ponoviti kviz
       </button>{" "}
-      or{" "}
+      ili{" "}
       <button type="button" onClick={onGiveUp}>
-        see the correct answers
+        vidjeti točne odgovore
       </button>
       .
     </p>
@@ -217,13 +216,13 @@ let AnswerReview = ({
   let questionTitles = generateQuestionTitles(quiz);
   return (
     <>
-      <h3>Answer Review</h3>
+      <h3>Pregled odgovora</h3>
       <p>
-        You answered{" "}
+        Odgovorili ste točno na{" "}
         <strong>
           {nCorrect}/{quiz.questions.length}
         </strong>{" "}
-        questions correctly.
+        pitanja.
       </p>
       {confirm}
       {quiz.questions.map((question, i) => {
@@ -462,7 +461,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
               state.started = true;
             })}
           >
-            Start
+            Početak
           </button>
         )}
       </section>

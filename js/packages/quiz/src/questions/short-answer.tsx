@@ -24,14 +24,14 @@ export let ShortAnswerMethods: QuestionMethods<
           <input
             {...formFields}
             type="text"
-            placeholder="Write your answer here..."
+            placeholder="Ovdje napišite svoj odgovor..."
             onKeyDown={e => {
               if (e.key === "Enter") submit();
             }}
           />
         ) : (
           /* prompt.response == "long" */
-          <textarea {...formFields} placeholder="Write your answer here..." />
+          <textarea {...formFields} placeholder="Ovdje napišite svoj odgovor..." />
         )}
       </>
     );
