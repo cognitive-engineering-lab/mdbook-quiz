@@ -53,6 +53,9 @@ struct QuizConfig {
   /// Path to a .dic file containing words to include in the spellcheck dictionary.
   more_words: Option<PathBuf>,
 
+  /// If true (and telemetry is enabled) then allow users to report bugs in the frontend.
+  show_bug_reporter: Option<bool>,
+
   dev_mode: bool,
 }
 
@@ -170,6 +173,9 @@ impl QuizPreprocessor {
     if let Some(lang) = &self.config.default_language {
       add_data("quiz-default-language", lang)?;
     }
+    if let Some(true) = self.config.show_bug_reporter {
+      add_data("quiz-show-bug-reporter", "")?;
+    }
 
     html.push_str("></div>");
 
@@ -199,6 +205,7 @@ impl SimplePreprocessor for QuizPreprocessor {
         .get("more-words")
         .map(|value| value.as_str().unwrap().into()),
       spellcheck: parse_bool("spellcheck"),
+      show_bug_reporter: parse_bool("show-bug-reporter"),
       dev_mode,
     };
 
