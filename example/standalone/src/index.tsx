@@ -1,5 +1,5 @@
 import TOML from "@iarna/toml";
-import { Quiz, QuizView } from "@wcrichto/quiz";
+import { type Quiz, QuizView } from "@wcrichto/quiz";
 import React from "react";
 import ReactDOM from "react-dom/client";
 
