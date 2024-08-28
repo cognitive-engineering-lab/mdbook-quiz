@@ -9,8 +9,11 @@
     ".": {
       "default": "./dist/lib.js"
     },
-    "./*": {
+    "./*.js": {
       "default": "./dist/*.js"
+    },
+    "./*.scss": {
+      "default": "./dist/*.scss"
     }
   },
   "type": "module",

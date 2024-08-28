@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import _ from "lodash";
-import React, { useId, useMemo, useRef, useState } from "react";
+import React, { useContext, useId, useMemo, useRef, useState } from "react";
 import { type RegisterOptions, useForm } from "react-hook-form";
 
 import type { Question } from "../bindings/Question";
 import type { Quiz } from "../bindings/Quiz";
 import { MarkdownView } from "../components/markdown";
 import { MoreInfo } from "../components/more-info";
-import { useCaptureMdbookShortcuts } from "../lib";
+import { QuizConfigContext, useCaptureMdbookShortcuts } from "../lib";
 import { MultipleChoiceMethods } from "./multiple-choice";
 import { ShortAnswerMethods } from "./short-answer";
 import { TracingMethods } from "./tracing";
@@ -113,7 +113,6 @@ we can better improve the surrounding text.
 `.trim();
 
 interface QuestionViewProps {
-  quizName: string;
   multipart: Quiz["multipart"];
   question: Question;
   index: number;
@@ -146,7 +145,6 @@ let MultipartContext = ({
 );
 
 export let QuestionView: React.FC<QuestionViewProps> = ({
-  quizName,
   multipart,
   question,
   index,
@@ -155,6 +153,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
   questionState,
   onSubmit
 }) => {
+  let { name: quizName, showBugReporter } = useContext(QuizConfigContext)!;
   let start = useMemo(now, [quizName, question, index]);
   let ref = useRef<HTMLFormElement>(null);
   let [showExplanation, setShowExplanation] = useState(false);
@@ -209,7 +208,7 @@ export let QuestionView: React.FC<QuestionViewProps> = ({
           />
         )}
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry && (
+        {window.telemetry && showBugReporter && (
           <BugReporter quizName={quizName} question={index} />
         )}
       </div>
@@ -266,7 +265,6 @@ interface AnswerViewProps {
 }
 
 export let AnswerView: React.FC<AnswerViewProps> = ({
-  quizName,
   multipart,
   question,
   index,
@@ -275,6 +273,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
   correct,
   showCorrect
 }) => {
+  let { name: quizName, showBugReporter } = useContext(QuizConfigContext)!;
   let methods = getQuestionMethods(question.type);
   let questionClass = questionNameToCssClass(question.type);
 
@@ -309,7 +308,7 @@ export let AnswerView: React.FC<AnswerViewProps> = ({
         <h4>Question {title}</h4>
         {multipartView}
         <methods.PromptView prompt={question.prompt} />
-        {window.telemetry && (
+        {window.telemetry && showBugReporter && (
           <BugReporter quizName={quizName} question={index} />
         )}
       </div>

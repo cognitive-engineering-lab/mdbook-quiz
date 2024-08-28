@@ -4,6 +4,7 @@ import { action, toJS } from "mobx";
 import { observer, useLocalObservable } from "mobx-react";
 import hash from "object-hash";
 import React, {
+  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -152,55 +153,54 @@ let loadState = ({
 };
 
 interface HeaderProps {
-  quiz: Quiz;
   state: QuizState;
   ended: boolean;
 }
 
-let Header = observer(({ quiz, state, ended }: HeaderProps) => (
-  <header>
-    <h3>Quiz</h3>
-    <div className="counter">
-      {state.started ? (
-        !ended && (
+let Header = observer(({ state, ended }: HeaderProps) => {
+  let { quiz } = useContext(QuizConfigContext)!;
+  return (
+    <header>
+      <h3>Quiz</h3>
+      <div className="counter">
+        {state.started ? (
+          !ended && (
+            <>
+              Question{" "}
+              {(state.attempt === 0
+                ? state.index
+                : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
+              /{" "}
+              {state.attempt === 0
+                ? quiz.questions.length
+                : state.wrongAnswers!.length}
+            </>
+          )
+        ) : (
           <>
-            Question{" "}
-            {(state.attempt === 0
-              ? state.index
-              : state.wrongAnswers!.indexOf(state.index)) + 1}{" "}
-            /{" "}
-            {state.attempt === 0
-              ? quiz.questions.length
-              : state.wrongAnswers!.length}
+            {quiz.questions.length} question
+            {quiz.questions.length > 1 && "s"}
           </>
-        )
-      ) : (
-        <>
-          {quiz.questions.length} question
-          {quiz.questions.length > 1 && "s"}
-        </>
-      )}
-    </div>
-  </header>
-));
+        )}
+      </div>
+    </header>
+  );
+});
 
 interface AnswerReviewProps {
-  quiz: Quiz;
   state: QuizState;
-  name: string;
   nCorrect: number;
   onRetry: () => void;
   onGiveUp: () => void;
 }
 
 let AnswerReview = ({
-  quiz,
   state,
-  name,
   nCorrect,
   onRetry,
   onGiveUp
 }: AnswerReviewProps) => {
+  let { quiz, name } = useContext(QuizConfigContext)!;
   let confirm = !state.confirmedDone && (
     <p style={{ marginBottom: "1em" }}>
       You can either{" "}
@@ -294,14 +294,20 @@ export let useCaptureMdbookShortcuts = (capture: boolean) => {
   }, [capture]);
 };
 
-export interface QuizViewProps {
+export interface QuizViewConfig {
   name: string;
   quiz: Quiz;
   fullscreen?: boolean;
   cacheAnswers?: boolean;
   allowRetry?: boolean;
-  onFinish?: (answers: TaggedAnswer[]) => void;
+  showBugReporter?: boolean;
 }
+
+export type QuizViewProps = QuizViewConfig & {
+  onFinish?: (answers: TaggedAnswer[]) => void;
+};
+
+export let QuizConfigContext = React.createContext<QuizViewConfig | null>(null);
 
 let aCode = "a".charCodeAt(0);
 export let generateQuestionTitles = (quiz: Quiz): string[] => {
@@ -333,23 +339,27 @@ export let generateQuestionTitles = (quiz: Quiz): string[] => {
 };
 
 export let QuizView: React.FC<QuizViewProps> = observer(
-  ({ quiz, name, fullscreen, cacheAnswers, allowRetry, onFinish }) => {
-    let [quizHash] = useState(() => hash.MD5(quiz));
-    let answerStorage = new AnswerStorage(name, quizHash);
+  ({ onFinish, ...config }) => {
+    let [quizHash] = useState(() => hash.MD5(config.quiz));
+    let answerStorage = new AnswerStorage(config.name, quizHash);
     let questionStates = useMemo(
       () =>
-        quiz.questions.map(q => {
+        config.quiz.questions.map(q => {
           let methods = getQuestionMethods(q.type);
           return methods.questionState?.(q.prompt, q.answer);
         }),
-      [quiz]
+      [config.quiz]
     );
     let state = useLocalObservable(() =>
-      loadState({ quiz, answerStorage, cacheAnswers })
+      loadState({
+        quiz: config.quiz,
+        answerStorage,
+        cacheAnswers: config.cacheAnswers
+      })
     );
 
     let saveToCache = () => {
-      if (cacheAnswers)
+      if (config.cacheAnswers)
         answerStorage.save(
           state.answers,
           state.confirmedDone,
@@ -360,18 +370,18 @@ export let QuizView: React.FC<QuizViewProps> = observer(
 
     // Don't allow any keyboard inputs to reach external listeners
     // while the quiz is active (e.g. to avoid using the search box).
-    let ended = state.index === quiz.questions.length;
+    let ended = state.index === config.quiz.questions.length;
     let inProgress = state.started && !ended;
     useCaptureMdbookShortcuts(inProgress);
 
     // Restore the user's scroll position after leaving fullscreen mode
     let [lastTop, setLastTop] = useState<number | undefined>();
-    let showFullscreen = inProgress && (fullscreen ?? false);
+    let showFullscreen = inProgress && (config.fullscreen ?? false);
     useLayoutEffect(() => {
       document.body.style.overflowY = showFullscreen ? "hidden" : "auto";
       if (showFullscreen) {
         setLastTop(window.scrollY + 100);
-      } else if (fullscreen && lastTop !== undefined) {
+      } else if (config.fullscreen && lastTop !== undefined) {
         window.scrollTo(0, lastTop);
       }
     }, [showFullscreen]);
@@ -389,7 +399,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           n => n === state.index
         );
         if (wrongAnswerIdx === state.wrongAnswers!.length - 1)
-          state.index = quiz.questions.length;
+          state.index = config.quiz.questions.length;
         else state.index = state.wrongAnswers![wrongAnswerIdx + 1];
       }
 
@@ -400,11 +410,11 @@ export let QuizView: React.FC<QuizViewProps> = observer(
         attempt: state.attempt
       });
 
-      if (state.index === quiz.questions.length) {
+      if (state.index === config.quiz.questions.length) {
         let wrongAnswers = state.answers
           .map((a, i) => ({ a, i }))
           .filter(({ a }) => !a.correct);
-        if (wrongAnswers.length === 0 || !allowRetry) {
+        if (wrongAnswers.length === 0 || !config.allowRetry) {
           state.confirmedDone = true;
         } else {
           state.wrongAnswers = wrongAnswers.map(({ i }) => i);
@@ -421,15 +431,13 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     // on first render...
     state.confirmedDone;
 
-    let questionTitles = generateQuestionTitles(quiz);
+    let questionTitles = generateQuestionTitles(config.quiz);
 
     let body = (
       <section>
         {state.started ? (
           ended ? (
             <AnswerReview
-              quiz={quiz}
-              name={name}
               state={state}
               nCorrect={nCorrect}
               onRetry={action(() => {
@@ -444,12 +452,11 @@ export let QuizView: React.FC<QuizViewProps> = observer(
           ) : (
             <QuestionView
               key={state.index}
-              quizName={name}
-              multipart={quiz.multipart}
+              multipart={config.quiz.multipart}
               index={state.index}
               title={questionTitles[state.index]}
               attempt={state.attempt}
-              question={quiz.questions[state.index]}
+              question={config.quiz.questions[state.index]}
               questionState={questionStates[state.index]}
               onSubmit={onSubmit}
             />
@@ -484,18 +491,20 @@ export let QuizView: React.FC<QuizViewProps> = observer(
     let wrapperRef = useRef<HTMLDivElement | undefined>();
 
     return (
-      <div ref={wrapperRef} className={wrapperClass}>
-        <div className="mdbook-quiz">
-          {showFullscreen && (
-            <>
-              {exitButton}
-              <ExitExplanation wrapperRef={wrapperRef} />
-            </>
-          )}
-          <Header quiz={quiz} state={state} ended={ended} />
-          {body}
+      <QuizConfigContext.Provider value={config}>
+        <div ref={wrapperRef} className={wrapperClass}>
+          <div className="mdbook-quiz">
+            {showFullscreen && (
+              <>
+                {exitButton}
+                <ExitExplanation wrapperRef={wrapperRef} />
+              </>
+            )}
+            <Header state={state} ended={ended} />
+            {body}
+          </div>
         </div>
-      </div>
+      </QuizConfigContext.Provider>
     );
   }
 );

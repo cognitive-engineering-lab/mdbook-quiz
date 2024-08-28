@@ -4,7 +4,11 @@ import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { MultipleChoice } from "../src/bindings/MultipleChoice";
-import { MultipleChoiceMethods, QuestionView } from "../src/lib";
+import {
+  MultipleChoiceMethods,
+  QuestionView,
+  QuizConfigContext
+} from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("MultipleChoice", () => {
@@ -22,18 +26,19 @@ describe("MultipleChoice", () => {
       question.answer
     );
     render(
-      <QuestionView
-        quizName={"Foobar"}
-        question={question}
-        multipart={{}}
-        title={"1"}
-        index={1}
-        attempt={0}
-        questionState={state}
-        onSubmit={answer => {
-          submitted = answer;
-        }}
-      />
+      <QuizConfigContext.Provider value={{ name: "Foobar", quiz: {} as any }}>
+        <QuestionView
+          question={question}
+          multipart={{}}
+          title={"1"}
+          index={1}
+          attempt={0}
+          questionState={state}
+          onSubmit={answer => {
+            submitted = answer;
+          }}
+        />
+      </QuizConfigContext.Provider>
     );
     await waitFor(() => screen.getByText("Hello world"));
   });
@@ -71,18 +76,19 @@ describe("MultipleChoice multi-answer", () => {
       question.answer
     );
     render(
-      <QuestionView
-        quizName={"Foobar"}
-        question={question}
-        multipart={{}}
-        index={1}
-        title="1"
-        attempt={0}
-        questionState={state}
-        onSubmit={answer => {
-          submitted = answer;
-        }}
-      />
+      <QuizConfigContext.Provider value={{ name: "Foobar", quiz: {} as any }}>
+        <QuestionView
+          question={question}
+          multipart={{}}
+          index={1}
+          title="1"
+          attempt={0}
+          questionState={state}
+          onSubmit={answer => {
+            submitted = answer;
+          }}
+        />
+      </QuizConfigContext.Provider>
     );
     await waitFor(() => screen.getByText("Hello world"));
   });

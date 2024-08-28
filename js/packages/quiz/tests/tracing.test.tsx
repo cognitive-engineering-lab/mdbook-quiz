@@ -4,7 +4,7 @@ import React from "react";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { Tracing } from "../src/bindings/Tracing";
-import { QuestionView } from "../src/lib";
+import { QuestionView, QuizConfigContext } from "../src/lib";
 import { submitButton } from "./utils";
 
 describe("Tracing", () => {
@@ -18,17 +18,18 @@ describe("Tracing", () => {
   beforeEach(async () => {
     submitted = null;
     render(
-      <QuestionView
-        quizName={"Foobar"}
-        question={question}
-        multipart={{}}
-        index={1}
-        title="1"
-        attempt={0}
-        onSubmit={answer => {
-          submitted = answer;
-        }}
-      />
+      <QuizConfigContext.Provider value={{ name: "Foobar", quiz: {} as any }}>
+        <QuestionView
+          question={question}
+          multipart={{}}
+          index={1}
+          title="1"
+          attempt={0}
+          onSubmit={answer => {
+            submitted = answer;
+          }}
+        />
+      </QuizConfigContext.Provider>
     );
     await waitFor(() => screen.getByText("Question 1"));
   });
