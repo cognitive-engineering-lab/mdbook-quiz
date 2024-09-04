@@ -34,7 +34,7 @@ jobs:
       - name: Lint Rust package
         run: cargo clippy --all-features --locked -- -D warnings
       - name: Test JS package
-        run: depot test
+        run: depot build --lint-fail && depot test
         working-directory: js
       - name: Install mdbook-quiz
         run: cargo install --path crates/mdbook-quiz --debug --locked
@@ -42,5 +42,5 @@ jobs:
         run: mdbook build
         working-directory: example/mdbook
       - name: Build example standalone
-        run: depot build
+        run: depot build --lint-fail
         working-directory: example/standalone

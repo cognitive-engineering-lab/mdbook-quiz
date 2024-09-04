@@ -4,6 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import quizStr from "./quiz-example.toml?raw";
+import "./telemetry";
 
 let App = () => {
   let quiz = TOML.parse(quizStr) as any as Quiz;
