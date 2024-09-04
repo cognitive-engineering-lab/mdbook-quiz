@@ -385,8 +385,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@rollup/wasm-node@4.21.1':
-    resolution: {integrity: sha512-U91HbBWWbyevXQAsW5/NTbfsOP1QoKFeyuQNWbo2dQTnfx5W1iVq7Ma1ul+Kp36oj5Cb8nj8D7e1PlRc02u/oQ==}
+  '@rollup/wasm-node@4.21.2':
+    resolution: {integrity: sha512-AJCfdXkpe5EX+jfWOMYuFl3ZomTQyfx4V4geRmChdTwAo05FdpnobwqtYn0mo7Mf1qVN7mniI7kdG98vKDVd2g==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -1335,7 +1335,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@rollup/wasm-node@4.21.1':
+  '@rollup/wasm-node@4.21.2':
     dependencies:
       '@types/estree': 1.0.5
     optionalDependencies:
@@ -1923,7 +1923,7 @@ snapshots:
     dependencies:
       esbuild: 0.20.2
       postcss: 8.4.38
-      rollup: '@rollup/wasm-node@4.21.1'
+      rollup: '@rollup/wasm-node@4.21.2'
     optionalDependencies:
       '@types/node': 20.12.12
       fsevents: 2.3.3
