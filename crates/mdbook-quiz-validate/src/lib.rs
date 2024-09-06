@@ -22,8 +22,15 @@ pub use toml_spanned_value::SpannedValue;
 mod impls;
 mod spellcheck;
 
-/// A thread-safe mutable set of question identifiers.
-pub type IdSet = Arc<Mutex<HashSet<String>>>;
+#[derive(Default)]
+struct ValidatedInner {
+  ids: HashSet<String>,
+  paths: HashSet<PathBuf>,
+}
+
+#[derive(Default, Clone)]
+/// A thread-safe mutable set of already-validated identifiers and paths.
+pub struct Validated(Arc<Mutex<ValidatedInner>>);
 
 struct QuizDiagnostic {
   error: miette::Error,
@@ -34,17 +41,17 @@ pub(crate) struct ValidationContext {
   diagnostics: RefCell<Vec<QuizDiagnostic>>,
   path: PathBuf,
   contents: String,
-  ids: IdSet,
+  validated: Validated,
   spellcheck: bool,
 }
 
 impl ValidationContext {
-  pub fn new(path: &Path, contents: &str, ids: IdSet, spellcheck: bool) -> Self {
+  pub fn new(path: &Path, contents: &str, validated: Validated, spellcheck: bool) -> Self {
     ValidationContext {
       diagnostics: Default::default(),
       path: path.to_owned(),
       contents: contents.to_owned(),
-      ids,
+      validated,
       spellcheck,
     }
   }
@@ -71,7 +78,7 @@ impl ValidationContext {
   }
 
   pub fn check_id(&mut self, id: &str, value: &SpannedValue) {
-    let new_id = self.ids.lock().unwrap().insert(id.to_string());
+    let new_id = self.validated.0.lock().unwrap().ids.insert(id.to_string());
     if !new_id {
       self.error(miette!(
         labels = vec![value.labeled_span()],
@@ -149,8 +156,18 @@ struct ParseError {
 }
 
 /// Runs validation on a quiz with TOML-format `contents` at `path` under the ID set `ids`.
-pub fn validate(path: &Path, contents: &str, ids: &IdSet, spellcheck: bool) -> anyhow::Result<()> {
-  let mut cx = ValidationContext::new(path, contents, Arc::clone(ids), spellcheck);
+pub fn validate(
+  path: &Path,
+  contents: &str,
+  validated: &Validated,
+  spellcheck: bool,
+) -> anyhow::Result<()> {
+  let not_checked = validated.0.lock().unwrap().paths.insert(path.to_path_buf());
+  if !not_checked {
+    return Ok(());
+  }
+
+  let mut cx = ValidationContext::new(path, contents, validated.clone(), spellcheck);
 
   let parse_result = toml::from_str::<Quiz>(contents);
   match parse_result {
@@ -180,13 +197,28 @@ pub fn validate(path: &Path, contents: &str, ids: &IdSet, spellcheck: bool) -> a
 }
 
 #[cfg(test)]
-pub(crate) fn harness(contents: &str) -> anyhow::Result<()> {
-  validate(Path::new("dummy.rs"), contents, &IdSet::default(), true)
-}
-
-#[cfg(test)]
-mod test {
+pub(crate) mod test {
   use super::*;
+
+  pub(crate) fn harness(contents: &str) -> anyhow::Result<()> {
+    validate(Path::new("dummy.rs"), contents, &Validated::default(), true)
+  }
+
+  #[test]
+  fn validate_twice() -> anyhow::Result<()> {
+    let contents = r#"
+[[questions]]
+id = "foobar"
+type = "MultipleChoice"
+prompt.prompt = ""
+answer.answer = ""
+prompt.distractors = [""]
+"#;
+    let validated = Validated::default();
+    validate(Path::new("dummy.rs"), contents, &validated, true)?;
+    validate(Path::new("dummy.rs"), contents, &validated, true)?;
+    Ok(())
+  }
 
   #[test]
   fn validate_parse_error() {

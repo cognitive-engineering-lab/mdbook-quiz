@@ -107,7 +107,7 @@ fn main() {
 answer.doesCompile = true
 answer.stdout = "Hello world"
 "#;
-  assert!(crate::harness(contents).is_ok());
+  assert!(crate::test::harness(contents).is_ok());
 }
 
 #[test]
@@ -123,7 +123,7 @@ fn main() {
 answer.doesCompile = true
 answer.stdout = ""
 "#;
-  assert!(crate::harness(contents).is_err());
+  assert!(crate::test::harness(contents).is_err());
 }
 
 #[test]
@@ -139,5 +139,5 @@ fn main() {
 answer.doesCompile = true
 answer.stdout = "meep meep"
 "#;
-  assert!(crate::harness(contents).is_err());
+  assert!(crate::test::harness(contents).is_err());
 }

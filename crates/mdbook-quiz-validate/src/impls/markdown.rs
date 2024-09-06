@@ -76,7 +76,7 @@ prompt.prompt = "Hello **world**"
 answer.answer = ""
 prompt.distractors = [""]
 "#;
-  assert!(crate::harness(contents).is_ok());
+  assert!(crate::test::harness(contents).is_ok());
 }
 
 #[test]
@@ -89,5 +89,5 @@ answer.answer = ""
 prompt.distractors = [""]
 "#;
   // TODO: right now this test is just verified looking at stderr
-  assert!(crate::harness(contents).is_ok());
+  assert!(crate::test::harness(contents).is_ok());
 }

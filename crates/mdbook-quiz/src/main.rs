@@ -3,7 +3,7 @@ use mdbook_preprocessor_utils::{
   mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
 };
 
-use mdbook_quiz_validate::IdSet;
+use mdbook_quiz_validate::Validated;
 use regex::Regex;
 use std::{
   env,
@@ -61,7 +61,7 @@ struct QuizConfig {
 
 struct QuizPreprocessor {
   config: QuizConfig,
-  question_ids: IdSet,
+  validated: Validated,
   #[cfg(feature = "aquascope")]
   aquascope: mdbook_aquascope::AquascopePreprocessor,
 }
@@ -132,7 +132,7 @@ impl QuizPreprocessor {
     mdbook_quiz_validate::validate(
       &quiz_path_abs,
       &content_toml,
-      &self.question_ids,
+      &self.validated,
       self.config.spellcheck.unwrap_or(false),
     )?;
 
@@ -215,7 +215,7 @@ impl SimplePreprocessor for QuizPreprocessor {
 
     Ok(QuizPreprocessor {
       config,
-      question_ids: IdSet::default(),
+      validated: Validated::default(),
       #[cfg(feature = "aquascope")]
       aquascope: mdbook_aquascope::AquascopePreprocessor::new()
         .context("Aquascope failed to initialize")?,

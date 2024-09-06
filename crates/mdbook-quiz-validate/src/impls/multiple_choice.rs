@@ -73,7 +73,7 @@ prompt.prompt = ""
 answer.answer = ""
 prompt.distractors = [""]
 "#;
-  assert!(crate::harness(contents).is_ok());
+  assert!(crate::test::harness(contents).is_ok());
 }
 
 #[test]
@@ -87,5 +87,5 @@ prompt.distractors = [""]
 prompt.answerIndex = 0
 prompt.sortAnswers = true
 "#;
-  assert!(crate::harness(contents).is_err());
+  assert!(crate::test::harness(contents).is_err());
 }
