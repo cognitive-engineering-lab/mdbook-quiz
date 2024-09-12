@@ -6,14 +6,10 @@ on:
       - "**"
     tags-ignore:
       - "v*"
-  pull_request:
-    branches:
-      - "**"
 
 env:
   AQUASCOPE_VERSION: 0.3.1
   AQUASCOPE_TOOLCHAIN: nightly-2023-08-25
-
 
 jobs:
   tests:

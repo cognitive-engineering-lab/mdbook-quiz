@@ -112,11 +112,13 @@ interface QuizState {
 let loadState = ({
   quiz,
   answerStorage,
-  cacheAnswers
+  cacheAnswers,
+  autoStart
 }: {
   quiz: Quiz;
   answerStorage: AnswerStorage;
   cacheAnswers?: boolean;
+  autoStart?: boolean;
 }): QuizState => {
   let stored = answerStorage.load();
 
@@ -143,7 +145,7 @@ let loadState = ({
     };
   } else {
     return {
-      started: false,
+      started: autoStart || false,
       index: 0,
       attempt: 0,
       confirmedDone: false,
@@ -301,6 +303,7 @@ export interface QuizViewConfig {
   cacheAnswers?: boolean;
   allowRetry?: boolean;
   showBugReporter?: boolean;
+  autoStart?: boolean;
 }
 
 export type QuizViewProps = QuizViewConfig & {
@@ -354,7 +357,8 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       loadState({
         quiz: config.quiz,
         answerStorage,
-        cacheAnswers: config.cacheAnswers
+        cacheAnswers: config.cacheAnswers,
+        autoStart: config.autoStart
       })
     );
 
