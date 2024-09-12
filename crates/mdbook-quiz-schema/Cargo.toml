@@ -1,6 +1,6 @@
 [package]
 name = "mdbook-quiz-schema"
-version = "0.3.7"
+version = "0.3.8"
 authors = ["Will Crichton <crichton.will@gmail.com>"]
 description = "Schema for quizzes used in mdbook-quiz"
 license = "MIT OR Apache-2.0"

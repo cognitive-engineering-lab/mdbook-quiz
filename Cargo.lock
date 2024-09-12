@@ -1181,7 +1181,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz"
-version = "0.3.7"
+version = "0.3.8"
 dependencies = [
  "anyhow",
  "html-escape",
@@ -1200,7 +1200,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz-schema"
-version = "0.3.7"
+version = "0.3.8"
 dependencies = [
  "schemars",
  "serde",
@@ -1211,7 +1211,7 @@ dependencies = [
 
 [[package]]
 name = "mdbook-quiz-validate"
-version = "0.3.7"
+version = "0.3.8"
 dependencies = [
  "anyhow",
  "fluid-let",
