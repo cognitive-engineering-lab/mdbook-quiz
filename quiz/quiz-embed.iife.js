@@ -50479,7 +50479,7 @@ ${question.context}` })
       React.createElement("div", { style: { display: expanded ? "block" : "none" } }, "We want to know how much you are learning that can be recalled without assistance. Please complete the quiz without re-reading the text, e.g. by opening it in another tab.")
     );
   };
-  let loadState = ({ quiz, answerStorage, cacheAnswers }) => {
+  let loadState = ({ quiz, answerStorage, cacheAnswers, autoStart }) => {
     let stored = answerStorage.load();
     let badSchema = stored && stored.attempt > 0 && !stored.confirmedDone && !stored.wrongAnswers;
     if (cacheAnswers && stored && !badSchema) {
@@ -50494,7 +50494,7 @@ ${question.context}` })
       };
     } else {
       return {
-        started: false,
+        started: autoStart || false,
         index: 0,
         attempt: 0,
         confirmedDone: false,
@@ -50629,7 +50629,8 @@ ${question.context}` })
     let state = useLocalObservable(() => loadState({
       quiz: config.quiz,
       answerStorage,
-      cacheAnswers: config.cacheAnswers
+      cacheAnswers: config.cacheAnswers,
+      autoStart: config.autoStart
     }));
     let saveToCache = () => {
       if (config.cacheAnswers)
