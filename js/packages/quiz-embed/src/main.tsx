@@ -30,12 +30,16 @@ let initQuizzes = () => {
 
   document.querySelectorAll(".quiz-placeholder").forEach(el => {
     let divEl = el as HTMLDivElement;
-    let name = divEl.dataset.quizName!;
-    let quiz: Quiz = JSON.parse(divEl.dataset.quizQuestions!);
+    let name = JSON.parse(divEl.dataset.quizName!) as string;
+    let quiz = JSON.parse(divEl.dataset.quizQuestions!) as Quiz;
     let root = ReactDOM.createRoot(el);
-    let fullscreen = divEl.dataset.quizFullscreen !== undefined;
-    let cacheAnswers = divEl.dataset.quizCacheAnswers !== undefined;
-    let showBugReporter = divEl.dataset.quizShowBugReporter !== undefined;
+
+    let maybeParseJson = <T,>(s: string | undefined): T | undefined =>
+      s ? JSON.parse(s) : undefined;
+    let fullscreen = maybeParseJson<boolean>(divEl.dataset.quizFullscreen) === true;
+    let cacheAnswers = maybeParseJson<boolean>(divEl.dataset.quizCacheAnswers) === true;
+    let showBugReporter = maybeParseJson<boolean>(divEl.dataset.quizShowBugReporter) === true;
+
     root.render(
       <ErrorBoundary FallbackComponent={onError}>
         <QuizView

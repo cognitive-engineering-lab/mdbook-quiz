@@ -1,14 +1,12 @@
 use anyhow::{Context, Result};
 use mdbook_preprocessor_utils::{
-  mdbook::preprocess::PreprocessorContext, Asset, SimplePreprocessor,
+  mdbook::preprocess::PreprocessorContext, Asset, HtmlElementBuilder, SimplePreprocessor,
 };
 
 use mdbook_quiz_validate::Validated;
 use regex::Regex;
 use std::{
-  env,
-  fmt::Write,
-  fs,
+  env, fs,
   path::{Path, PathBuf},
   sync::OnceLock,
 };
@@ -148,42 +146,40 @@ impl QuizPreprocessor {
     self.add_aquascope_blocks(&mut content)?;
 
     let quiz_name = quiz_path_rel.file_stem().unwrap().to_string_lossy();
-    let content_json = serde_json::to_string(&content)?;
 
-    let mut html = String::from("<div class=\"quiz-placeholder\"");
+    let mut html = HtmlElementBuilder::new();
 
-    let mut add_data = |k: &str, v: &str| {
-      write!(
-        html,
-        " data-{}=\"{}\" ",
-        k,
-        html_escape::encode_double_quoted_attribute(v)
-      )
-    };
-    add_data("quiz-name", &quiz_name)?;
-    add_data("quiz-questions", &content_json)?;
+    html
+      .attr("class", "quiz-placeholder")
+      .data("quiz-name", &quiz_name)?
+      .data("quiz-questions", &content)?;
+
     if let Some(true) = self.config.fullscreen {
-      add_data("quiz-fullscreen", "")?;
+      html.data("quiz-fullscreen", true)?;
     }
     if let Some(true) = self.config.cache_answers {
       if !self.config.dev_mode {
-        add_data("quiz-cache-answers", "")?;
+        html.data("quiz-quiz-cache-answers", true)?;
       }
     }
     if let Some(lang) = &self.config.default_language {
-      add_data("quiz-default-language", lang)?;
+      html.data("quiz-default-language", lang)?;
     }
     if let Some(true) = self.config.show_bug_reporter {
-      add_data("quiz-show-bug-reporter", "")?;
+      html.data("quiz-show-bug-reporter", "")?;
     }
 
-    html.push_str("></div>");
-
-    Ok(html)
+    Ok(html.finish())
   }
 }
 
+#[derive(clap::Parser)]
+#[clap(author, about, version)]
+struct QuizArgs;
+
 impl SimplePreprocessor for QuizPreprocessor {
+  type Args = QuizArgs;
+
   fn name() -> &'static str {
     "quiz"
   }
@@ -284,8 +280,8 @@ mod test {
     fs::write(
       &chapter_path,
       r#"
-    *Hello world!* 
-    
+    *Hello world!*
+
     {{#quiz ../quiz.toml}}
     "#,
     )?;
