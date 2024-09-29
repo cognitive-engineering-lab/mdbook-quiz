@@ -24,7 +24,7 @@ fn main() -> Result<()> {
     }
   }
 
-  mdbook_preprocessor_utils::copy_assets(LOCAL_JS_DIST_DIR, JS_DIST_DIR)?;
+  mdbook_preprocessor_utils::copy_assets(JS_DIST_DIR, LOCAL_JS_DIST_DIR)?;
 
   Ok(())
 }
