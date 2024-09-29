@@ -1,5 +1,5 @@
 use anyhow::Result;
-use std::{fs, path::Path, process::Command};
+use std::{path::Path, process::Command};
 
 const BINDINGS_DIR: &str = "../../js/packages/quiz/src/bindings";
 const JS_DIST_DIR: &str = "../../js/packages/quiz-embed/dist";
@@ -24,14 +24,7 @@ fn main() -> Result<()> {
     }
   }
 
-  println!("cargo:rerun-if-changed={JS_DIST_DIR}");
-  let entries = fs::read_dir(js_dist_dir)?;
-  let local_js_dist_dir = Path::new(LOCAL_JS_DIST_DIR);
-  fs::create_dir_all(local_js_dist_dir)?;
-  for entry in entries {
-    let path = entry?.path();
-    fs::copy(&path, local_js_dist_dir.join(path.file_name().unwrap()))?;
-  }
+  mdbook_preprocessor_utils::copy_assets(LOCAL_JS_DIST_DIR, JS_DIST_DIR)?;
 
   Ok(())
 }

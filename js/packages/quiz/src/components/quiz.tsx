@@ -408,7 +408,7 @@ export let QuizView: React.FC<QuizViewProps> = observer(
       }
 
       window.telemetry?.log("answers", {
-        quizName: name,
+        quizName: config.name,
         quizHash,
         answers: state.answers,
         attempt: state.attempt
