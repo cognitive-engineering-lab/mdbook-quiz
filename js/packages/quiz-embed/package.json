@@ -1,6 +1,6 @@
 {
   "name": "@wcrichto/quiz-embed",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "depot": {
     "platform": "browser"
   },
