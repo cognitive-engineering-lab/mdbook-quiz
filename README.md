@@ -41,17 +41,22 @@ And you can check your version by running `mdbook-quiz -V`. This repository uses
 
 ### From source
 
-You need Cargo, [cargo-make](https://github.com/sagiegurari/cargo-make), and [Depot](https://github.com/cognitive-engineering-lab/depot) installed:
+First, clone the repository:
+
+```
+git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
+cd mdbook-quiz
+```
+
+You'll need some build tools for the Rust ([cargo-make](https://github.com/sagiegurari/cargo-make)) and JS ([Depot](https://github.com/cognitive-engineering-lab/depot)) tool-chain:
 
 - `cargo install --force cargo-make`
 - `cargo install depot-js --locked`
 
 
-Then run:
+Then you can build the library:
 
 ```
-git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
-cd mdbook-quiz
 cargo make init-bindings
 cargo install --path crates/mdbook-quiz
 ```
