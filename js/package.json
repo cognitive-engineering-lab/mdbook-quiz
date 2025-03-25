@@ -14,5 +14,8 @@
     "typescript": "^5.1.3",
     "vite": "^4.3.9",
     "vitest": "^0.32.0"
+  },
+  "dependencies": {
+    "@biomejs/cli-linux-x64": "^1.9.4"
   }
 }

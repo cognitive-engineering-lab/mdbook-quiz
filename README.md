@@ -41,7 +41,13 @@ And you can check your version by running `mdbook-quiz -V`. This repository uses
 
 ### From source
 
-You need Cargo, [cargo-make](https://github.com/sagiegurari/cargo-make), and [Depot](https://github.com/cognitive-engineering-lab/depot) installed. Then run:
+You need Cargo, [cargo-make](https://github.com/sagiegurari/cargo-make), and [Depot](https://github.com/cognitive-engineering-lab/depot) installed:
+
+- `cargo install --force cargo-make`
+- `cargo install depot-js --locked`
+
+
+Then run:
 
 ```
 git clone https://github.com/cognitive-engineering-lab/mdbook-quiz
