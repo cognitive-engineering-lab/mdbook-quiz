@@ -1,4 +1,4 @@
-import TOML from "@iarna/toml";
+import { parse, stringify } from 'smol-toml'
 import { type Quiz, QuizView } from "@wcrichto/quiz";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -7,7 +7,7 @@ import quizStr from "./quiz-example.toml?raw";
 import "./telemetry";
 
 let App = () => {
-  let quiz = TOML.parse(quizStr) as any as Quiz;
+  let quiz = parse(quizStr) as any as Quiz;
   return (
     <div>
       <h1>Example quiz</h1>
