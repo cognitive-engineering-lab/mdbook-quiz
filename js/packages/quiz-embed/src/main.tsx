@@ -36,9 +36,12 @@ let initQuizzes = () => {
 
     let maybeParseJson = <T,>(s: string | undefined): T | undefined =>
       s ? JSON.parse(s) : undefined;
-    let fullscreen = maybeParseJson<boolean>(divEl.dataset.quizFullscreen) === true;
-    let cacheAnswers = maybeParseJson<boolean>(divEl.dataset.quizCacheAnswers) === true;
-    let showBugReporter = maybeParseJson<boolean>(divEl.dataset.quizShowBugReporter) === true;
+    let fullscreen =
+      maybeParseJson<boolean>(divEl.dataset.quizFullscreen) === true;
+    let cacheAnswers =
+      maybeParseJson<boolean>(divEl.dataset.quizCacheAnswers) === true;
+    let showBugReporter =
+      maybeParseJson<boolean>(divEl.dataset.quizShowBugReporter) === true;
 
     root.render(
       <ErrorBoundary FallbackComponent={onError}>
