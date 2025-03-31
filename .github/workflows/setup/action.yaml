@@ -20,10 +20,7 @@ runs:
       with:
         crate: cargo-make
     - name: Install Depot
-      run: |
-        curl https://raw.githubusercontent.com/cognitive-engineering-lab/depot/main/scripts/install.sh | sh
-        echo "$HOME/.local/bin" >> ${GITHUB_PATH}
-      shell: bash
+      uses: cognitive-engineering-lab/depot/actions/install@main
     - name: Install mdbook
       run: |
         mkdir bin
