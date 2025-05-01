@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       external: Object.keys(manifest.dependencies || {}),
     },
+    sourcemap: true
   },
   define: {
     "process.env.NODE_ENV": JSON.stringify(mode),
