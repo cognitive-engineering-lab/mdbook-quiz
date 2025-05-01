@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use mdbook_preprocessor_utils::{
-  mdbook::preprocess::PreprocessorContext, Asset, HtmlElementBuilder, SimplePreprocessor,
+  Asset, HtmlElementBuilder, SimplePreprocessor, mdbook::preprocess::PreprocessorContext,
 };
 
 use mdbook_quiz_validate::Validated;

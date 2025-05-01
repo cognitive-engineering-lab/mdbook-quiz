@@ -1,5 +1,5 @@
 use crate::{SpannedValue, Validate, ValidationContext};
-use markdown::{mdast::Node, ParseOptions};
+use markdown::{ParseOptions, mdast::Node};
 use mdbook_quiz_schema::*;
 use miette::{Diagnostic, SourceSpan};
 use thiserror::Error;
@@ -34,11 +34,7 @@ impl Validate for Markdown {
       let dict = crate::spellcheck::dictionary();
       let open_quote = &cx.contents()[value.start()..];
       let quote_size = if let Some(next) = open_quote.strip_prefix(r#"""""#) {
-        if next.starts_with('\n') {
-          4
-        } else {
-          3
-        }
+        if next.starts_with('\n') { 4 } else { 3 }
       } else {
         1
       };

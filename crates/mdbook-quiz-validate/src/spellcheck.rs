@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Context};
+use anyhow::{Context, anyhow};
 use std::{borrow::Cow, fs, path::Path, sync::OnceLock};
 use zspell::{DictBuilder, Dictionary};
 

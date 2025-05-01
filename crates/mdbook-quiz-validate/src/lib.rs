@@ -12,7 +12,7 @@ use std::{
 
 use mdbook_quiz_schema::*;
 use miette::{
-  miette, Diagnostic, EyreContext, LabeledSpan, MietteHandler, NamedSource, Result, SourceSpan,
+  Diagnostic, EyreContext, LabeledSpan, MietteHandler, NamedSource, Result, SourceSpan, miette,
 };
 use thiserror::Error;
 

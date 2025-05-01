@@ -14,7 +14,7 @@ fn main() -> Result<()> {
   let js_dist_dir = Path::new(JS_DIST_DIR);
   if !js_dist_dir.exists() {
     let mut cmd = Command::new("depot");
-    cmd.current_dir("../../js").arg("build");
+    cmd.current_dir("../../js").arg("build").arg("--release");
     if cfg!(feature = "rust-editor") {
       cmd.env("RUST_EDITOR", "yes");
     }

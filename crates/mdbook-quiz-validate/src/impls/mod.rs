@@ -1,4 +1,4 @@
-use crate::{cxensure, tomlcast, SpannedValue, SpannedValueExt, Validate, ValidationContext};
+use crate::{SpannedValue, SpannedValueExt, Validate, ValidationContext, cxensure, tomlcast};
 use fluid_let::{fluid_let, fluid_set};
 use mdbook_quiz_schema::{Question, QuestionFields, Quiz};
 

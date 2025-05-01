@@ -1,4 +1,4 @@
-use crate::{tomlcast, SpannedValue, Validate, ValidationContext};
+use crate::{SpannedValue, Validate, ValidationContext, tomlcast};
 use mdbook_quiz_schema::*;
 
 impl Validate for ShortAnswerPrompt {

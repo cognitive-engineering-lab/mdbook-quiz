@@ -4,7 +4,7 @@ use std::{
 };
 use tempfile::TempDir;
 
-use crate::{cxensure, tomlcast, SpannedValue, SpannedValueExt, Validate, ValidationContext};
+use crate::{SpannedValue, SpannedValueExt, Validate, ValidationContext, cxensure, tomlcast};
 use mdbook_quiz_schema::*;
 
 impl Validate for Tracing {
