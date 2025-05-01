@@ -54,6 +54,9 @@ struct QuizConfig {
   /// If true (and telemetry is enabled) then allow users to report bugs in the frontend.
   show_bug_reporter: Option<bool>,
 
+  /// The text to initially show before a user starts a quiz. "Quiz" by default.
+  initial_text: Option<String>,
+
   dev_mode: bool,
 }
 
@@ -168,6 +171,9 @@ impl QuizPreprocessor {
     if let Some(true) = self.config.show_bug_reporter {
       html.data("quiz-show-bug-reporter", "")?;
     }
+    if let Some(s) = &self.config.initial_text {
+      html.data("quiz-initial-text", s)?;
+    }
 
     Ok(html.finish())
   }
@@ -189,19 +195,21 @@ impl SimplePreprocessor for QuizPreprocessor {
 
     let config_toml = ctx.config.get_preprocessor(Self::name()).unwrap();
     let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
+    let get_str = |key: &str| {
+      config_toml
+        .get(key)
+        .map(|value| value.as_str().unwrap().to_string())
+    };
 
     let dev_mode = env::var("QUIZ_DEV_MODE").is_ok();
     let config = QuizConfig {
       fullscreen: parse_bool("fullscreen"),
       cache_answers: parse_bool("cache-answers"),
-      default_language: config_toml
-        .get("default-language")
-        .map(|value| value.as_str().unwrap().into()),
-      more_words: config_toml
-        .get("more-words")
-        .map(|value| value.as_str().unwrap().into()),
+      default_language: get_str("default-language"),
+      more_words: get_str("more-words").map(PathBuf::from),
       spellcheck: parse_bool("spellcheck"),
       show_bug_reporter: parse_bool("show-bug-reporter"),
+      initial_text: get_str("initial-text"),
       dev_mode,
     };
 

@@ -1,25 +1,23 @@
 import * as rustEditor from "@wcrichto/rust-editor";
 import type { monaco } from "@wcrichto/rust-editor";
-//@ts-ignore
-import hljs from "highlight.js/lib/core";
-//@ts-ignore
-import rust from "highlight.js/lib/languages/rust";
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import ReactDOM from "react-dom/client";
+import { QuizConfigContext } from "./quiz";
 
-// This reduces bundle size by not including a bunch of extra languages
-hljs.registerLanguage("rust", rust);
+export type SyntaxHighlighter = (code: HTMLElement) => void;
 
 export interface SnippetOptions {
   snippet: string;
   lineNumbers?: boolean;
   language?: string;
+  syntaxHighlighter?: SyntaxHighlighter;
 }
 
 export let snippetToNode = ({
   snippet,
   language,
-  lineNumbers
+  lineNumbers,
+  syntaxHighlighter
 }: SnippetOptions): HTMLPreElement => {
   // allow quiz authors to have leading/trailing whitespace
   snippet = snippet.trim();
@@ -46,7 +44,8 @@ export let snippetToNode = ({
   let code = document.createElement("code");
   code.className = `language-${language || "rust"}`;
   code.innerHTML = snippet;
-  hljs.highlightBlock(code);
+
+  if (syntaxHighlighter) syntaxHighlighter(code);
 
   let pre = document.createElement("pre");
   pre.innerHTML = code.innerHTML;
@@ -134,9 +133,12 @@ export let renderIde = (
 };
 
 export let Snippet: React.FC<SnippetOptions> = options => {
+  let config = useContext(QuizConfigContext);
   let ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    ref.current!.appendChild(snippetToNode(options));
+    ref.current!.appendChild(
+      snippetToNode({ ...options, syntaxHighlighter: config.syntaxHighlighter })
+    );
   }, []);
   return <div ref={ref} />;
 };

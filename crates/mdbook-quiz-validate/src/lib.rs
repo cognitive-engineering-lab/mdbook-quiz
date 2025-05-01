@@ -184,7 +184,7 @@ pub fn validate(
     }
   }
 
-  let has_diagnostic = cx.diagnostics.borrow().len() > 0;
+  let has_diagnostic = !cx.diagnostics.borrow().is_empty();
   let is_fatal = cx.diagnostics.borrow().iter().any(|d| d.fatal);
 
   if has_diagnostic {

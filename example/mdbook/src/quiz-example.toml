@@ -1,7 +1,13 @@
 [[questions]]
 type = "MultipleChoice"
 prompt.prompt = """
-What does it mean if a variable `x` is immutable?
+```rust
+fn main() {}
+```
+
+```cpp
+void main() {}
+```
 """
 prompt.distractors = [
   "`x` is stored in the immutable region of memory.",
