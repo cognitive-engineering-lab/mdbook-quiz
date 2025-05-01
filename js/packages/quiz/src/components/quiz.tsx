@@ -20,6 +20,7 @@ import {
   type TaggedAnswer,
   getQuestionMethods
 } from "../questions/mod";
+import type { SyntaxHighlighter } from "./snippet";
 
 interface StoredAnswers {
   answers: TaggedAnswer[];
@@ -160,10 +161,10 @@ interface HeaderProps {
 }
 
 let Header = observer(({ state, ended }: HeaderProps) => {
-  let { quiz } = useContext(QuizConfigContext)!;
+  let { quiz, initialText } = useContext(QuizConfigContext)!;
   return (
     <header>
-      <h3>Quiz</h3>
+      <h3>{initialText || "Quiz"}</h3>
       <div className="counter">
         {state.started ? (
           !ended && (
@@ -304,6 +305,8 @@ export interface QuizViewConfig {
   allowRetry?: boolean;
   showBugReporter?: boolean;
   autoStart?: boolean;
+  initialText?: string;
+  syntaxHighlighter?: SyntaxHighlighter;
 }
 
 export type QuizViewProps = QuizViewConfig & {

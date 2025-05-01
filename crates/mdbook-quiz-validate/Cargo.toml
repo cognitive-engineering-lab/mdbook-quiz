@@ -1,10 +1,10 @@
 [package]
 name = "mdbook-quiz-validate"
-version = "0.3.10"
+version = "0.3.11"
 authors = ["Will Crichton <crichton.will@gmail.com>"]
 description = "Input validation for quizzes used in mdbook-quiz"
 license = "MIT OR Apache-2.0"
-edition = "2021"
+edition = "2024"
 repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 
 [dependencies]

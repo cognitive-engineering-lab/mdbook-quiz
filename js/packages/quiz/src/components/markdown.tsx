@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Markdown as Showdown, type ShowdownExtension } from "react-showdown";
 
+import { QuizConfigContext } from "./quiz";
 import { type SnippetOptions, renderIde, snippetToNode } from "./snippet";
 
 let highlightExtension = (
@@ -47,12 +48,18 @@ export let MarkdownView: React.FC<{
     renderIde(ref.current!, snippetOptions);
     window.initAquascopeBlocks?.(ref.current!);
   }, [markdown]);
+  let config = useContext(QuizConfigContext);
 
   return (
     <div ref={ref}>
       <Showdown
         markdown={markdown}
-        extensions={[highlightExtension(snippetOptions)]}
+        extensions={[
+          highlightExtension({
+            ...snippetOptions,
+            syntaxHighlighter: config.syntaxHighlighter
+          })
+        ]}
       />
     </div>
   );

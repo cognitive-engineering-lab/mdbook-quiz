@@ -50,9 +50,6 @@ importers:
       classnames:
         specifier: ^2.3.1
         version: 2.3.2
-      highlight.js:
-        specifier: 10.1.1
-        version: 10.1.1
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -1148,10 +1145,6 @@ packages:
   has@1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
     engines: {node: '>= 0.4.0'}
-
-  highlight.js@10.1.1:
-    resolution: {integrity: sha512-b4L09127uVa+9vkMgPpdUQP78ickGbHEQTWeBrQFTJZ4/n2aihWOGS0ZoUqAwjVmfjhq/C76HRzkqwZhK4sBbg==}
-    deprecated: Potential vulnerability. Upgrade to @latest
 
   html-encoding-sniffer@3.0.0:
     resolution: {integrity: sha512-oWv4T4yJ52iKrufjnyZPkrN0CH3QnrUqdB6In1g5Fe1mia8GmF36gnfNySxoZtxD5+NmYw1EElVXiBk93UeskA==}
@@ -3236,8 +3229,6 @@ snapshots:
   has@1.0.3:
     dependencies:
       function-bind: 1.1.1
-
-  highlight.js@10.1.1: {}
 
   html-encoding-sniffer@3.0.0:
     dependencies:

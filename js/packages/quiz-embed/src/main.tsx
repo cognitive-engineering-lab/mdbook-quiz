@@ -22,6 +22,12 @@ let onError = ({ error }: { error: Error }) => {
   );
 };
 
+declare global {
+  var hljs: {
+    highlightBlock: (code: HTMLElement) => void;
+  };
+}
+
 let initQuizzes = () => {
   if (rustEditor.raSetup) {
     rustEditor.raSetup("./quiz");
@@ -35,13 +41,16 @@ let initQuizzes = () => {
     let root = ReactDOM.createRoot(el);
 
     let maybeParseJson = <T,>(s: string | undefined): T | undefined =>
-      s ? JSON.parse(s) : undefined;
+      s !== undefined ? JSON.parse(s) : undefined;
     let fullscreen =
       maybeParseJson<boolean>(divEl.dataset.quizFullscreen) === true;
     let cacheAnswers =
       maybeParseJson<boolean>(divEl.dataset.quizCacheAnswers) === true;
     let showBugReporter =
       maybeParseJson<boolean>(divEl.dataset.quizShowBugReporter) === true;
+    let initialText = maybeParseJson<string>(divEl.dataset.quizInitialText);
+
+    let syntaxHighlighter = hljs.highlightBlock;
 
     root.render(
       <ErrorBoundary FallbackComponent={onError}>
@@ -51,6 +60,8 @@ let initQuizzes = () => {
           fullscreen={fullscreen}
           cacheAnswers={cacheAnswers}
           showBugReporter={showBugReporter}
+          initialText={initialText}
+          syntaxHighlighter={syntaxHighlighter}
           allowRetry
         />
       </ErrorBoundary>
