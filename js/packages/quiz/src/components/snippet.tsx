@@ -47,6 +47,14 @@ export let snippetToNode = ({
 
   if (syntaxHighlighter) syntaxHighlighter(code);
 
+  // HACK: some highlighters like the C++ one seem to inject random spans
+  // outside of the containing <code> elements. As a workaround, we find
+  // and remove those spans.
+  for (let child of code.children) {
+    if (child.tagName === "SPAN" && child.className !== "line-number")
+      child.remove();
+  }
+
   let pre = document.createElement("pre");
   pre.innerHTML = code.innerHTML;
   if (lineNumbers) pre.classList.add("line-numbers");
