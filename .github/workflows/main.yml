@@ -8,8 +8,8 @@ on:
       - "v*"
 
 env:
-  AQUASCOPE_VERSION: 0.3.1
-  AQUASCOPE_TOOLCHAIN: nightly-2023-08-25
+  AQUASCOPE_VERSION: 0.3.5
+  AQUASCOPE_TOOLCHAIN: nightly-2024-12-15
 
 jobs:
   tests:
