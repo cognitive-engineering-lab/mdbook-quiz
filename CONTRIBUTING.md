@@ -3,7 +3,7 @@
 Thanks for your interest in contributing to mdbook-quiz! To get started, follow the "From Source" installation instructions in the README. Then from the root of the repository, run:
 
 ```
-cargo make watch
+just watch
 ```
 
 This will build the Rust mdBook preprocessor, and rebuild it when Rust source files are changed. Then in another terminal, run:

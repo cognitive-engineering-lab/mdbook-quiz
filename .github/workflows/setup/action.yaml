@@ -15,10 +15,7 @@ runs:
         target: ${{ inputs.target }}
         override: true
     - uses: Swatinem/rust-cache@v1
-    - name: Install cargo-make
-      uses: baptiste0928/cargo-install@v2
-      with:
-        crate: cargo-make
+    - uses: extractions/setup-just@v3
     - name: Install Depot
       uses: cognitive-engineering-lab/depot/actions/install@main
     - name: Install mdbook
