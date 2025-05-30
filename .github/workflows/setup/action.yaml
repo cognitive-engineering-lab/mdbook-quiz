@@ -11,7 +11,7 @@ runs:
       with:
         profile: minimal
         toolchain: stable
-        components: clippy rustfmt
+        components: clippy,rustfmt
         target: ${{ inputs.target }}
         override: true
     - uses: Swatinem/rust-cache@v2
@@ -25,5 +25,5 @@ runs:
         echo "$(pwd)/bin" >> ${GITHUB_PATH}
       shell: bash
     - name: Initialize TS bindings
-      run: cargo make init-bindings
+      run: just init-bindings
       shell: bash
