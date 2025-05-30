@@ -11,22 +11,19 @@ runs:
       with:
         profile: minimal
         toolchain: stable
-        components: clippy
+        components: clippy,rustfmt
         target: ${{ inputs.target }}
         override: true
-    - uses: Swatinem/rust-cache@v1
-    - name: Install cargo-make
-      uses: baptiste0928/cargo-install@v2
-      with:
-        crate: cargo-make
+    - uses: Swatinem/rust-cache@v2
+    - uses: extractions/setup-just@v3
     - name: Install Depot
       uses: cognitive-engineering-lab/depot/actions/install@main
     - name: Install mdbook
       run: |
         mkdir bin
-        curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.14/mdbook-v0.4.14-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
+        curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.45/mdbook-v0.4.45-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
         echo "$(pwd)/bin" >> ${GITHUB_PATH}
       shell: bash
     - name: Initialize TS bindings
-      run: cargo make init-bindings
+      run: just init-bindings
       shell: bash
