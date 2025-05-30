@@ -11,10 +11,10 @@ runs:
       with:
         profile: minimal
         toolchain: stable
-        components: clippy
+        components: clippy rustfmt
         target: ${{ inputs.target }}
         override: true
-    - uses: Swatinem/rust-cache@v1
+    - uses: Swatinem/rust-cache@v2
     - uses: extractions/setup-just@v3
     - name: Install Depot
       uses: cognitive-engineering-lab/depot/actions/install@main

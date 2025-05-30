@@ -22,13 +22,15 @@ jobs:
         run: |
           rustup toolchain install ${AQUASCOPE_TOOLCHAIN} -c rust-src,rustc-dev,llvm-tools-preview,miri
           cargo +${AQUASCOPE_TOOLCHAIN} miri setup
-          echo "LD_LIBRARY_PATH=$($(rustup which --toolchain ${AQUASCOPE_TOOLCHAIN} rustc) --print target-libdir)" >> ${GITHUB_ENV}          
+          echo "LD_LIBRARY_PATH=$($(rustup which --toolchain ${AQUASCOPE_TOOLCHAIN} rustc) --print target-libdir)" >> ${GITHUB_ENV}
           curl -sSL https://github.com/cognitive-engineering-lab/aquascope/releases/download/v${AQUASCOPE_VERSION}/aquascope-x86_64-unknown-linux-gnu.tar.gz | tar -xz --directory=bin
           echo "$(pwd)/bin" >> ${GITHUB_PATH}
       - name: Test Rust package
         run: cargo test --all-features --locked
       - name: Lint Rust package
-        run: cargo clippy --all-features --locked -- -D warnings
+        run: |
+          cargo clippy --all-features --locked -- -D warnings
+          cargo fmt --check
       - name: Test JS package
         run: depot build --lint-fail && depot test
         working-directory: js
