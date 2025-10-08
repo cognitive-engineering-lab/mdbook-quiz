@@ -160,10 +160,10 @@ impl QuizPreprocessor {
     if let Some(true) = self.config.fullscreen {
       html.data("quiz-fullscreen", true)?;
     }
-    if let Some(true) = self.config.cache_answers {
-      if !self.config.dev_mode {
-        html.data("quiz-cache-answers", true)?;
-      }
+    if let Some(true) = self.config.cache_answers
+      && !self.config.dev_mode
+    {
+      html.data("quiz-cache-answers", true)?;
     }
     if let Some(lang) = &self.config.default_language {
       html.data("quiz-default-language", lang)?;
