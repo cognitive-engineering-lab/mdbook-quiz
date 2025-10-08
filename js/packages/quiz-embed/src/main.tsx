@@ -4,6 +4,9 @@ import React from "react";
 import * as ReactDOM from "react-dom/client";
 import { ErrorBoundary } from "react-error-boundary";
 
+//@ts-ignore
+import hljs from "highlight.js";
+
 import "./index.scss";
 
 let onError = ({ error }: { error: Error }) => {
@@ -22,11 +25,11 @@ let onError = ({ error }: { error: Error }) => {
   );
 };
 
-declare global {
-  var hljs: {
-    highlightBlock: (code: HTMLElement) => void;
-  };
-}
+// declare global {
+//   var hljs: {
+//     highlightBlock: (code: HTMLElement) => void;
+//   };
+// }
 
 let initQuizzes = () => {
   if (rustEditor.raSetup) {
@@ -50,7 +53,7 @@ let initQuizzes = () => {
       maybeParseJson<boolean>(divEl.dataset.quizShowBugReporter) === true;
     let initialText = maybeParseJson<string>(divEl.dataset.quizInitialText);
 
-    let syntaxHighlighter = hljs.highlightBlock;
+    let syntaxHighlighter = hljs.highlightElement;
 
     root.render(
       <ErrorBoundary FallbackComponent={onError}>

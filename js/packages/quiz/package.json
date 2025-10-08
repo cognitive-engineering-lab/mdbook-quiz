@@ -32,6 +32,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/showdown": "^2.0.0",
+    "highlight.js": "^10.7.2",
     "jsdom": "^22.1.0",
     "mobx": "^6.9.0",
     "mobx-react": "^8.0.0",
