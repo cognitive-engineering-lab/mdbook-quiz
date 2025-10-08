@@ -20,14 +20,22 @@
         pnpm = pkgs.pnpm_9;
         nodejs = pkgs.nodejs_22;
 
-        mdbook-quiz = pkgs.stdenv.mkDerivation (finalAttrs: {
+        src = pkgs.fetchFromGitHub {
+          owner = "cognitive-engineering-lab";
+          repo = name;
+          rev = "e3ceded46e3cd7a51a3457381ddbc694a2cda430";
+          hash = "sha256-ngqOKdWTfAz1h1qzBTZCLHK5jhOgAmGnb6cEF3QLfCc=";
+        };
+
+        mdbook-quiz = pkgs.rustPlatform.buildRustPackage (finalAttrs: rec {
           pname = name;
-          inherit version;
+          inherit version src;
           nativeBuildInputs = [ 
-            pnpm nodejs depotjs 
+            pnpm nodejs depotjs
             pkgs.cacert pkgs.just 
-            pkgs.rust-bin.stable.latest.default
           ];
+          cargoHash = "sha256-pDWTvJKz1W41Y/ck+GBE6vaBc45l2Ut7nPwl/oYAknw=";
+          cargoBuildFlags = [ "--features" "rust-editor,source-map" ];
 
           env = { 
             CARGO_HOME="${placeholder "out"}/.cargo"; 
@@ -42,24 +50,17 @@
             sourceRoot = "${finalAttrs.src.name}/js";
           };
 
-          src = pkgs.fetchFromGitHub {
-            owner = "cognitive-engineering-lab";
-            repo = name;
-            rev = "e3ceded46e3cd7a51a3457381ddbc694a2cda430";
-            hash = "sha256-ngqOKdWTfAz1h1qzBTZCLHK5jhOgAmGnb6cEF3QLfCc=";
-          };
-
-          buildPhase = ''
+          preBuild = ''
+            export PNPM_WRITABLE_STORE=$(mktemp -d)
+            cp -r ${pnpmDeps}/.* $PNPM_WRITABLE_STORE/ || true
+            export npm_config_store_dir=$PNPM_WRITABLE_STORE
             just init-bindings
-            cargo build --release --locked --features rust-editor --features source-map
           '';
 
           installPhase = ''
             mkdir -p $out/bin
             cp target/release/${name} $out/bin/
           '';
-
-          #cargoHash = "sha256-pDWTvJKz1W41Y/ck+GBE6vaBc45l2Ut7nPwl/oYAknw=";
         });
 
       in {
