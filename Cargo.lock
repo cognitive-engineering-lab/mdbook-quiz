@@ -1536,6 +1536,7 @@ dependencies = [
  "semver",
  "serde",
  "serde_json",
+ "tempfile",
  "toml 0.5.11",
  "toml_edit",
  "uuid",

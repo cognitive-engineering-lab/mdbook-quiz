@@ -274,44 +274,104 @@ fn main() {
 
 #[cfg(test)]
 mod test {
-  // TODO: Re-enable imports and test after implementing a test harness for mdbook 0.5.x
-  // The MdbookTestHarness from mdbook-preprocessor-utils is not available in mdbook 0.5.x
-  
-  #[test]
-  #[ignore]
-  fn test_quiz_generator() {
-    // Temporarily disabled - needs migration to mdbook 0.5.x test utilities
+  use super::QuizPreprocessor;
+  use anyhow::Result;
+  use mdbook_core::book::{Book, BookItem, Chapter};
+  use mdbook_core::config::Config;
+  use mdbook_preprocessor::{Preprocessor, PreprocessorContext};
+  use mdbook_quiz_schema::{Question, Quiz};
+  use std::fs;
+  use std::path::{Path, PathBuf};
+  use tempfile::{tempdir, TempDir};
+
+  /// Test harness to replace the old MdbookTestHarness from mdbook-preprocessor-utils
+  /// This provides a temporary directory structure for testing mdbook preprocessors
+  struct TestHarness {
+    dir: TempDir,
   }
 
-  /* Original test - to be migrated:
+  impl TestHarness {
+    fn new() -> Result<Self> {
+      let dir = tempdir()?;
+      // Create minimal book structure
+      fs::create_dir_all(dir.path().join("src"))?;
+      
+      // Create a minimal SUMMARY.md
+      fs::write(
+        dir.path().join("src").join("SUMMARY.md"),
+        "# Summary\n\n- [Chapter 1](chapter_1.md)\n",
+      )?;
+      
+      Ok(TestHarness { dir })
+    }
+
+    fn root(&self) -> &Path {
+      self.dir.path()
+    }
+
+    /// Compile the book through the preprocessor
+    fn compile(&self) -> Result<Book> {
+      // Create a PreprocessorContext
+      let ctx = PreprocessorContext::new(
+        self.root().to_path_buf(),
+        Config::default(),
+        "html".to_string(),
+      );
+
+      // Create a Book with the chapter we wrote
+      let book = self.create_book()?;
+
+      // Use SimplePreprocessorDriver to run the preprocessor
+      let driver = crate::utils::preprocessor::SimplePreprocessorDriver::<QuizPreprocessor>::new();
+      driver.run(&ctx, book)
+    }
+
+    /// Create a Book structure from the files in the test directory
+    fn create_book(&self) -> Result<Book> {
+      let chapter_path = self.root().join("src").join("chapter_1.md");
+      let content = fs::read_to_string(&chapter_path)?;
+
+      let chapter = Chapter {
+        name: "Chapter 1".to_string(),
+        content,
+        number: Some(mdbook_core::book::SectionNumber::new(vec![1])),
+        sub_items: vec![],
+        path: Some(PathBuf::from("chapter_1.md")),
+        source_path: Some(PathBuf::from("chapter_1.md")),
+        parent_names: vec![],
+      };
+
+      let items = vec![BookItem::Chapter(chapter)];
+      Ok(Book::new_with_items(items))
+    }
+  }
+
   #[test]
   fn test_quiz_generator() -> Result<()> {
-    let harness = MdbookTestHarness::new()?;
+    let harness = TestHarness::new()?;
     let quiz_path = harness.root().join("quiz.toml");
     fs::write(
       &quiz_path,
       r#"
-    [[questions]]
-    type = "ShortAnswer"
-    prompt.prompt = "Hello world"
-    answer.answer = "No"
-    "#,
+[[questions]]
+type = "ShortAnswer"
+prompt.prompt = "Hello world"
+answer.answer = "No"
+"#,
     )?;
 
     let chapter_path = harness.root().join("src").join("chapter_1.md");
     fs::write(
       &chapter_path,
-      r#"
-    *Hello world!*
+      r#"*Hello world!*
 
-    {{#quiz ../quiz.toml}}
-    "#,
+{{#quiz ../quiz.toml}}
+"#,
     )?;
 
-    let config = serde_json::json!({});
-    let mut book = harness.compile::<QuizPreprocessor>(config)?;
+    let mut book = harness.compile()?;
 
-    let contents = match book.items.remove(0) {  // Changed from book.sections
+    let contents = match book.items.remove(0) {
       BookItem::Chapter(chapter) => chapter.content,
       _ => unreachable!(),
     };
@@ -327,5 +387,4 @@ mod test {
 
     Ok(())
   }
-  */
 }
