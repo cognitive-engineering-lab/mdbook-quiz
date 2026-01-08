@@ -1,3 +1,9 @@
 target/
 bindings/
 .pnpm-debug.log
+
+# Generated JS/CSS assets (built by depot)
+crates/mdbook-quiz/js/*.js
+crates/mdbook-quiz/js/*.css
+crates/mdbook-quiz/js/*.wasm
+crates/mdbook-quiz/js/*.map
