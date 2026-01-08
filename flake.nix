@@ -50,8 +50,7 @@
             inherit version;
 
             buildFeatures =
-              [ ]
-              ++ pkgs.lib.optional enableRustEditor "rust-editor"
+              pkgs.lib.optional enableRustEditor "rust-editor"
               ++ pkgs.lib.optional enableSourceMap "source-map"
               ++ pkgs.lib.optional enableAquascope "aquascope";
 
@@ -69,37 +68,35 @@
 
             cargoHash = "sha256-pDWTvJKz1W41Y/ck+GBE6vaBc45l2Ut7nPwl/oYAknw=";
 
-            pnpmRoot = "js";
-            pnpmWorkspaces = [
-              "@wcrichto/quiz"
-              "@wcrichto/quiz-embed"
-            ];
-
             pnpmDeps = pnpm.fetchDeps {
-              inherit
-                pname
-                version
-                src
-                pnpmWorkspaces
-                ;
+              inherit pname version;
+              src = pkgs.lib.cleanSource ./js;
               fetcherVersion = 2;
               hash = "sha256-xbctcU8vXWeYF/50iDRpa6SGST9fttL1yGJrkbf9NuI=";
-              sourceRoot = "js";
             };
 
             preBuild = ''
+              export NPM_CONFIG_OFFLINE=true
               export PNPM_WRITABLE_STORE=$(mktemp -d)
+
               # Copy pnpm deps to writable store
-              cp -r ${pnpmDeps}/.* $PNPM_WRITABLE_STORE/ || true
+              cp -LR ${pnpmDeps}/* $PNPM_WRITABLE_STORE/ || true
               export npm_config_store_dir=$PNPM_WRITABLE_STORE
 
-              # Run the JS build
+              # Generate TS bindings
               cargo test -p mdbook-quiz-schema --locked export_bindings --features ts
               mkdir -p js/packages/quiz/src/bindings
               cp crates/mdbook-quiz-schema/bindings/* js/packages/quiz/src/bindings
+
+              # Build JS so that the build.rs won't
+              cd js
+              pnpm install --offline --frozen-lockfile --ignore-scripts
+              chmod -R +w node_modules
+              ${pkgs.lib.optionalString enableRustEditor "export RUST_EDITOR=yes"}
+              depot build --release
+              cd ..
             '';
           };
-
       in
       {
         packages.default = pkgs.lib.makeOverridable buildQuiz { };
