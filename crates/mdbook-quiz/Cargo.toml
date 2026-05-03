@@ -1,12 +1,12 @@
 [package]
 name = "mdbook-quiz"
-authors = ["Will Crichton <crichton.will@gmail.com>"]
 description = "Interactive quizzes for your mdBook"
-license = "MIT OR Apache-2.0"
-version = "0.4.0"
-edition = "2024"
+version = { workspace = true }
+authors = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+repository = { workspace = true }
 include = ["/src", "/js"]
-repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
 readme = "../../README.md"
 
 [features]
@@ -16,12 +16,12 @@ source-map = []
 
 [dependencies]
 serde_json = "1"
+serde = { version = "1", features = ["derive"] }
 anyhow = { workspace = true, features = ["backtrace"] }
 regex = "1"
 html-escape = "0.2"
 toml = { workspace = true }
-mdbook = "= 0.4.45"
-mdbook-preprocessor-utils = "0.2.0"
+mdbook-preprocessor-utils = "0.3.0"
 mdbook-aquascope = { version = "=0.3.6", optional = true }
 mdbook-quiz-schema = { path = "../mdbook-quiz-schema", version = "0.4.0" }
 mdbook-quiz-validate = { path = "../mdbook-quiz-validate", version = "0.4.0" }
@@ -31,8 +31,8 @@ log = "0.4.20"
 clap = { version = "4", features = ["derive"] }
 
 [dev-dependencies]
-mdbook-preprocessor-utils = { version = "0.2.0", features = ["testing"] }
+mdbook-preprocessor-utils = { version = "0.3.0", features = ["testing"] }
 
 [build-dependencies]
 anyhow = { workspace = true }
-mdbook-preprocessor-utils = "0.2.0"
+mdbook-preprocessor-utils = "0.3.0"

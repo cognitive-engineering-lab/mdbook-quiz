@@ -1,10 +1,11 @@
 use anyhow::{Context, Result};
 use mdbook_preprocessor_utils::{
-  Asset, HtmlElementBuilder, SimplePreprocessor, mdbook::preprocess::PreprocessorContext,
+  Asset, HtmlElementBuilder, SimplePreprocessor, mdbook_preprocessor::PreprocessorContext,
 };
 
 use mdbook_quiz_validate::Validated;
 use regex::Regex;
+use serde::Deserialize;
 use std::{
   env, fs,
   path::{Path, PathBuf},
@@ -32,6 +33,7 @@ const SOURCE_MAP_ASSETS: [Asset; 1] = [
 #[cfg(not(feature = "source-map"))]
 const SOURCE_MAP_ASSETS: [Asset; 0] = [];
 
+#[derive(Deserialize)]
 struct QuizConfig {
   /// If true, then a quiz will take up the web page's full screen during use.
   fullscreen: Option<bool>,
@@ -57,7 +59,7 @@ struct QuizConfig {
   /// The text to initially show before a user starts a quiz. "Quiz" by default.
   initial_text: Option<String>,
 
-  dev_mode: bool,
+  dev_mode: Option<bool>,
 }
 
 struct QuizPreprocessor {
@@ -161,7 +163,7 @@ impl QuizPreprocessor {
       html.data("quiz-fullscreen", true)?;
     }
     if let Some(true) = self.config.cache_answers
-      && !self.config.dev_mode
+      && !self.config.dev_mode.unwrap_or(false)
     {
       html.data("quiz-cache-answers", true)?;
     }
@@ -193,25 +195,13 @@ impl SimplePreprocessor for QuizPreprocessor {
   fn build(ctx: &PreprocessorContext) -> Result<Self> {
     log::info!("Running the mdbook-quiz preprocessor");
 
-    let config_toml = ctx.config.get_preprocessor(Self::name()).unwrap();
-    let parse_bool = |key: &str| config_toml.get(key).map(|value| value.as_bool().unwrap());
-    let get_str = |key: &str| {
-      config_toml
-        .get(key)
-        .map(|value| value.as_str().unwrap().to_string())
-    };
-
+    let mut config = ctx
+      .config
+      .get::<QuizConfig>("preprocessor.quiz")
+      .expect("book.toml invalid")
+      .expect("mdbook-quiz missing config");
     let dev_mode = env::var("QUIZ_DEV_MODE").is_ok();
-    let config = QuizConfig {
-      fullscreen: parse_bool("fullscreen"),
-      cache_answers: parse_bool("cache-answers"),
-      default_language: get_str("default-language"),
-      more_words: get_str("more-words").map(PathBuf::from),
-      spellcheck: parse_bool("spellcheck"),
-      show_bug_reporter: parse_bool("show-bug-reporter"),
-      initial_text: get_str("initial-text"),
-      dev_mode,
-    };
+    config.dev_mode = Some(dev_mode);
 
     if let Some(more_words) = &config.more_words {
       mdbook_quiz_validate::register_more_words(more_words)?;
@@ -266,7 +256,9 @@ fn main() {
 mod test {
   use super::QuizPreprocessor;
   use anyhow::Result;
-  use mdbook_preprocessor_utils::{mdbook::BookItem, testing::MdbookTestHarness};
+  use mdbook_preprocessor_utils::{
+    mdbook_preprocessor::book::BookItem, testing::MdbookTestHarness,
+  };
   use mdbook_quiz_schema::{Question, Quiz};
   use std::fs;
 
@@ -297,7 +289,7 @@ mod test {
     let config = serde_json::json!({});
     let mut book = harness.compile::<QuizPreprocessor>(config)?;
 
-    let contents = match book.sections.remove(0) {
+    let contents = match book.items.remove(0) {
       BookItem::Chapter(chapter) => chapter.content,
       _ => unreachable!(),
     };

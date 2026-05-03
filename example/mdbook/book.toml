@@ -1,7 +1,6 @@
 [book]
 authors = ["Will Crichton"]
 language = "en"
-multilingual = false
 src = "src"
 title = "example"
 

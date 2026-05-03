@@ -1,41 +1,354 @@
 [[questions]]
 type = "MultipleChoice"
+prompt.prompt = "If you want to wait on a future in non-async code, you should do which of the following?"
+prompt.distractors = [
+  "Put an `.await` directly after the future",
+  "Give the future to Rust's built-in async runtime",
+  "Wrap the future in an `async` block and `.await` the block",  
+]
+answer.answer = "Give the future to a third-party async runtime" 
+context = """
+Rust does not let you use `.await` outside of `async` blocks or functions. Rust also does not have a built-in async runtime.
+You should use a third-party async runtime like `tokio` or `trpl`. 
+"""
+id = "de2a5023-dd5c-412e-8425-c8ed638f18f0"
+
+[[questions]]
+type = "MultipleChoice"
 prompt.prompt = """
-What does it mean if a variable `x` is immutable?
+The async function below desugars into which type signature?
+
+```rust
+async fn calculate(nums: &[i32]) -> i32 {
+  /* ... */
+}
+```
 """
 prompt.distractors = [
-  "`x` is stored in the immutable region of memory.",
-  "After being defined, `x` can be changed at most once.",
-  "You cannot create a reference to `x`."
+  """
+```rust
+fn calculate<'a>(nums: &'a [i32], output: &mut impl Future<Output = i32> + 'a);
+```
+  """,
+  """
+```rust
+fn calculate(nums: &'_ [i32]) -> i32 as Future;
+```
+  """,
+  """
+```rust
+fn calculate() -> impl for<'a> Future<Input = &'a [i32], Output = i32> + 'a;
+```
+  """
 ]
-answer.answer = "`x` cannot be changed after being assigned to a value."
-context = """
-Immutable means "not mutable", or not changeable.
+answer.answer = """
+```rust
+fn calculate<'a>(nums: &'a [i32]) -> impl Future<Output = i32> + 'a;
+```
 """
-id = "18ea4c61-c7c3-433f-add5-d3d3156e3e71"
+context = """
+An async function returns an anonymous type that implements the `Future` trait whose output is the function's return type. 
+So here, that is represented as `impl Future<Output = i32>`. The future captures any lifetimes in the function's arguments.
+Therefore the returned type has the bound `+ 'a` and the input slice has the type `&'a [i32]`. This indicates that the slice 
+must live at least as long as the future which captures it.
+"""
+id = "9c000322-464b-4d34-9e30-55591f9283d2"
 
 [[questions]]
-type = "ShortAnswer"
-prompt.prompt = "What is the keyword used after `let` to indicate that a variable can be mutated?"
-answer.answer = "mut"
-context = """
-For example, you can make a mutable variable `x` by writing: `let mut x = 1`.
-"""
-id = "dbbaea6a-f469-464f-9d60-99ae98456b6a"
+type = "MultipleChoice"
+prompt.prompt = """
+Consider the following function:
 
-[[questions]]
-type = "Tracing"
-prompt.program = """
-fn main() {
-  let x = 1;
-  println!("{x}");
-  x += 1;
-  println!("{x}");
+```rust
+async fn print_letters() {
+  let a = async { print!("A"); };
+  let b = async { print!("B"); };
+  let c = async { print!("C"); };
+  c.await;
+  b.await;
+  a.await;
 }
+```
+
+Which of the following strings can possibly be printed after running `print_letters().await`?
 """
-answer.doesCompile = false
-answer.lineNumber = 4
+prompt.distractors = ["`ABC`", "`BCA`", "`ACB`"]
+answer.answer = ["`CBA`"]
 context = """
-This is a compiler error because line 4 tries to mutate `x` when `x` is not marked as `mut`.
+This program has deterministic behavior. The prints do not execute until the async blocks are awaited.
+The blocks are awaited in the order `c`/`b`/`a`, so the program will only print `CBA`.
 """
-id = "bba6a299-b20f-4685-934a-792a591df3c0"
+id = "8f62c158-525a-43a2-aa6a-0cc106cada10"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Say you are given a helper function `wait_all(a, b)` with the following behavior:
+* `wait_all` guarantees that `a` and `b` are executed to completion.
+* `wait_all` makes no guarantees regarding fairness or initial execution order.
+
+Then given the following code:
+
+```rust
+async fn print_letters() {
+  let fut1 = async { 
+    print!("A");
+    sleep().await;
+    print!("B");
+  };
+  let fut2 = async {
+    print!("C");
+    sleep().await;
+    print!("D");
+  }
+  wait_all(fut1, fut2).await;
+}
+```
+
+Which of the following strings can possibly be printed after running `print_letters().await`?
+"""
+prompt.distractors = ["`DABC`"]
+answer.answer = [
+  "`ABCD`", "`CADB`", "`ACBD`"
+]
+context = """
+The hypothetical `wait_all` primitive is like `join` but with fewer guarantees. Given only the spec in this problem, any interleaving of the
+two futures is valid. The only invalid output is one that inverts program execution order, i.e., `DABC` which would have `D` printed before `C`.
+"""
+id = "4b28f13e-9781-4d29-b886-7639fa527f36"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Say you are given a message-passing channel `channel()` which is non-blocking and *bounded*, 
+meaning `send` returns a future that completes once there is capacity in the channel.
+Assume you also have a function `join(a, b)` which *fairly* waits on both its arguments to completion. Then given this async code:
+
+```rust
+let (tx, mut rx) = channel(16);
+let recv_fut = rx.recv();
+let send_fut = tx.send(0);
+let (n, _) = join(recv_fut, send_fut).await;
+println!("{}", n.unwrap());
+```
+
+What will happen as a result of executing this code?
+"""
+prompt.distractors = [
+  "The program prints `0` and loops forever",
+  "The program prints nothing and loops forever",
+  "The program panics"
+]
+answer.answer = "The program prints `0` and exits"
+context = """
+Because the channel is non-blocking, we can create a receive future before sending without looping forever.
+"""
+id = "e23b7c48-3780-44e7-8ea4-df35032548a1"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Given a function `sleep(d)` that sleeps for the given duration, consider this function:
+
+```rust
+let futs: Vec<_> = [1, 2, 3].iter().map(|n| async {
+  sleep(Duration::from_secs(5)).await;
+  n + 1
+}).collect();
+
+for fut in futs {
+  let n = fut.await;
+  println!("{n}");
+}
+```
+
+When executed, about how many seconds should this take to execute?
+"""
+prompt.distractors = ["5", "0"]
+answer.answer = "15"
+context = """
+Without using a function like `join_all`, the futures will not run concurrently. Therefore this code would take 15 seconds (5 seconds per list element).
+"""
+id = "68680e2e-7a9f-4cee-8080-70e57fe5a2b3"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Say you are designing a utility function with the following specification:
+
+> `map_stringify` takes two arguments: a vector of inputs, and an async function that converts the input to an output,
+> where the outputs can be converted to strings.
+> `map_stringify` returns a vector of stringified outputs.
+
+Which function type signature best encodes this specification?
+"""
+prompt.distractors = [
+"""
+```rust
+async fn map_stringify(
+  inputs: Vec<String>, f: impl Future<Output = String>
+) -> Vec<String>
+```
+""",
+"""
+```rust
+fn map_stringify<I, O, F>(
+  inputs: Vec<I>, f: impl Fn(I) -> O,
+) -> Vec<impl Future<Output = String>>
+where
+  O: ToString,  
+```
+""",
+"""
+```rust
+async fn map_stringify<I, F>(
+  inputs: Vec<I>, f: impl Fn(I) -> F, 
+) -> Vec<String>
+where
+  F: Future + ToString,
+```
+"""]
+answer.answer = """
+```rust
+async fn map_stringify<I, O, F>(
+  inputs: Vec<I>, f: impl Fn(I) -> F, 
+) -> Vec<String>
+where
+  O: ToString,
+  F: Future<Output = O>,
+```
+"""
+context = """
+Here's one implementation of the specified function:
+
+```rust
+async fn map_stringify<I, O, F>(
+  f: impl Fn(I) -> F, inputs: Vec<I>
+) -> Vec<String>
+where
+  O: ToString,
+  F: Future<Output = O>,
+{
+  let f = &f;
+  let futs = inputs
+    .into_iter()
+    .map(|input| async move { f(input).await.to_string() });
+  futures::future::join_all(futs).await
+}
+```
+"""
+id = "b42a9c5b-bfe7-4d6f-967a-f8ff2a6faa0d"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Say you are writing a program that needs to run some async code, but every 500ms check to see if the computation should be halted.
+Which helper function would be most appropriate for accomplishing this task?
+"""
+prompt.distractors = [
+  "`join`",
+  "`yield`",
+  "`spawn` / `spawn_task`"
+]
+answer.answer = "`race` / `select`"
+context = """
+For instance, you could run a `select` in a loop between a long-running future and a sleep future that completes in 500ms.
+"""
+id = "7da21e95-8e03-412b-8c4d-90ccfc8c6802"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+The `Stream` trait is most analogous to which non-async trait in the Rust standard library?
+"""
+prompt.distractors = ["`Write`", "`Index`", "`Sync`"]
+answer.answer = "`Iterator`"
+context = """
+The `Stream` trait provides an asynchronous version of a Rust iterator.
+"""
+id = "f94a87f0-a4d6-4cd6-bcee-dfcc606f8ec2"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Say you have a stream that produces the sequence `["A", "B", "C"]` and another stream that produces the sequence ["D", "E", "F"].
+You do not know when each stream will emit each character, only that it occurs in the specified sequences.
+Consider merging these streams and printing each character. Then select each of the following output strings that could print.
+"""
+prompt.distractors = [
+  "ACBDEF",
+  "CFBEAD"
+]
+answer.answer = [
+  "ABDEFC",
+  "DEFABC"
+]
+context = """
+Merging will always respect ordering in each stream, so for example "B" cannot occur before "C".
+"""
+id = "84452eff-13df-4fcb-91ea-1f504d5bfaf0"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = "Given a future `f`, which of the following best describes how `f.await` works?"
+prompt.distractors = [
+  "It calls `f.poll()` once, which blocks in-place until `f` is ready",
+  "It calls `f.poll()` in a loop, exiting if `f` is ready, or immediately polling again if `f` is not ready",
+  "It calls `f.push(...)` once, which executes a callback containing the remaining code after `f.await` once `f` is ready"
+]
+answer.answer = "It calls `f.poll()` in a loop, exiting if `f` is ready, or returning control to the async runtime if `f` is not ready"
+context = """
+Rust uses a poll-based model for future execution. An await point desugars into a loop which repeatedly calls `.poll()`, 
+and cedes control to the async runtime after each unsuccessful poll to allow other async code to run. The runtime can later
+"wake up" the `f.await` code to poll `f` again.
+"""
+id = "c4d90f3c-7286-4272-921c-241b266e9f91"
+
+[[questions]]
+type = "MultipleChoice"
+prompt.prompt = """
+Imagine Rust did not require that futures were pinned in order to be polled. 
+Which of the following async functions could potentially cause undefined behavior if not pinned?
+"""
+prompt.distractors = [
+"""
+```rust
+async fn example(x: &i32) -> i32 {
+    sleep(Duration::from_secs(1)).await;
+    *y
+}
+```
+""",
+"""
+```rust
+async fn example(x: Vec<i32>) -> i32 {
+    sleep(Duration::from_secs(1)).await;
+    x[0]
+}
+```
+""",
+"""
+```rust
+async fn example() -> i32 {
+    let x = 0;
+    sleep(Duration::from_secs(1)).await;
+    x
+}
+```
+""",  
+]
+answer.answer = """
+```rust
+async fn example(x: i32) -> i32 {
+    let y = &x;
+    sleep(Duration::from_secs(1)).await;
+    *y
+}
+```
+"""
+context = """
+The core problem addressed by pinning in self-reference, or a future which contains a pointer to itself. 
+This happens an async block contains a local variable that refers to another local variable in the future.
+Here, that would be `y = &x`.
+"""
+id = "bc8b4acb-d111-4fec-b89a-e5d1bc77c8f2"

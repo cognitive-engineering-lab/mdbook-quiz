@@ -2,6 +2,13 @@
 resolver = "2"
 members = ["crates/*"]
 
+[workspace.package]
+version = "0.4.0"
+authors = ["Will Crichton <crichton.will@gmail.com>"]
+license = "MIT OR Apache-2.0"
+edition = "2024"
+repository = "https://github.com/cognitive-engineering-lab/mdbook-quiz"
+
 [workspace.dependencies]
 toml = "0.5.4"
 anyhow = "1.0.75"

@@ -20,6 +20,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
     "@wcrichto/quiz": "^0.3.5",
+    "highlight.js": "^10.1.1",
     "jsdom": "^24.0.0",
     "mobx": "^6.12.3",
     "mobx-react": "8",
@@ -30,6 +31,7 @@
     "smol-toml": "^1.3.1",
     "typedoc": "^0.25.13",
     "typescript": "^5.4.5",
+    "uuid": "^11.1.0",
     "vite": "^5.2.11"
   }
 }

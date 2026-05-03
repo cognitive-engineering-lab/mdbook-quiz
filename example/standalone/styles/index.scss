@@ -1,5 +1,10 @@
 @import "normalize.css/normalize.css";
 @import "@wcrichto/quiz/dist/lib.scss";
+@import "highlight.js/styles/default.css";
+
+html {
+  font-family: sans-serif;
+}
 
 #root {
   max-width: 800px;
