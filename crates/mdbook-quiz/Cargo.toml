@@ -23,8 +23,8 @@ html-escape = "0.2"
 toml = { workspace = true }
 mdbook-preprocessor-utils = "0.3.0"
 mdbook-aquascope = { version = "=0.4.0", optional = true }
-mdbook-quiz-schema = { path = "../mdbook-quiz-schema", version = "0.4.0" }
-mdbook-quiz-validate = { path = "../mdbook-quiz-validate", version = "0.4.0" }
+mdbook-quiz-schema = { path = "../mdbook-quiz-schema", version = "0.5.0" }
+mdbook-quiz-validate = { path = "../mdbook-quiz-validate", version = "0.5.0" }
 toml_edit = "0.20.0"
 uuid = {version = "1.4.1", features = ["v4"]}
 log = "0.4.20"
