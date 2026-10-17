@@ -45,8 +45,11 @@ export let MarkdownView: React.FC<{
 }> = ({ markdown, snippetOptions }) => {
   let ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    renderIde(ref.current!, snippetOptions);
+    let cleanupIde = renderIde(ref.current!, snippetOptions);
     window.initAquascopeBlocks?.(ref.current!);
+    return () => {
+      cleanupIde?.();
+    };
   }, [markdown]);
   let config = useContext(QuizConfigContext);
 
